@@ -1,0 +1,15 @@
+CompleteOrder-ergmReference
+                        A uniform distribution over the possible
+                        complete orderings of the alters by each ego
+ergm.rank-package       Fit, Simulate and Diagnose Exponential-Family
+                        Models for Rank-Order Relational Data
+newcomb                 Newcomb's Fraternity Networks
+rank.deference-ergmTerm
+                        Deference (aversion)
+rank.edgecov-ergmTerm   Dyadic covariates
+rank.inconsistency-ergmTerm
+                        (Weighted) Inconsistency
+rank.nodeicov-ergmTerm
+                        Attractiveness/Popularity covariates
+rank.nonconformity-ergmTerm
+                        Nonconformity

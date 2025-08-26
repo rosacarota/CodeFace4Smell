@@ -1,0 +1,73 @@
+EI                      Calculate EI-Index of ego networks
+aaties32                32 sets of randomly created alter-alter ties
+                        belonging to ego-centered networks
+activate.egor           Activate ego, alter or alter-alter tie data
+                        level of an egor dataset
+allbus_2010_simulated   Simulated Allbus 2010 Data
+alter_design            Set and query the alter nomination design
+alters32                32 sets of randomly created alters belonging to
+                        ego-centered networks
+alts_diversity_count    Calculate diversity measures on an 'egor'
+                        object.
+append_egor             Append rows/columns to ego, alter or aatie data
+as.egor                 egor - a data class for ego-centered network
+                        data.
+as_igraph               Convert 'egor' object to 'network' or 'igraph'
+                        objects
+as_tibble.egor          Extract ego, alter, and alter-alter tables from
+                        an 'egor' object.
+clustered_graphs        Cluster ego-centered networks by a grouping
+                        factor
+comp_ei                 Calculate the EI-Indices of an 'egor' object as
+                        a measurement of ego-alter homophily
+comp_ply                Calculate custom compositional measures on an
+                        'egor' object
+composition             Calculate the composition of alter attributes
+                        in an 'egor' object
+count_dyads             Count attribute combinations of dyads in
+                        ego-centered networks
+ego_constraint          Calculate Burt constraint for the egos of
+                        ego-centered networks
+ego_density             Calculate the relationship density in
+                        ego-centered networks
+ego_design              Set and query the ego sampling design
+egor32                  32 randomly created ego-centered networks
+                        stored as an egor object
+egor_options            Display names and values of global egor
+                        options.
+egor_vis_app            'egor' Network Visualization App
+egos32                  32 randomly created egos belonging to
+                        ego-centered networks
+extract_egos_and_return
+                        This extracts egos from igraph/network data if
+                        they are named in 'ego_name' and returns an
+                        egor object
+gss2004                 A selective subset of GSS 2004 data
+helper                  General helper functions
+layout_egogram          Create layout for an egogram
+make_egor               Generate random ego-centered-network data.
+onefile_to_egor         Import ego-centered network data from 'one file
+                        format'
+plot_egograms           Plotting _egor_ objects
+read_egonet             Read ego-centered network data exported with
+                        EgoNet software as an 'egor' object
+return_results          Returns results inheriting 'srvyr' design if
+                        the input egor object has a an 'ego_design' and
+                        global option "egor.return.results.with.design"
+                        is 'TRUE' or 'NULL'.
+rowlist                 Convert a table to a list of rows
+subset.egor             Filter and Subset Ego-centered Datasets
+summary.egor            Methods to print and summarize 'egor' objects
+threefiles_to_egor      Read/ import ego-centered network data from the
+                        three files format, EgoWeb2.0 or openeddi.
+transnat                Transnational personal communities of social
+                        support of German migrants in Great Britain
+trim_aaties             Trims alter-alter ties of alters that are
+                        missing/ deleted from alters data.
+trim_alters             Trims alters that are missing/ deleted from ego
+                        data.
+twofiles_to_egor        Import ego-centered network data from two file
+                        format
+vis_clustered_graphs    Visualize clustered graphs
+weights.egor            'weights.egor()' extracts the (relative)
+                        sampling weights of each ego in the dataset.

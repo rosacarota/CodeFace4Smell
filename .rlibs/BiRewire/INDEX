@@ -1,0 +1,55 @@
+BRCA_binary_matrix      TCGA Brest Cancer data
+BiRewire-package        The BiRewire package
+birewire.analysis.bipartite
+                        Analysis of Jaccard similarity trends across
+                        switching steps.
+birewire.analysis.dsg   Analysis of Jaccard similarity trends across
+                        switching steps.
+birewire.analysis.undirected
+                        Analysis of Jaccard similarity trends across
+                        switching steps.
+birewire.bipartite.from.incidence
+                        Converts an incidence matrix into a bipartite
+                        graph.
+birewire.build.dsg      Transform a dsg object in a SIF file.
+birewire.induced.bipartite
+                        Transform a SIF data frame into a dsg object (a
+                        list of positive and negative incidence
+                        matrix).
+birewire.load.dsg       Read a SIF file from a given path
+birewire.rewire.bipartite
+                        Efficient rewiring of bipartite graphs
+birewire.rewire.bipartite.and.projections
+                        Analysis and rewiring function processing a
+                        bipartite graphs and its two projections
+birewire.rewire.dsg     Efficient rewiring of directed signed graphs
+birewire.rewire.undirected
+                        Efficient rewiring of undirected graphs
+birewire.sampler.bipartite
+                        Efficient generation of a null model for a
+                        given bipartite graph
+birewire.sampler.dsg    Efficient generation of a null model for a
+                        given dsg.
+birewire.sampler.undirected
+                        Efficient generation of a null model for a
+                        given undirected graph
+birewire.similarity     Compute the Jaccard similarity index between
+                        two binary matrices with the same number of
+                        non-null entries and the sam row- and
+                        column-wise sums.
+birewire.similarity.dsg
+                        Compute the Jaccard similarity index between
+                        dsg.
+birewire.slum.to.sparseMatrix
+                        The function transforms a triplet sparse matrix
+                        from slum package to a Matrix sparse matrix.
+birewire.visual.monitoring.bipartite
+                        Visual monitoring of the Markov chain
+                        underlying the SA for directed graphs.
+birewire.visual.monitoring.dsg
+                        Visual monitoring of the Markov chain
+                        underlying the SA for dsgs.
+birewire.visual.monitoring.undirected
+                        Visual monitoring of the Markov chain
+                        underlying the SA for undirected graphs.
+test_dsg                Tool example of dsg

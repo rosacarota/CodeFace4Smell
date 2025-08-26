@@ -1,0 +1,33 @@
++.networkLite           Add and Subtract 'networkLite's
+add.edges.networkLite   Methods to Add or Modify Edges in a
+                        'networkLite'.
+add.vertices.networkLite
+                        Add Vertices to a 'networkLite'.
+as.edgelist.networkLite
+                        Convert a 'networkLite' to a Matrix or
+                        'tibble'.
+as.networkLite          Convert to 'networkLite' Representation.
+atomize                 Convert Lists to Atomic Vectors Where Possible
+delete.edges.networkLite
+                        Delete edges from a networkLite.
+delete.vertices.networkLite
+                        Delete vertices from a networkLite.
+get.inducedSubgraph.networkLite
+                        Return an induced subgraph
+get.vertex.attribute.networkLite
+                        'networkLite' Attribute Methods
+is.na.networkLite       Extract 'networkLite' with Missing Edges Only
+mixingmatrix.networkLite
+                        Extract Mixing Matrix from 'networkLite'
+network.edgecount.networkLite
+                        Count Edges in a 'networkLite'
+networkLite             networkLite Constructor Utilities
+networkLite-package     networkLite Package
+permute.vertexIDs.networkLite
+                        Permute vertices
+print.networkLite       Print Basic Summary of a 'networkLite'
+to_network_networkLite
+                        Convert a 'networkLite' object to a 'network'
+                        object
+valid.eids.networkLite
+                        valid.eids

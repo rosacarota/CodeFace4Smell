@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head><title>R: Import and Analyse Ego-Centered Network Data</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+<h1> Import and Analyse Ego-Centered Network Data
+<img class="toplogo" src="../../../doc/html/Rlogo.svg" alt="[R logo]" />
+</h1>
+<hr/>
+<div style="text-align: center;">
+<a href="../../../doc/html/packages.html"><img class="arrow" src="../../../doc/html/left.jpg" alt="[Up]" /></a>
+<a href="../../../doc/html/index.html"><img class="arrow" src="../../../doc/html/up.jpg" alt="[Top]" /></a>
+</div><h2>Documentation for package &lsquo;egor&rsquo; version 1.24.2</h2>
+
+<ul><li><a href="../DESCRIPTION" type="text/plain; charset=utf-8">DESCRIPTION file</a>.</li>
+<li><a href="../doc/index.html">User guides, package vignettes and other documentation.</a></li>
+<li><a href="../NEWS.md">Package NEWS</a>.</li>
+</ul>
+
+<h2>Help Pages</h2>
+
+
+<table style="width: 100%;">
+<tr><td style="width: 25%;"><a href="aaties32.html">aaties32</a></td>
+<td>32 sets of randomly created alter-alter ties belonging to ego-centered networks</td></tr>
+<tr><td style="width: 25%;"><a href="helper.html">aaties_by_ego</a></td>
+<td>General helper functions</td></tr>
+<tr><td style="width: 25%;"><a href="helper.html">aaties_by_ego.egor</a></td>
+<td>General helper functions</td></tr>
+<tr><td style="width: 25%;"><a href="helper.html">aaties_by_ego.nested_egor</a></td>
+<td>General helper functions</td></tr>
+<tr><td style="width: 25%;"><a href="activate.egor.html">activate.egor</a></td>
+<td>Activate ego, alter or alter-alter tie data level of an egor dataset</td></tr>
+<tr><td style="width: 25%;"><a href="allbus_2010_simulated.html">allbus_2010_simulated</a></td>
+<td>Simulated Allbus 2010 Data</td></tr>
+<tr><td style="width: 25%;"><a href="alters32.html">alters32</a></td>
+<td>32 sets of randomly created alters belonging to ego-centered networks</td></tr>
+<tr><td style="width: 25%;"><a href="helper.html">alters_by_ego</a></td>
+<td>General helper functions</td></tr>
+<tr><td style="width: 25%;"><a href="helper.html">alters_by_ego.egor</a></td>
+<td>General helper functions</td></tr>
+<tr><td style="width: 25%;"><a href="helper.html">alters_by_ego.nested_egor</a></td>
+<td>General helper functions</td></tr>
+<tr><td style="width: 25%;"><a href="alter_design.html">alter_design</a></td>
+<td>Set and query the alter nomination design</td></tr>
+<tr><td style="width: 25%;"><a href="alter_design.html">alter_design.egor</a></td>
+<td>Set and query the alter nomination design</td></tr>
+<tr><td style="width: 25%;"><a href="alter_design.html">alter_design&lt;-</a></td>
+<td>Set and query the alter nomination design</td></tr>
+<tr><td style="width: 25%;"><a href="alter_design.html">alter_design&lt;-.egor</a></td>
+<td>Set and query the alter nomination design</td></tr>
+<tr><td style="width: 25%;"><a href="transnat.html">alter_df</a></td>
+<td>Transnational personal communities of social support of German migrants in Great Britain</td></tr>
+<tr><td style="width: 25%;"><a href="alts_diversity_count.html">alts_diversity_count</a></td>
+<td>Calculate diversity measures on an 'egor' object.</td></tr>
+<tr><td style="width: 25%;"><a href="alts_diversity_count.html">alts_diversity_entropy</a></td>
+<td>Calculate diversity measures on an 'egor' object.</td></tr>
+<tr><td style="width: 25%;"><a href="append_egor.html">append_cols</a></td>
+<td>Append rows/columns to ego, alter or aatie data</td></tr>
+<tr><td style="width: 25%;"><a href="append_egor.html">append_egor</a></td>
+<td>Append rows/columns to ego, alter or aatie data</td></tr>
+<tr><td style="width: 25%;"><a href="append_egor.html">append_rows</a></td>
+<td>Append rows/columns to ego, alter or aatie data</td></tr>
+<tr><td style="width: 25%;"><a href="egor.html">as.egor</a></td>
+<td>egor - a data class for ego-centered network data.</td></tr>
+<tr><td style="width: 25%;"><a href="egor.html">as.egor.list</a></td>
+<td>egor - a data class for ego-centered network data.</td></tr>
+<tr><td style="width: 25%;"><a href="egor.html">as.egor.nested_egor</a></td>
+<td>egor - a data class for ego-centered network data.</td></tr>
+<tr><td style="width: 25%;"><a href="as_igraph.html">as.igraph.egor</a></td>
+<td>Convert 'egor' object to 'network' or 'igraph' objects</td></tr>
+<tr><td style="width: 25%;"><a href="as_igraph.html">as.network.egor</a></td>
+<td>Convert 'egor' object to 'network' or 'igraph' objects</td></tr>
+<tr><td style="width: 25%;"><a href="as_tibble.egor.html">as_aaties_df</a></td>
+<td>Extract ego, alter, and alter-alter tables from an 'egor' object.</td></tr>
+<tr><td style="width: 25%;"><a href="as_tibble.egor.html">as_aaties_survey</a></td>
+<td>Extract ego, alter, and alter-alter tables from an 'egor' object.</td></tr>
+<tr><td style="width: 25%;"><a href="as_tibble.egor.html">as_alters_df</a></td>
+<td>Extract ego, alter, and alter-alter tables from an 'egor' object.</td></tr>
+<tr><td style="width: 25%;"><a href="as_tibble.egor.html">as_alters_survey</a></td>
+<td>Extract ego, alter, and alter-alter tables from an 'egor' object.</td></tr>
+<tr><td style="width: 25%;"><a href="as_tibble.egor.html">as_egos_df</a></td>
+<td>Extract ego, alter, and alter-alter tables from an 'egor' object.</td></tr>
+<tr><td style="width: 25%;"><a href="as_tibble.egor.html">as_egos_survey</a></td>
+<td>Extract ego, alter, and alter-alter tables from an 'egor' object.</td></tr>
+<tr><td style="width: 25%;"><a href="as_igraph.html">as_igraph</a></td>
+<td>Convert 'egor' object to 'network' or 'igraph' objects</td></tr>
+<tr><td style="width: 25%;"><a href="as_igraph.html">as_igraph.nested_egor</a></td>
+<td>Convert 'egor' object to 'network' or 'igraph' objects</td></tr>
+<tr><td style="width: 25%;"><a href="helper.html">as_nested_egor</a></td>
+<td>General helper functions</td></tr>
+<tr><td style="width: 25%;"><a href="as_igraph.html">as_network</a></td>
+<td>Convert 'egor' object to 'network' or 'igraph' objects</td></tr>
+<tr><td style="width: 25%;"><a href="as_tibble.egor.html">as_survey.egor</a></td>
+<td>Extract ego, alter, and alter-alter tables from an 'egor' object.</td></tr>
+<tr><td style="width: 25%;"><a href="as_tibble.egor.html">as_tibble.egor</a></td>
+<td>Extract ego, alter, and alter-alter tables from an 'egor' object.</td></tr>
+<tr><td style="width: 25%;"><a href="clustered_graphs.html">clustered_graphs</a></td>
+<td>Cluster ego-centered networks by a grouping factor</td></tr>
+<tr><td style="width: 25%;"><a href="clustered_graphs.html">clustered_graphs.data.frame</a></td>
+<td>Cluster ego-centered networks by a grouping factor</td></tr>
+<tr><td style="width: 25%;"><a href="clustered_graphs.html">clustered_graphs.egor</a></td>
+<td>Cluster ego-centered networks by a grouping factor</td></tr>
+<tr><td style="width: 25%;"><a href="clustered_graphs.html">clustered_graphs.list</a></td>
+<td>Cluster ego-centered networks by a grouping factor</td></tr>
+<tr><td style="width: 25%;"><a href="composition.html">composition</a></td>
+<td>Calculate the composition of alter attributes in an 'egor' object</td></tr>
+<tr><td style="width: 25%;"><a href="comp_ei.html">comp_ei</a></td>
+<td>Calculate the EI-Indices of an 'egor' object as a measurement of ego-alter homophily</td></tr>
+<tr><td style="width: 25%;"><a href="comp_ply.html">comp_ply</a></td>
+<td>Calculate custom compositional measures on an 'egor' object</td></tr>
+<tr><td style="width: 25%;"><a href="count_dyads.html">count_dyads</a></td>
+<td>Count attribute combinations of dyads in ego-centered networks</td></tr>
+<tr><td style="width: 25%;"><a href="helper.html">create_edge_names_wide</a></td>
+<td>General helper functions</td></tr>
+<tr><td style="width: 25%;"><a href="helper.html">din_page_dist</a></td>
+<td>General helper functions</td></tr>
+<tr><td style="width: 25%;"><a href="helper.html">dyad.poss</a></td>
+<td>General helper functions</td></tr>
+<tr><td style="width: 25%;"><a href="helper.html">dyads_possible_between_groups</a></td>
+<td>General helper functions</td></tr>
+<tr><td style="width: 25%;"><a href="egor.html">egor</a></td>
+<td>egor - a data class for ego-centered network data.</td></tr>
+<tr><td style="width: 25%;"><a href="egor32.html">egor32</a></td>
+<td>32 randomly created ego-centered networks stored as an egor object</td></tr>
+<tr><td style="width: 25%;"><a href="egor_options.html">egor_options</a></td>
+<td>Display names and values of global egor options.</td></tr>
+<tr><td style="width: 25%;"><a href="egor_vis_app.html">egor_vis_app</a></td>
+<td>'egor' Network Visualization App</td></tr>
+<tr><td style="width: 25%;"><a href="egos32.html">egos32</a></td>
+<td>32 randomly created egos belonging to ego-centered networks</td></tr>
+<tr><td style="width: 25%;"><a href="ego_constraint.html">ego_constraint</a></td>
+<td>Calculate Burt constraint for the egos of ego-centered networks</td></tr>
+<tr><td style="width: 25%;"><a href="ego_density.html">ego_density</a></td>
+<td>Calculate the relationship density in ego-centered networks</td></tr>
+<tr><td style="width: 25%;"><a href="ego_density.html">ego_density.egor</a></td>
+<td>Calculate the relationship density in ego-centered networks</td></tr>
+<tr><td style="width: 25%;"><a href="ego_design.html">ego_design</a></td>
+<td>Set and query the ego sampling design</td></tr>
+<tr><td style="width: 25%;"><a href="ego_design.html">ego_design.egor</a></td>
+<td>Set and query the ego sampling design</td></tr>
+<tr><td style="width: 25%;"><a href="ego_design.html">ego_design.nested_egor</a></td>
+<td>Set and query the ego sampling design</td></tr>
+<tr><td style="width: 25%;"><a href="ego_design.html">ego_design&lt;-</a></td>
+<td>Set and query the ego sampling design</td></tr>
+<tr><td style="width: 25%;"><a href="ego_design.html">ego_design&lt;-.egor</a></td>
+<td>Set and query the ego sampling design</td></tr>
+<tr><td style="width: 25%;"><a href="ego_design.html">ego_design&lt;-.nested_egor</a></td>
+<td>Set and query the ego sampling design</td></tr>
+<tr><td style="width: 25%;"><a href="transnat.html">ego_df</a></td>
+<td>Transnational personal communities of social support of German migrants in Great Britain</td></tr>
+<tr><td style="width: 25%;"><a href="EI.html">EI</a></td>
+<td>Calculate EI-Index of ego networks</td></tr>
+<tr><td style="width: 25%;"><a href="extract_egos_and_return.html">extract_egos_and_return</a></td>
+<td>This extracts egos from igraph/network data if they are named in 'ego_name' and returns an egor object</td></tr>
+<tr><td style="width: 25%;"><a href="gss2004.html">gss2004</a></td>
+<td>A selective subset of GSS 2004 data</td></tr>
+<tr><td style="width: 25%;"><a href="ego_design.html">has_ego_design</a></td>
+<td>Set and query the ego sampling design</td></tr>
+<tr><td style="width: 25%;"><a href="ego_design.html">has_ego_design.egor</a></td>
+<td>Set and query the ego sampling design</td></tr>
+<tr><td style="width: 25%;"><a href="ego_design.html">has_ego_design.nested_egor</a></td>
+<td>Set and query the ego sampling design</td></tr>
+<tr><td style="width: 25%;"><a href="helper.html">helper</a></td>
+<td>General helper functions</td></tr>
+<tr><td style="width: 25%;"><a href="layout_egogram.html">layout_egogram</a></td>
+<td>Create layout for an egogram</td></tr>
+<tr><td style="width: 25%;"><a href="make_egor.html">make_egor</a></td>
+<td>Generate random ego-centered-network data.</td></tr>
+<tr><td style="width: 25%;"><a href="onefile_to_egor.html">onefile_to_egor</a></td>
+<td>Import ego-centered network data from 'one file format'</td></tr>
+<tr><td style="width: 25%;"><a href="plot_egor.html">plot.egor</a></td>
+<td>Plotting _egor_ objects</td></tr>
+<tr><td style="width: 25%;"><a href="plot_egor.html">plot_egograms</a></td>
+<td>Plotting _egor_ objects</td></tr>
+<tr><td style="width: 25%;"><a href="plot_egor.html">plot_egor</a></td>
+<td>Plotting _egor_ objects</td></tr>
+<tr><td style="width: 25%;"><a href="plot_egor.html">plot_ego_graphs</a></td>
+<td>Plotting _egor_ objects</td></tr>
+<tr><td style="width: 25%;"><a href="summary.egor.html">print.egor</a></td>
+<td>Methods to print and summarize 'egor' objects</td></tr>
+<tr><td style="width: 25%;"><a href="read_egonet.html">read_egonet</a></td>
+<td>Read ego-centered network data exported with EgoNet software as an 'egor' object</td></tr>
+<tr><td style="width: 25%;"><a href="threefiles_to_egor.html">read_egoweb</a></td>
+<td>Read/ import ego-centered network data from the three files format, EgoWeb2.0 or openeddi.</td></tr>
+<tr><td style="width: 25%;"><a href="threefiles_to_egor.html">read_openeddi</a></td>
+<td>Read/ import ego-centered network data from the three files format, EgoWeb2.0 or openeddi.</td></tr>
+<tr><td style="width: 25%;"><a href="return_results.html">return_results</a></td>
+<td>Returns results inheriting 'srvyr' design if the input egor object has a an 'ego_design' and global option "egor.return.results.with.design" is 'TRUE' or 'NULL'.</td></tr>
+<tr><td style="width: 25%;"><a href="rowlist.html">rowlist</a></td>
+<td>Convert a table to a list of rows</td></tr>
+<tr><td style="width: 25%;"><a href="helper.html">sanitize.wide.edges</a></td>
+<td>General helper functions</td></tr>
+<tr><td style="width: 25%;"><a href="ego_design.html">strip_ego_design</a></td>
+<td>Set and query the ego sampling design</td></tr>
+<tr><td style="width: 25%;"><a href="subset.egor.html">subset.egor</a></td>
+<td>Filter and Subset Ego-centered Datasets</td></tr>
+<tr><td style="width: 25%;"><a href="summary.egor.html">summary.egor</a></td>
+<td>Methods to print and summarize 'egor' objects</td></tr>
+<tr><td style="width: 25%;"><a href="threefiles_to_egor.html">threefiles_to_egor</a></td>
+<td>Read/ import ego-centered network data from the three files format, EgoWeb2.0 or openeddi.</td></tr>
+<tr><td style="width: 25%;"><a href="transnat.html">transnat</a></td>
+<td>Transnational personal communities of social support of German migrants in Great Britain</td></tr>
+<tr><td style="width: 25%;"><a href="trim_aaties.html">trim_aaties</a></td>
+<td>Trims alter-alter ties of alters that are missing/ deleted from alters data.</td></tr>
+<tr><td style="width: 25%;"><a href="trim_alters.html">trim_alters</a></td>
+<td>Trims alters that are missing/ deleted from ego data.</td></tr>
+<tr><td style="width: 25%;"><a href="twofiles_to_egor.html">twofiles_to_egor</a></td>
+<td>Import ego-centered network data from two file format</td></tr>
+<tr><td style="width: 25%;"><a href="vis_clustered_graphs.html">vis_clustered_graphs</a></td>
+<td>Visualize clustered graphs</td></tr>
+<tr><td style="width: 25%;"><a href="weights.egor.html">weights.egor</a></td>
+<td>'weights.egor()' extracts the (relative) sampling weights of each ego in the dataset.</td></tr>
+<tr><td style="width: 25%;"><a href="subset.egor.html">[.egor</a></td>
+<td>Filter and Subset Ego-centered Datasets</td></tr>
+</table>
+</div></body></html>

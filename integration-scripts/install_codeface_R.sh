@@ -1,15 +1,50 @@
-#!/bin/sh
+#!/usr/bin/env bash
+set -euo pipefail
 
-echo "Providing R libraries"
+echo "[R] preparo cache condivisa /opt/Rlibs e configurazione globale"
+sudo mkdir -p /etc/R /opt/Rlibs
+sudo chown -R vagrant:vagrant /opt/Rlibs
 
-sudo DEBIAN_FRONTEND=noninteractive apt-get -qqy install r-base r-base-dev r-cran-ggplot2 r-cran-tm \
-	r-cran-tm.plugin.mail r-cran-optparse r-cran-igraph r-cran-zoo r-cran-xts \
-	r-cran-lubridate r-cran-xtable r-cran-reshape r-cran-wordnet \
-	r-cran-stringr r-cran-yaml r-cran-plyr r-cran-scales r-cran-gridExtra \
-	r-cran-scales r-cran-RMySQL r-cran-RJSONIO r-cran-RCurl r-cran-mgcv \
-	r-cran-shiny r-cran-dtw r-cran-httpuv r-cran-png \
-	r-cran-rjson r-cran-lsa r-cran-testthat r-cran-arules r-cran-data.table \
-	r-cran-ineq libx11-dev libssh2-1-dev r-bioc-biocinstaller
+# Rprofile.site: /opt/Rlibs deve essere PRIMA in .libPaths() per ogni chiamata R
+sudo tee /etc/R/Rprofile.site >/dev/null <<'EOF'
+.libPaths(unique(c("/opt/Rlibs", .libPaths())))
+options(repos = c(CRAN = "https://cloud.r-project.org"))
+EOF
 
-sudo Rscript packages.R
+# Variabili d'ambiente (persistenti)
+echo 'export R_LIBS_USER=/opt/Rlibs' | sudo tee /etc/profile.d/rlibs.sh >/dev/null
+echo 'export R_LIBS_SITE=/opt/Rlibs' | sudo tee -a /etc/profile.d/rlibs.sh >/dev/null
+sudo bash -lc 'grep -q "^R_INSTALL_STAGED" /etc/environment || echo "R_INSTALL_STAGED=false" >> /etc/environment'
 
+echo "[R] install dipendenze di sistema specifiche per pacchetti R"
+sudo apt-get update -y
+sudo apt-get install -y \
+  r-base r-base-dev \
+  libxml2-dev libssl-dev libcurl4-openssl-dev libmysqlclient-dev \
+  libpng-dev libgraphviz-dev libcairo2-dev libxt-dev libz-dev \
+  libprotobuf-dev protobuf-compiler libjq-dev libssh2-1-dev libx11-dev \
+  libharfbuzz-dev libfribidi-dev libfreetype6-dev libfontconfig1-dev \
+  libjpeg-dev libtiff5-dev \
+  libgit2-dev \
+  default-jre default-jdk \
+  wordnet \
+  git graphviz
+
+# WordNet: variabili d'ambiente per il pacchetto R 'wordnet'
+echo 'export WNHOME=/usr/share/wordnet'           | sudo tee /etc/profile.d/wordnet.sh >/dev/null
+echo 'export WNSEARCHDIR=/usr/share/wordnet/dict' | sudo tee -a /etc/profile.d/wordnet.sh >/dev/null
+sudo chmod +x /etc/profile.d/wordnet.sh
+
+# Configura Java per rJava
+sudo R CMD javareconf
+
+# Compilazioni più rapide in parallelo
+echo "MAKEFLAGS = -j$(nproc)" | sudo tee /etc/R/Makevars.site >/dev/null
+
+echo "[R] installo i pacchetti da packages.R usando la cache"
+# pulizia preventiva di eventuali lock temporanei
+rm -rf /opt/Rlibs/00LOCK* /opt/Rlibs/*/00LOCK* || true
+
+# eseguo come utente vagrant, con la cache configurata esplicitamente
+sudo -u vagrant env R_LIBS_USER=/opt/Rlibs R_LIBS_SITE=/opt/Rlibs \
+  R --vanilla --no-save --no-restore -q -f /vagrant/packages.R

@@ -1,0 +1,24 @@
+Package: shinyGridster
+Type: Package
+Title: Gridster package for Shiny
+Version: 0.1
+Author: RStudio, Inc.
+Maintainer: Winston Chang <winston@rstudio.com>
+Description: Gridster for Shiny
+License: GPL-3
+Depends: R (>= 2.14.1)
+Imports: shiny (>= 0.5.0)
+Collate: 'gridster.r'
+RemoteType: github
+RemoteHost: api.github.com
+RemoteRepo: shiny-gridster
+RemoteUsername: wch
+RemoteRef: HEAD
+RemoteSha: 6a0a5495dcc09e771a99e6a9b923bb0c1a135d3d
+GithubRepo: shiny-gridster
+GithubUsername: wch
+GithubRef: HEAD
+GithubSHA1: 6a0a5495dcc09e771a99e6a9b923bb0c1a135d3d
+NeedsCompilation: no
+Packaged: 2025-08-25 22:21:12 UTC; vagrant
+Built: R 4.5.1; ; 2025-08-25 22:21:13 UTC; unix

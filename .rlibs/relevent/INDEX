@@ -1,0 +1,5 @@
+as.sociomatrix.eventlist
+                        Convert an Event List Into a Sociomatrix
+rem                     Fit a Relational Event Model to Single or
+                        Multiple Sequence Data
+rem.dyad                Fit a Relational Event Model to Dyadic Data

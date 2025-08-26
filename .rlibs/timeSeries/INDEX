@@ -1,0 +1,70 @@
+TimeSeriesClass         Create objects from class 'timeSeries'
+TimeSeriesData          Time series data sets
+TimeSeriesSubsettings   Subsetting time series
+aggregate-methods       Aggregate time series
+align-methods           Align a 'timeSeries' object to equidistant time
+                        stamps
+apply                   Apply functions over time windows
+as                      Convert objects to/from class 'timeSeries'
+attach                  Attach a 'timeSeries' to the search path
+attributes              Get and set optional attributes of a
+                        'timeSeries'
+cbind                   Bind 'timeSeries' objects by column or row
+colCum                  Cumulated column statistics
+colStats                Column statistics
+comment                 Get and set comments for 'timeSeries' objects
+cumulated               Cumulated time series from returns
+description             Creates date and user information
+diff                    Difference a 'timeSeries' object
+dim,timeSeries-method   Dimension and their names for 'timeSeries'
+                        objects
+drawdowns               Calculations of drawdowns
+dummyTimeSeries         Create dummy time series
+durations               Durations from a 'timeSeries'
+endOfPeriod             End-of-Period series, stats, and benchmarks
+filter                  Linear filtering on a time series
+finCenter               Get and set Financial center of a 'timeSeries'
+getDataPart,timeSeries-method
+                        DataPart,timeSeries-method
+getUnits                Get and set unit names of a 'timeSeries'
+index2wealth            Conversion of an index to wealth
+is.timeSeries           Check if an object is from class 'timeSeries'
+isRegular               Checks if a time series is regular
+isUnivariate            Checks if a time series is univariate
+lag                     Lag a 'timeSeries' object
+math                    Mathematical operations on 'timeSeries'
+merge                   Merge 'timeSeries' objects
+monthly                 Special monthly series
+na                      Handle missing values in 'timeSeries' objects
+na.contiguous           Find longest contiguous stretch of non-NAs or
+                        check for NAs
+orderColnames           Reorder column names of a time series
+orderStatistics         Order statistics
+plot                    Plot 'timeSeries' objects
+rank                    Sample ranks of a time series
+readSeries              Read a 'timeSeries' from a text file
+returns                 Financial returns
+rev.timeSeries          Reverse a 'timeSeries'
+rollMean                Rolling statistics
+rowCum                  Cumulative row statistics
+runlengths              Runlengths of a time series
+sample                  Resample 'timeSeries' objects
+scale                   Center and scale 'timeSeries' objects
+sd-methods              Base R functions applied to 'timeSeries'
+                        objects
+series                  Get and set the data component of a
+                        'timeSeries'
+show,timeSeries-method
+                        Print 'timeSeries' objects
+smoothLowess            Smooths time series objects
+sort                    Sort a 'timeSeries' by time stamps
+splits                  splits
+spreads                 Spreads and mid quotes
+start                   Start and end of a 'timeSeries'
+str-methods             Display the structure of 'timeSeries' objects
+t,timeSeries-method     Transpose 'timeSeries' objects
+time                    Get and set time stamps of a 'timeSeries'
+timeSeries-class        Class 'timeSeries' in package timeSeries
+timeSeries-package      Utilities and tools package
+turns                   Turning points of a time series
+window                  Methods for 'window' in package 'timeSeries'

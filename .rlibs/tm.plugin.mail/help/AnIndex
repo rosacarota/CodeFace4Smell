@@ -1,0 +1,11 @@
+convert_mbox_eml	convert_mbox_eml
+MailDocument	MailDocument
+MBoxSource	MBoxSource
+readMail	readMail
+removeCitation	removeCitation
+removeCitation.MailDocument	removeCitation
+removeMultipart	removeMultipart
+removeMultipart.MailDocument	removeMultipart
+removeSignature	removeSignature
+removeSignature.MailDocument	removeSignature
+threads	threads

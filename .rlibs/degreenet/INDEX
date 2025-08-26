@@ -1,0 +1,47 @@
+acmpmle                 Conway Maxwell Poisson Modeling of Discrete
+                        Data
+adqemle                 Discrete version of q-Exponential Modeling of
+                        Discrete Data
+aplnmle                 Poisson Lognormal Modeling of Discrete Data
+awarmle                 Waring Modeling of Discrete Data
+ayulemle                Yule Distribution Modeling of Discrete Data
+bsdp                    Calculate Bootstrap Estimates and Confidence
+                        Intervals for the Discrete Pareto Distribution
+bsnb                    Calculate Bootstrap Estimates and Confidence
+                        Intervals for the Negative Binomial
+                        Distribution
+bspln                   Calculate Bootstrap Estimates and Confidence
+                        Intervals for the Poisson Lognormal
+                        Distribution
+bswar                   Calculate Bootstrap Estimates and Confidence
+                        Intervals for the Waring Distribution
+bsyule                  Calculate Bootstrap Estimates and Confidence
+                        Intervals for the Yule Distribution
+degreenet-package       Models for Skewed Count Distributions Relevant
+                        to Networks
+gyulemle                Models for Count Distributions
+llgyule                 Calculate the Conditional log-likelihood for
+                        Count Distributions
+llgyuleall              Calculate the log-likelihood for Count
+                        Distributions
+llpln                   Calculate the Conditional log-likelihood for
+                        the Poisson Lognormal Distributions
+llyule                  Calculate the Conditional log-likelihood for
+                        Count Distributions
+llyuleall               Calculate the log-likelihood for Count
+                        Distributions
+reedmolloy              Generate a undirected network with a given
+                        sequence of degrees
+rplnmle                 Rounded Poisson Lognormal Modeling of Discrete
+                        Data
+ryule                   Generate a (non-random) network from a Yule
+                        Distribution
+simcmp                  Simulate from a Conway Maxwell Poisson
+                        Distribution
+simdp                   Simulate from a Discrete Pareto Distribution
+simnb                   Simulate from a Negative Binomial Distribution
+simpln                  Simulate from a Poisson Lognormal Distribution
+simwar                  Simulate from a Waring Distribution
+simyule                 Simulate from a Yule Distribution
+sweden                  Number of sex partners in the last 12 months
+                        for men and women in Sweden

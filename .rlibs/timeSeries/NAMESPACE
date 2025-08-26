@@ -1,0 +1,257 @@
+################################################
+## import name space
+################################################
+
+## MM: Importing all is almost surely a waste [FIXME!]
+import("methods") # , show
+
+importFrom("grDevices", col2rgb, rgb , xy.coords)
+
+importFrom("stats",
+           approx, approxfun, spline, splinefun,
+           var, cor, dist, hclust, qt, rnorm, runif, runmed,
+           ts, is.mts, deltat,
+           ## for these, we provide methods:
+           start, end, time, window, lag, filter, frequency,
+           aggregate, as.ts,
+           median, quantile, na.contiguous, na.omit
+           )
+
+importFrom("graphics", # Note: lines, plot, points imported from timeDate
+           axTicks, axis, axis.POSIXct,
+           box, grid, layout, mtext, par,
+           plot.default, plot.new, plot.window,
+           segments, text, title
+           )
+
+importFrom("utils",
+           head.matrix, tail.matrix, read.table,
+           .DollarNames, # as we provide an S3 method
+           ## provide methods for these :
+           head, tail, str
+           )
+
+importFrom("timeDate",
+           abline, # the S4 generic from here, not "graphics" (graphics::abline is not generic)
+           ##--- For these we provide and export methods :
+           plot,           # base
+           lines, points,  # graphics
+           isDaily, isMonthly, isQuarterly, isRegular,
+           align,
+           ##---- end of generics for which we define/export methods
+           getRmetricsOptions, setRmetricsOptions,
+           finCenter, "finCenter<-",
+           as.timeDate, atoms, dayOfWeek, isWeekday,
+           timeCalendar, timeDate, timeSequence,
+           timeFirstDayInMonth, timeFirstDayInQuarter,
+           timeLastDayInMonth, timeLastDayInQuarter,
+           kurtosis, skewness
+           )
+
+importMethodsFrom("timeDate",
+                  "+", "-", "Ops", "["
+                  )
+
+################################################
+## S3 methods
+################################################
+
+S3method(".DollarNames",  "timeSeries")
+S3method("aggregate",     "timeSeries")
+S3method("as.data.frame", "timeSeries")
+S3method("as.list",       "timeSeries")
+S3method("as.matrix",     "timeSeries")
+S3method("as.timeSeries",  character)
+S3method("as.timeSeries",  data.frame)
+S3method("as.timeSeries",  default)
+S3method("as.timeSeries",  ts)
+S3method("as.timeSeries",  zoo)
+S3method("as.ts",         "timeSeries")
+S3method("cbind",         "timeSeries")
+S3method("cumulated",      default)
+# S3method("cut", "timeSeries") # timeSeries method was removed on 2023-05-26
+S3method("diff",     "timeSeries")
+S3method("end",      "timeSeries")
+S3method("getUnits",  default)
+S3method("head",     "timeSeries")
+S3method("lag",      "timeSeries")
+S3method("lines",    "timeSeries")
+S3method("median",    "timeSeries")
+S3method("merge",    "timeSeries")
+S3method("na.contiguous",  "timeSeries")
+S3method("na.omit",  "timeSeries")
+S3method("plot",     "timeSeries")
+S3method("points",   "timeSeries")
+S3method("pretty",   "timeSeries")
+S3method("print",     timeSeries)
+S3method("print",     timeSeries_summary)
+S3method("rbind",    "timeSeries")
+S3method("rev",      "timeSeries")
+S3method("scale",    "timeSeries")
+S3method("sort",     "timeSeries")
+S3method("start",    "timeSeries")
+S3method("summary",  "timeSeries")
+S3method("str",      "timeSeries")
+S3method("tail",     "timeSeries")
+S3method("window",   "timeSeries")
+S3method("time",     "timeSeries")
+
+S3method("frequency", "timeSeries")
+S3method("is.unsorted", "timeSeries")
+
+S3method("time<-", "timeSeries")
+S3method("time<-", default)
+if(getRversion() >= "3.6.0") { # GNB
+    ## we ensure that when zoo is loaded zoo::`time<-` gets the 'timeSeries'
+    ## method.  This works nicely, if 'zoo' is attached after 'timeSeries' (or
+    ## if 'timeSeries' is loaded but not attached).  It may seem that if
+    ## 'timeSeries' is attached after 'zoo', zoo::`time<-` will be masked, so
+    ## 'time(x) <- value' will see only the methods for the timeSeries version
+    ## of 'time<-'. But this is not a problem since the default method for
+    ## timeSeries::`time<-` calls zoo::`time<-`
+    S3method(zoo::`time<-`,     "timeSeries")
+    S3method(zoo::coredata,     "timeSeries")
+    S3method(zoo::'coredata<-', "timeSeries")
+}
+
+
+################################################
+## S4 classes
+################################################
+
+exportClasses("index_timeSeries",
+              "timeSeries",
+              "time_timeSeries"
+              )
+
+exportMethods(
+    "$", "$<-", "+", "-", "Ops", "[",
+
+    ## from timeDate
+    "align",
+    "finCenter", "finCenter<-",
+    "isDaily", "isMonthly", "isQuarterly", "isRegular",
+
+    ## from methods
+    "cbind2", "rbind2",
+    "coerce",
+    "getDataPart", "setDataPart",  # not generic in methods
+    "initialize",
+    "show",
+
+    ## primitive R functions (internally S3 and S4 generic)
+    "cummax", "cummin", "cumprod", "cumsum",
+    "dim", "dim<-",
+    "dimnames", "dimnames<-",
+    "names", "names<-",
+
+    ## stats
+    ## "aggregate",
+    ## "as.ts",
+    "filter",  # not generic in stats; let it stay S4 here
+
+    ## graphics
+    ## "lines", "points",
+
+    ## from base
+    "apply",                                               # not generic in base
+    "as.data.frame", "as.list", "as.matrix",
+    "attach",                                              # not generic in base
+    "colMeans", "colSums",                                 # not generic in base
+    "colnames", "colnames<-", "rownames", "rownames<-",    # not generic in base
+    "comment", "comment<-",                                # not generic in base
+    # "cut",                     # timeSeries method was removed on 2023-05-26
+    "is.unsorted",         # internal generic in base (but seemingly only S3, not S4)
+    "merge",                     # the S4 methods are for x and y, so S4 is essential
+    "plot",
+    "rank",                                                # not generic in base
+    "sample",                                              # not generic in base
+    "t"
+)
+
+
+################################################
+## functions
+################################################
+
+export(
+    ".colorwheelPalette", # used in the vignette
+
+    "alignDailySeries",
+    "applySeries",
+    "as.timeSeries",
+    "colCummaxs", "colCummins", "colCumprods", "colCumreturns", "colCumsums",
+    "colKurtosis", "colMaxs", "colMins", "colProds",
+    "colQuantiles", "colSds", "colSkewness", "colStats", "colVars",
+    "coredata.timeSeries", "coredata<-.timeSeries",
+    "countMonthlyRecords",
+    "cumulated",
+    "daily2monthly", "daily2weekly",
+    "description",
+    "drawdowns", "drawdownsStats",
+    "dummyDailySeries", "dummyMonthlySeries",
+    "durations",
+     "endOfPeriodBenchmarks", "endOfPeriodSeries", "endOfPeriodStats",
+    "fapply",
+    "getAttributes",
+    "getFinCenter",
+    "getReturns", # several uses in the tests in 'fTrading'
+                  # I corrected the devel version of 'fTrading'.
+                  # TODO: remove when fTrading is updated on CRAN.
+    "getTime",
+    "getUnits", "getUnits.default",
+    "hclustColnames",
+    "index2wealth",
+    "interpNA",
+    "is.signalSeries", "is.timeSeries",
+    "isMultivariate", "isUnivariate",
+    "midquotes",
+    "orderColnames",
+    "orderStatistics",
+    "outlier",
+    "pcaColnames",
+    "readSeries",
+    "removeNA",
+    "returns", "returns0",
+    "rollDailySeries",
+    "rollMax", "rollMean", "rollMedian", "rollMin",
+    "rollMonthlySeries", "rollMonthlyWindows", "rollStats",
+    "rowCumsums",
+    "runlengths",
+    "sampleColnames",
+    "series", "series<-",
+    "setAttributes<-",
+    "setFinCenter<-", "setTime<-", "setUnits<-",
+    "smoothLowess", "smoothSpline", "smoothSupsmu",
+    "sortColnames",
+    "splits", "spreads",
+    "statsColnames",
+    "substituteNA",
+    "time",
+    "time<-",
+    "timeSeries",
+    "turns", "turnsStats",
+
+    "head", # 2024-01-05 GNB: were in exportMethods but no longer S4 generic
+    "tail",
+    "str",
+    "start",
+    "end",
+    "median",
+    "quantile",
+    "na.contiguous",
+    ## "sort",  # from 'base', no need to export
+    ## "rev",
+    ## "print",
+    ## "diff",
+    ## "is.na", # primitive
+
+    ## "frequency",
+    "aggregate", "as.ts",  # stats, reexport
+    ## graphics
+    "lines", "points", # graphics, reexport
+
+    "na.omit",
+    "lag",
+    "window"
+)

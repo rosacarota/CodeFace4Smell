@@ -1,0 +1,13 @@
+getDict                 Get Default Dictionary
+getDictInstance         Get a Dictionary Instance
+getFilterTypes          Get Available Filter Types
+getIndexTerms           Get Index Terms
+getLemma                Get Index Term Lemma
+getRelatedSynsets       Get Related Synsets for a Synset
+getSynonyms             Get Synonyms for an Index Term
+getSynsets              Get Synsets for an Index Term
+getTermFilter           Get a Term Filter
+getWord                 Get Synset Word
+initDict                Initialize Dictionary
+setDict                 Set Default Dictionary
+synonyms                Get Synonyms for a Word

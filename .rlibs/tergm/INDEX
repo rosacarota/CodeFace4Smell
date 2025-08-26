@@ -1,0 +1,60 @@
+.extract.fd.formulae    An Internal Function for Extracting (Some)
+                        Formation and Dissolution Formulas from a
+                        Combined Formula
+Change-ergmTerm         The Change Operator Term
+Cross-ergmTerm          The Crossection Operator Term
+Diss-ergmTerm           The Dissolution Operator Term
+EdgeAges-ergmTerm       The EdgeAges Operator Term
+Form-ergmTerm           The Formation Operator Term
+NetSeries               A network series specification for conditional
+                        modeling.
+Persist-ergmTerm        The Persistence Operator Term
+control.simulate.network
+                        Auxiliary for Controlling Separable Temporal
+                        ERGM Simulation
+control.simulate.tergm
+                        Auxiliary for Controlling Temporal ERGM
+                        Simulation
+control.stergm          Auxiliary for Controlling Separable Temporal
+                        ERGM Fitting
+control.tergm           Auxiliary for Controlling Temporal ERGM Fitting
+control.tergm.godfather
+                        Control parameters for 'tergm.godfather()'.
+degrange.mean.age-ergmTerm
+                        Average age of ties incident on nodes having
+                        degree in a given range
+degree.mean.age-ergmTerm
+                        Average age of ties incident on nodes having a
+                        given degree
+discord-ergmHint        Discordant dyads
+edge.ages-ergmTerm      Sum of ages of extant ties
+edgecov.ages-ergmTerm   Weighted sum of ages of extant ties
+edgecov.mean.age-ergmTerm
+                        Weighted average age of an extant tie
+edges.ageinterval-ergmTerm
+                        Number of edges with age falling into a
+                        specified range
+impute.network.list     Impute missing dyads in a series of networks
+is.durational           Testing for duration dependent models
+lasttoggle              Lasttoggle
+mean.age-ergmTerm       Average age of an extant tie
+nodefactor.mean.age-ergmTerm
+                        Average ages of extant half-ties incident on
+                        nodes of specified attribute levels
+nodemix.mean.age-ergmTerm
+                        Average ages of extant ties of specified mixing
+                        types
+simulate.network        STERGM wrappers for TERGM simulation
+simulate.tergm          Draw from the distribution of a Temporal
+                        Exponential Family Random Graph Model
+snctrl                  Statnet Control
+stergm                  Separable Temporal Exponential Family Random
+                        Graph Models (Deprecated)
+summary_formula.networkDynamic
+                        Calculation of networkDynamic statistics.
+tergm                   Temporal Exponential-Family Random Graph Models
+tergm-package           tergm: Fit, Simulate and Diagnose Models for
+                        Network Evolution Based on Exponential-Family
+                        Random Graph Models
+tergm.godfather         A function to apply a given series of changes
+                        to a network.

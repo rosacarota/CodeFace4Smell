@@ -1,0 +1,22 @@
+citHeader("When using wordnet in publications, please cite both the wordnet interface, the Jawbone interface, and WordNet itself:")
+
+bibentry("Manual",
+         other = unlist(citation(auto = meta), recursive = FALSE),
+	 header = "To cite wordnet, the R via Java interface to WordNet, please use:")
+
+bibentry("Manual",
+         title = "Jawbone Java WordNet API",
+         author = person("Mike", "Wallace"),
+         year = "2007",
+         url = "https://sites.google.com/site/mfwallace/jawbone",
+	 header = "To cite Jawbone, the Java interface to WordNet, please use:"
+         )
+
+bibentry("Book",
+         title = "WordNet: An Electronic Lexical Database",
+         author = person("Christiane", "Fellbaum"),
+         year = "1998",
+         publisher = "Bradford Books",
+         url = "https://mitpress.mit.edu/9780262561167/",
+	 header = "To cite WordNet, please use:"
+         )

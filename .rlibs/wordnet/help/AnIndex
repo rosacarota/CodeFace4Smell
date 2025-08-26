@@ -1,0 +1,13 @@
+getDict	getDict
+getDictInstance	getDictInstance
+getFilterTypes	getFilterTypes
+getIndexTerms	getIndexTerms
+getLemma	getLemma
+getRelatedSynsets	getRelatedSynsets
+getSynonyms	getSynonyms
+getSynsets	getSynsets
+getTermFilter	getTermFilter
+getWord	getWord
+initDict	initDict
+setDict	setDict
+synonyms	synonyms

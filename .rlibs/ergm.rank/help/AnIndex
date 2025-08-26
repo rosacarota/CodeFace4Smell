@@ -1,0 +1,17 @@
+ergm.rank-package	ergm.rank-package
+AlterSwap-ergmProposal	AlterSwap-ergmProposal-7e827ae4
+CompleteOrder-ergmReference	CompleteOrder-ergmReference-f40141c3
+ergm.rank	ergm.rank-package
+InitErgmReference.CompleteOrder	CompleteOrder-ergmReference-f40141c3
+InitWtErgmProposal.AlterSwap	AlterSwap-ergmProposal-7e827ae4
+InitWtErgmTerm.rank.deference	rankdeference-ergmTerm-73181c43
+InitWtErgmTerm.rank.edgecov	rankedgecov-ergmTerm-5905bc22
+InitWtErgmTerm.rank.inconsistency	rankinconsistency-ergmTerm-b232ab56
+InitWtErgmTerm.rank.nodeicov	ranknodeicov-ergmTerm-856bed59
+InitWtErgmTerm.rank.nonconformity	ranknonconformity-ergmTerm-a4593778
+newcomb	newcomb
+rank.deference-ergmTerm	rankdeference-ergmTerm-73181c43
+rank.edgecov-ergmTerm	rankedgecov-ergmTerm-5905bc22
+rank.inconsistency-ergmTerm	rankinconsistency-ergmTerm-b232ab56
+rank.nodeicov-ergmTerm	ranknodeicov-ergmTerm-856bed59
+rank.nonconformity-ergmTerm	ranknonconformity-ergmTerm-a4593778

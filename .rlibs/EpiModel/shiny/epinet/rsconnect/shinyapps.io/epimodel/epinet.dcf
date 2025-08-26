@@ -1,0 +1,13 @@
+name: epinet
+title: epinet
+username:
+account: epimodel
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 9344101
+bundleId: 7372045
+url: https://epimodel.shinyapps.io/epinet/
+when: 1687368220.33664
+lastSyncTime: 1687368220.33665
+asMultiple: FALSE
+asStatic: FALSE

@@ -1,0 +1,15 @@
+import("rJava")
+
+export("initDict",
+       "getDict",
+       "getDictInstance",
+       "getIndexTerms",
+       "getFilterTypes",
+       "getTermFilter",
+       "getLemma",
+       "getRelatedSynsets",
+       "getSynsets",
+       "getSynonyms",
+       "getWord",
+       "synonyms",
+       "setDict")

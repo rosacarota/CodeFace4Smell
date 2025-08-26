@@ -1,0 +1,8 @@
+MBoxSource              Mailbox Source
+MailDocument            E-Mail Documents
+convert_mbox_eml        Convert E-Mails From mbox Format To eml Format
+readMail                Read In an E-Mail Document
+removeCitation          Remove E-Mail Citations
+removeMultipart         Remove Non-Text Parts From E-Mails
+removeSignature         Remove E-Mail Signatures
+threads                 E-Mail Threads

@@ -1,0 +1,34 @@
+bootstrapPage           Create a Bootstrap page
+checkboxGroupInput      Checkbox Group Input Control
+checkboxInput           Checkbox Input Control
+column                  Create a column within a UI definition
+dataTableOutput         Create a table output element
+dateInput               Create date input
+dateRangeInput          Create date range input
+fixedPage               Create a page with a fixed layout
+fluidPage               Create a page with fluid layout
+headerPanel             Create a header panel
+icon                    Create an icon
+mainPanel               Create a main panel
+navbarPage              Create a page with a top level navigation bar
+navlistPanel            Create a navigation list panel
+numericInput            Create a numeric input control
+pageWithSidebar         Create a page with a sidebar
+radioButtons            Create radio buttons
+selectInput             Create a select list input control
+shinybootstrap2-package
+                        Bootstrap 2 components for use with Shiny
+sidebarLayout           Layout a sidebar and main area
+sidebarPanel            Create a sidebar panel
+sliderInput             Slider Input Widget
+submitButton            Create a submit button
+textInput               Create a text input control
+titlePanel              Create a panel containing an application title.
+updateCheckboxGroupInput
+                        Change the value of a checkbox group input on
+                        the client
+updateRadioButtons      Change the value of a radio input on the client
+updateSliderInput       Change the value of a slider input on the
+                        client
+verticalLayout          Lay out UI elements vertically
+withBootstrap2          Run Shiny UI code with Bootstrap 2 elements.

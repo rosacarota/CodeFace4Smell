@@ -1,61 +1,61 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# Copyright Roger Meier <roger@bufferoverflow.ch>
-# SPDX-License-Identifier:	Apache-2.0 BSD-2-Clause GPL-2.0+ MIT WTFPL
-
 $build = <<SCRIPT
 cd /vagrant
 
-integration-scripts/install_repositories.sh
-integration-scripts/install_common.sh
-integration-scripts/install_codeface_R.sh
-integration-scripts/install_codeface_node.sh
-integration-scripts/install_codeface_python.sh
+bash integration-scripts/install_repositories.sh
+bash integration-scripts/install_common.sh
+bash integration-scripts/install_codeface_R.sh
+bash integration-scripts/install_codeface_node.sh
+bash integration-scripts/install_codeface_python.sh
 
-integration-scripts/install_cppstats.sh
-
-integration-scripts/setup_database.sh
+bash integration-scripts/install_cppstats.sh
+bash integration-scripts/setup_database.sh
 SCRIPT
 
 Vagrant.configure("2") do |config|
-  # Hmm... no Debian image available yet, let's use a derivate
-  # Ubuntu 12.04 LTS (Precise Pangolin)
+  config.vm.box = "bento/ubuntu-20.04"
+  config.vm.boot_timeout = 1800
+  config.ssh.insert_key = true
 
- config.vm.provider :virtualbox do |vbox, override|
-    override.vm.box = "precise64"
-    override.vm.box_url = "http://files.vagrantup.com/precise64.box"
+  config.vm.network "forwarded_port", guest: 22,   host: 2222, id: "ssh", auto_correct: true
+  config.vm.network "forwarded_port", guest: 8081, host: 8081,              auto_correct: true
+  config.vm.network "forwarded_port", guest: 8100, host: 8100,              auto_correct: true
 
-    vbox.customize ["modifyvm", :id, "--memory", "4096"]
-    vbox.customize ["modifyvm", :id, "--cpus", "2"]
+  # NIENTE mount .rlibs per ora
+  config.vm.synced_folder "./.rlibs", "/opt/Rlibs", 
+    create: true, owner: "vagrant", group: "vagrant"
+
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.gui    = true
+    vb.memory = 4096
+    vb.cpus   = 2
+    vb.customize ["modifyvm", :id, "--nictype1", "Am79C973"]     # NIC super compatibile
+    vb.customize ["modifyvm", :id, "--paravirtprovider", "legacy"]# evita freeze su xor
+    vb.customize ["modifyvm", :id, "--ioapic", "on"]
+    vb.customize ["modifyvm", :id, "--pae", "on"]
+    vb.customize ["modifyvm", :id, "--hwvirtex", "on"]
+    vb.customize ["modifyvm", :id, "--audio", "none"]             # riduce interferenze
+    vb.customize ["modifyvm", :id, "--usbxhci", "off"]            # idem
   end
 
-  config.vm.provider :lxc do |lxc, override|
-     override.vm.box = "fgrehm/precise64-lxc"
+  # ❌ rimuoviamo completamente il provider LXC
+  # config.vm.provider :lxc do |lxc, override| ... end
+
+  if Vagrant.has_plugin?("vagrant-vbguest")
+    config.vbguest.auto_update = false
   end
 
-  # Forward main web ui (8081) and testing (8100) ports
-  config.vm.network :forwarded_port, guest: 8081, host: 8081
-  config.vm.network :forwarded_port, guest: 8100, host: 8100
+  config.vm.provision "fix-no-tty", type: "shell", privileged: true,
+    inline: "sed -i '/tty/!s/mesg n/tty -s \\&\\& mesg n/' /root/.profile"
 
-  config.vm.provision "fix-no-tty", type: "shell" do |s|
-    s.privileged = true
-    s.inline = "sed -i '/tty/!s/mesg n/tty -s \\&\\& mesg n/' /root/.profile"
-  end
+  config.vm.provision "local-mirror", type: "shell", privileged: true,
+    inline: "sed -i 's|http://[a-z\\.]*\\.ubuntu\\.com/ubuntu|mirror://mirrors\\.ubuntu\\.com/mirrors\\.txt|' /etc/apt/sources.list"
 
-  config.vm.provision "local-mirror", type: "shell" do |s|
-    s.privileged = true
-    s.inline = "sed -i 's|http://[a-z\.]*\.ubuntu\.com/ubuntu|mirror://mirrors\.ubuntu\.com/mirrors\.txt|' /etc/apt/sources.list"
-  end
-
-  config.vm.provision "build", type: "shell" do |s|
-    s.privileged = false
-    s.inline = $build
-  end
-
-  config.vm.provision "test", type: "shell" do |s|
-    s.privileged = false
-    s.inline = "cd /vagrant && integration-scripts/test_codeface.sh"
-  end
-
+  config.vm.provision "build", type: "shell", privileged: false, inline: $build
+  config.vm.provision "test",  type: "shell", privileged: false,
+    inline: "cd /vagrant && bash integration-scripts/test_codeface.sh"
 end
+

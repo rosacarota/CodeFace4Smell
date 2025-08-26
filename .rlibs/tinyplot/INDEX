@@ -1,0 +1,35 @@
+draw_legend             Calculate placement of legend and draw it
+get_saved_par           Retrieve the saved graphical parameters
+tinylabel               Format labels
+tinyplot                Lightweight extension of the base R plotting
+                        function
+tinyplot_add            Add new elements to the current 'tinyplot'
+tinytheme               Set or Reset Plot Themes for 'tinyplot'
+tpar                    Set or query graphical parameters
+type_abline             Add straight lines to a plot
+type_area               Ribbon and area plot types
+type_barplot            Barplot type
+type_boxplot            Boxplot type
+type_density            Density plot type
+type_errorbar           Error bar and pointrange plot types
+type_function           Plot a function
+type_glm                Generalized linear model plot type
+type_histogram          Histogram plot type
+type_jitter             Jittered points plot type
+type_lines              Lines plot type
+type_lm                 Linear model plot type
+type_loess              Local polynomial regression plot type
+type_points             Points plot type
+type_polygon            Polygon plot type
+type_polypath           Polypath polygon type
+type_qq                 Quantile-Quantile plot (QQ)
+type_rect               Rectangle plot type
+type_ridge              Ridge plot type
+type_rug                Add a rug to a plot
+type_segments           Line segments plot type
+type_spineplot          Spineplot and spinogram types
+type_spline             Spline plot type
+type_summary            Plot summary values of 'y' at unique values of
+                        'x'
+type_text               Text annotations plot type
+type_violin             Violin plot type

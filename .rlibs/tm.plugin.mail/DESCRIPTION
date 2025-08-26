@@ -1,0 +1,29 @@
+Package: tm.plugin.mail
+Title: Text Mining E-Mail Plug-In
+Version: 0.1-1
+Date: 2014-09-16
+Authors@R: c(person("Ingo", "Feinerer", role = c("aut", "cre"),
+                    email = "feinerer@logic.at"),
+             person("Wolfgang", "Mauerer", role = c("aut")))
+Imports: NLP (>= 0.1-2), tm (>= 0.6-1)
+Description: A plug-in for the tm text mining framework providing mail handling
+  functionality.
+License: GPL-3
+RemoteType: github
+RemoteHost: api.github.com
+RemoteRepo: tm-plugin-mail
+RemoteUsername: wolfgangmauerer
+RemoteRef: HEAD
+RemoteSha: 31e9ca1dc50087314c24ece95f2264f81caf9ff8
+RemoteSubdir: pkg
+GithubRepo: tm-plugin-mail
+GithubUsername: wolfgangmauerer
+GithubRef: HEAD
+GithubSHA1: 31e9ca1dc50087314c24ece95f2264f81caf9ff8
+GithubSubdir: pkg
+NeedsCompilation: no
+Packaged: 2025-08-25 22:19:50 UTC; vagrant
+Author: Ingo Feinerer [aut, cre],
+  Wolfgang Mauerer [aut]
+Maintainer: Ingo Feinerer <feinerer@logic.at>
+Built: R 4.5.1; ; 2025-08-25 22:19:51 UTC; unix

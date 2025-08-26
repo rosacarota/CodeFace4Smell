@@ -1,0 +1,58 @@
+CMBL-ergmTerm           Conway-Maxwell-Binomial dependence among layers
+Goeyvaerts              A sample of within-household contact networks
+                        in Flanders and Brussels
+L-ergmTerm              Evaluation on layers
+Layer                   A multilayer network representation.
+Lazega                  A network of advice, collaboration, and
+                        friendship in a law firm
+N-ergmTerm              Evaluation on multiple networks
+Networks                A multinetwork network representation.
+as_tibble.combined_networks
+                        An 'as_tibble' method for combined networks.
+b1dspL-ergmTerm         Dyadwise shared partners for dyads in the first
+                        bipartition on layers
+b2dspL-ergmTerm         Dyadwise shared partners for dyads in the
+                        second bipartition on layers
+combine_networks        A single block-diagonal network created by
+                        combining multiple networks
+control.gofN.ergm       Auxiliary for Controlling Multinetwork ERGM
+                        Linear Goodness-of-Fit Evaluation
+ddspL-ergmTerm          Dyadwise shared partners on layers
+despL-ergmTerm          Edgewise shared partners on layers
+dgwdspL-ergmTerm        Geometrically weighted dyadwise shared partner
+                        distribution on layers
+dgwespL-ergmTerm        Geometrically weighted edgewise shared partner
+                        distribution on layers
+dgwnspL-ergmTerm        Geometrically weighted non-edgewise shared
+                        partner distribution on layers
+direct.network          Returns a directed version of an undirected
+                        binary network
+dnspL-ergmTerm          Non-edgewise shared partners and paths on
+                        layers
+ergm.multi-package      ergm.multi: Fit, Simulate and Diagnose
+                        Exponential-Family Models for Multiple or
+                        Multilayer Networks
+gofN                    Linear model diagnostics for multinetwork
+                        linear models
+gwb1dspL-ergmTerm       Geometrically weighted dyadwise shared partner
+                        distribution for dyads in the first bipartition
+                        on layers
+gwb2dspL-ergmTerm       Geometrically weighted dyadwise shared partner
+                        distribution for dyads in the second
+                        bipartition on layers
+lm.gofN                 Fit a linear model to the residuals in a gofN
+                        object.
+marg_cond_sim           Calculate gofN()-style Pearson residuals for
+                        arbitrary statistics
+mutualL-ergmTerm        Mutuality
+network_view            Construct a "view" of a network.
+plot.gofN               Plotting methods for 'gofN', making residual
+                        and scale-location plots.
+snctrl                  Statnet Control
+split.network           A 'split()' method for 'network::network'
+                        objects.
+twostarL-ergmTerm       Multilayer two-star
+uncombine_network       Split up a network into a list of subgraphs
+upper_tri-ergmConstraint
+                        Only dyads in the upper-triangle of the
+                        sociomatrix may be toggled

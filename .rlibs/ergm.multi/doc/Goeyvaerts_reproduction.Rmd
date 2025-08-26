@@ -1,0 +1,171 @@
+---
+title: "Reproducing Goeyvaerts et al. (2018) using `ergm.multi`"
+author: "Pavel N. Krivitsky"
+date: "`ergm.multi` version `r packageVersion('ergm.multi')` (`r Sys.Date()`)"
+output: rmarkdown::html_vignette
+bibliography: ../inst/REFERENCES.bib
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{Reproducing Goeyvaerts et al. (2018) using ergm.multi}
+---
+
+```{css, echo=FALSE}
+pre {
+  font-size: 85%
+}
+```
+
+```{r, echo=FALSE, cache=FALSE, eval=TRUE}
+library(knitr)
+library(rmarkdown)
+options(rmarkdown.html_vignette.check_title = FALSE)
+opts_chunk$set(message=FALSE, echo=TRUE, cache=TRUE, autodep=TRUE,
+concordance=TRUE, error=FALSE, fig.width=7, fig.height=7)
+options(width=160)
+```
+
+```{r, message=FALSE}
+library(ergm.multi)
+library(dplyr)
+library(purrr)
+library(tibble)
+library(ggplot2)
+```
+
+# Obtaining data
+
+The list of networks studied by @GoSa18h is included in this package:
+```{r}
+data(Goeyvaerts)
+length(Goeyvaerts)
+```
+An explanation of the networks, including a list of their
+network (`%n%`) and vertex (`%v%`) attributes, can be obtained via `?Goeyvaerts`.
+A total of `r length(Goeyvaerts)` complete networks were collected, then two were excluded due to "nonstandard" family composition:
+```{r}
+Goeyvaerts %>% discard(`%n%`, "included") %>% map(as_tibble, unit="vertices")
+```
+
+To reproduce the analysis, exclude them as well:
+```{r}
+G <- Goeyvaerts %>% keep(`%n%`, "included")
+```
+
+# Data summaries
+
+Obtain weekday indicator, network size, and density for each network, and summarize them as in @GoSa18h Table 1:
+```{r}
+G %>% map(~list(weekday = . %n% "weekday",
+                n = network.size(.),
+                d = network.density(.))) %>% bind_rows() %>%
+  group_by(weekday, n = cut(n, c(1,2,3,4,5,9))) %>%
+  summarize(nnets = n(), p1 = mean(d==1), m = mean(d)) %>% kable()
+```
+
+# Reproducing ERGM fits
+
+We now reproduce the ERGM fits. First, we extract the weekday networks:
+```{r}
+G.wd <- G %>% keep(`%n%`, "weekday")
+length(G.wd)
+```
+
+Next, we specify the multi-network model using the `N(formula, lm)` operator. This operator will evaluate the `ergm` formula `formula` on each network, weighted by the predictors passed in the one-sided `lm` formula, which is interpreted the same way as that passed to the built-in `lm()` function, with its "`data`" being the table of network attributes.
+
+Since different networks may have different compositions, to have a consistent model, we specify a consistent list of family roles.
+```{r}
+roleset <- sort(unique(unlist(lapply(G.wd, `%v%`, "role"))))
+```
+
+We now construct the formula object, which will be passed directly to `ergm()`:
+```{r}
+# Networks() function tells ergm() to model these networks jointly.
+f.wd <- Networks(G.wd) ~
+  # This N() operator adds three edge counts:
+  N(~edges,
+    ~ # one total for all networks  (intercept implicit as in lm),
+      I(n<=3)+ # one total for only small households, and
+      I(n>=5) # one total for only large households.
+    ) +
+
+  # This N() construct evaluates each of its terms on each network,
+  # then sums each statistic over the networks:
+  N(
+      # First, mixing statistics among household roles, including only
+      # father-mother, father-child, and mother-child counts.
+      # Since tail < head in an undirected network, in the
+      # levels2 specification, it is important that tail levels (rows)
+      # come before head levels (columns). In this case, since
+      # "Child" < "Father" < "Mother" in alphabetical order, the
+      # row= and col= categories must be sorted accordingly.
+    ~mm("role", levels = I(roleset),
+        levels2=~.%in%list(list(row="Father",col="Mother"),
+                           list(row="Child",col="Father"),
+                           list(row="Child",col="Mother"))) +
+      # Second, the nodal covariate effect of age, but only for
+      # edges between children.
+      F(~nodecov("age"), ~nodematch("role", levels=I("Child"))) +
+      # Third, 2-stars.
+      kstar(2)
+  ) +
+  
+  # This N() adds one triangle count, totalled over all households
+  # with at least 6 members.
+  N(~triangles, ~I(n>=6))
+```
+See `ergmTerm?mm` for documentation on the `mm` term used above.
+Now, we can fit the model:
+```{r}
+# (Set seed for predictable run time.)
+fit.wd <- ergm(f.wd, control=snctrl(seed=123))
+```
+```{r}
+summary(fit.wd)
+```
+
+
+Similarly, we can extract the weekend network, and fit it to a smaller model. We only need one `N()` operator, since all statistics are applied to the same set
+of networks, namely, all of them.
+```{r}
+G.we <- G %>% discard(`%n%`, "weekday")
+fit.we <- ergm(Networks(G.we) ~
+                 N(~edges +
+                     mm("role", levels=I(roleset),
+                        levels2=~.%in%list(list(row="Father",col="Mother"),
+                                           list(row="Child",col="Father"),
+                                           list(row="Child",col="Mother"))) +
+                     F(~nodecov("age"), ~nodematch("role", levels=I("Child"))) +
+                     kstar(2) +
+                     triangles), control=snctrl(seed=123))
+```
+```{r}
+summary(fit.we)
+```
+
+# Diagnostics
+
+Perform diagnostic simulation [@KrCo22t], summarize the residuals, and make residuals vs. fitted and scale-location plots:
+```{r}
+gof.wd <- gofN(fit.wd, GOF = ~ edges + kstar(2) + triangles)
+summary(gof.wd)
+```
+
+Variances of Pearson residuals substantially greater than 1 suggest unaccounted-for heterogeneity.
+
+```{r}
+autoplot(gof.wd)
+```
+
+The plots don't look unreasonable.
+
+
+Also make plots of residuals vs. square root of fitted and vs. network size:
+```{r}
+autoplot(gof.wd, against=sqrt(.fitted))
+autoplot(gof.wd, against=ordered(n))
+```
+
+It looks like network-size effects are probably accounted for.
+
+# References

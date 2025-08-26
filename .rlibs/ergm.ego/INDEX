@@ -1,0 +1,28 @@
+*.svystat               A scalar multiplication method for 'svystat'
+as.egor.egodata         Convert (deprecated) 'egodata' Objects to
+                        'egor' Objects
+as.egor.network         Construct an Egocentric View of a 'network'
+                        Object
+control.ergm.ego        Control parameters for 'ergm.ego()'.
+control.simulate.ergm.ego
+                        Control parameters for 'simulate.ergm.ego()'.
+degreedist.egor         Plotting the degree distribution of an
+                        egocentric dataset
+ergm.ego                Inference for Exponential-Family Random Graph
+                        Models based on Egocentrically Sampled Data
+ergm.ego-terms          'ergm()' Terms Implemented for 'egor'
+fmhfit                  Fitted ergm.ego model object
+gof.ergm.ego            Conduct Goodness-of-Fit Diagnostics on a
+                        Exponential Family Random Graph Model fit to
+                        Egocentrically Sampled Data
+mixingmatrix.egor       Summarizing the mixing among groups in an
+                        egocentric dataset
+predict.ergm.ego        ERGM-based predicted tie probabilities for the
+                        pseudo-population network
+sample                  Draw random egocentric subsamples
+simulate.ergm.ego       Simulate from a 'ergm.ego()' fit.
+snctrl                  Statnet Control
+summary_formula.egor    Calculation of ERGM-style summary statistics
+                        for 'egor' objects.
+template_network        Construct an Empty "Template" Network
+                        Consistent with an Egocentric Sample

@@ -1,0 +1,25 @@
+USAGE
+
+These files are exported by ergm.multi via R's LinkingTo: API, and
+allow other R packages to extend ergm.multi's functionality. To make
+use of them, add the following dependencies to your package's
+DESCRIPTION file:
+
+Depends: ergm.multi
+LinkingTo: ergm.multi
+
+and place a one-line C file (e.g., include_stubs.c) containing the
+following one line in the src/ directory of your package:
+
+#include "ergm.multi_stubs.c"
+
+You will then be able to #include any of the exported header files,
+use the macros, and call any functions they define.
+
+If you make use of this functionality, please credit us and cite the
+ergm.multi package. (See citation(ergm.multi) for instructions.)
+
+STABILITY
+
+Currently, the APIs are subject to change, and are planned to be
+declared stable at version 1.0.

@@ -1,0 +1,31 @@
+CHANGES IN VERSION 3.27.5
+-----------------------
+    o Update support tsne-> Rtsne
+
+CHANGES IN VERSION 3.27.1
+-----------------------
+    o Added a constraint flag for excluding positive and negative arcs between two nodes
+
+CHANGES IN VERSION 3.9.1
+-----------------------
+    o Minorbug fixed (order not preserved using graph.edgelist and infinite loop in matrix with just one entry)
+
+
+CHANGES IN VERSION 3.6
+-----------------------
+
+NEW FEATURES: 
+
+    o undirected and bipartite networks with NA can be used now. In this case the SA consider NA as a forbidden edge. This does not work if a graph is given neither for a dsg.
+
+CHANGES IN VERSION 3.1
+-----------------------
+
+NEW FEATURES
+
+    o birewire.rewire.dsg has been introduced in order to rewire directed signed network (dsg). Moreover the sampler routine, analysis, visual monitoring and similarity has been written in order to have the same functionalities the package have for bipartite and undirected graphs also for the dsg.
+
+BUG FIXES
+
+    o birewire.sampler.bipartite creates more files than required in the case of non-sparse writing procedure: fixed in 3.1
+

@@ -1,0 +1,163 @@
+EpiModel-package        Mathematical Modeling of Infectious Disease
+                        Dynamics
+InitErgmTerm.absdiffby
+                        Definition for absdiffby ERGM Term
+InitErgmTerm.absdiffnodemix
+                        Definition for absdiffnodemix ERGM Term
+InitErgmTerm.fuzzynodematch
+                        Definition for fuzzynodematch ERGM Term
+add_vertices            Fast Version of network::add.vertices for
+                        Edgelist-formatted Network
+apportion_lr            Apportion Using the Largest Remainder Method
+arrive_nodes            Arrive New Nodes to the netsim_dat Object
+as.data.frame.dcm       Extract Model Data for Deterministic
+                        Compartmental Models
+as.data.frame.icm       Extract Model Data for Stochastic Models
+as.data.frame.netdx     Extract Timed Edgelists for netdx Objects
+as.epi.data.frame       Validate and Convert to epi.data.frame
+as.network.transmat     Convert transmat Infection Tree into a network
+                        Object
+as.phylo.transmat       Convert transmat Infection Tree into a phylo
+                        Object
+as_cumulative_edgelist
+                        Convert an object to a 'cumulative_edgelist'
+as_tibble_edgelist      Convert an Edgelist into a Tibble
+check_degdist_bal       Check Degree Distribution for Balance in Target
+                        Statistics
+color_tea               Create a TEA Variable for Infection Status for
+                        'ndtv' Animations
+comp_plot               Plot Compartment Diagram for Epidemic Models
+control.dcm             Control Settings for Deterministic
+                        Compartmental Models
+control.icm             Control Settings for Stochastic Individual
+                        Contact Models
+control.net             Control Settings for Stochastic Network Models
+create_dat_object       Create a Minimal netsim_dat Main List Object
+                        for a Network Model
+create_scenario_list    Make a list of EpiModel scenarios from a
+                        data.frame of scenarios
+dcm                     Deterministic Compartmental Models
+dedup_cumulative_edgelist
+                        Deduplicate a cumulative edgelist by combining
+                        overlapping edges
+delete_edges            Remove Edges That Include Specified Vertices
+delete_vertices         Fast Version of network::delete.vertices for
+                        Edgelist-formatted Network
+depart_nodes            Depart Nodes from the netsim_dat Object
+dissolution_coefs       Dissolution Coefficients for Stochastic Network
+                        Models
+edgelist_censor         Table of Edge Censoring
+epiweb                  EpiModel Web
+generate_random_params
+                        Generate Values for Random Parameters
+geom_bands              ggplot2 Geom for Quantile Bands
+get_adj_list            Returns an adjacency list from an edge list
+get_attr_history        Extract the Attributes History from Network
+                        Simulations
+get_connected_nodes     Returns all the node connected directly or
+                        indirectly to a set of nodes
+get_cumulative_degree   Return the Cumulative Degree of a Set of Index
+                        Nodes
+get_cumulative_edgelist
+                        Get a Cumulative Edgelist From a Specified
+                        Network
+get_cumulative_edgelists_df
+                        Get the Cumulative Edgelists of a Model
+get_current_timestep    Return the Current Timestep
+get_degree              Get Individual Degree from Network or Edgelist
+get_edgelist            Get an Edgelist From the Specified Network
+get_edgelists_df        Get the Edgelist(s) from the Specified
+                        Network(s)
+get_formula_term_attr   Output ERGM Formula Attributes into a Character
+                        Vector
+get_network             Extract Network Objects from Network
+                        Simulations
+get_network_attributes
+                        Get Network Attributes from a Network Object
+get_network_term_attr   Output Network Attributes into a Character
+                        Vector
+get_nwstats             Extract Network Statistics from netsim or netdx
+                        Object
+get_param_set           Extract the Parameter Set from Network
+                        Simulations
+get_partners            Return the Historical Contacts (Partners) of a
+                        Set of Index Nodes
+get_sims                Extract Network Simulations
+get_subnet_adj_list     Return an adjacency list of subnets
+get_vertex_attribute    Get Vertex Attribute on Network Object
+icm                     Stochastic Individual Contact Models
+increment_timestep      Increment the Current Timestep
+init.dcm                Initial Conditions for Deterministic
+                        Compartmental Models
+init.icm                Initial Conditions for Stochastic Individual
+                        Contact Models
+init.net                Initial Conditions for Stochastic Network
+                        Models
+is.transmat             Extract Transmissions Matrix from Network
+                        Epidemic Model
+is_active_posit_ids     Are These Nodes Active (Positional IDs)
+is_active_unique_ids    Are These Nodes Active (Unique IDs)
+merge.icm               Merge Data across Stochastic Individual Contact
+                        Model Simulations
+merge.netsim            Merge Model Simulations across netsim Objects
+modules.icm             Modules for Stochastic Individual Contact
+                        Models
+modules.net             Modules for Stochastic Network Models
+multilayer              Specify Controls by Network
+mutate_epi              Add New Epidemiology Variables
+net-accessor            Functions to Access and Edit the Main
+                        netsim_dat Object in Network Models
+netdx                   Dynamic Network Model Diagnostics
+netest                  Dynamic Network Model Estimation
+netsim                  Stochastic Network Models
+network_initialize      Initialize Network Object
+nwupdate.net            Dynamic Network Updates
+overwrite_attrs         Helper to use a 'data.frame' to initialize some
+                        attributes
+padded_vector           Grow a Vector to a Given Size, Padding it With
+                        Empty Elements
+param.dcm               Epidemic Parameters for Deterministic
+                        Compartmental Models
+param.icm               Epidemic Parameters for Stochastic Individual
+                        Contact Models
+param.net               Epidemic Parameters for Stochastic Network
+                        Models
+param.net_from_table    Parameters List for Stochastic Network Models
+                        from a Formatted Data Frame
+param.net_to_table      Coerce a list of parameters to a
+                        'long.param.df'
+param_random            Create a Value Sampler for Random Parameters
+plot.dcm                Plot Data from a Deterministic Compartmental
+                        Epidemic Model
+plot.epi.data.frame     Plot Epidemic Model Results From a Netsim
+                        Data.Frame
+plot.icm                Plot Data from a Stochastic Individual Contact
+                        Epidemic Model
+plot.netdx              Plot Dynamic Network Model Diagnostics
+plot.netsim             Plot Data from a Stochastic Network Epidemic
+                        Model
+plot.transmat           Plot transmat Infection Tree in Three Styles
+print.netdx             Utility Function for Printing netdx Object
+reachable-nodes         Get the Forward or Backward Reachable Nodes for
+                        a Set of Nodes
+record_attr_history     Record Attribute History
+record_raw_object       Record an Arbitrary Object During a Simulation
+set_current_timestep    Set the Current Timestep
+set_transmat            Save Transmission Matrix
+set_vertex_attribute    Set Vertex Attribute on Network Object
+summary.dcm             Summary Model Statistics
+summary.icm             Summary Model Statistics
+summary.netsim          Summary Model Statistics
+trim_netest             Function to Reduce the Size of a 'netest'
+                        Object
+truncate_sim            Truncate Simulation Time Series
+unique_id-tools         Convert Unique Identifiers to/from Positional
+                        Identifiers
+update_cumulative_edgelist
+                        Update a Cumulative Edgelist of the Specified
+                        Network
+update_dissolution      Adjust Dissolution Component of Network Model
+                        Fit
+update_params           Update Model Parameters for Stochastic Network
+                        Models
+use_scenario            Apply a scenario object to a param.net object

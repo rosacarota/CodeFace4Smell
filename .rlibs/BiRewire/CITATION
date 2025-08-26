@@ -1,0 +1,51 @@
+year <- sub("-.*", "", meta$Date)
+note <- sprintf("R package version %s", meta$Version)
+
+bibentry(bibtype = "Manual",
+         title = "{BiRewire}: High-performing routines for the randomization of a bipartite graph (or a binary event matrix), undirected and directed signed graph preserving degree distribution (or marginal totals)",
+       author = c(person("A.", "Gobbi"),
+                    person("F.", "Iorio"),
+                    person("D.", "Albanese"),
+                    person("G", "Jurman"),
+                    person("J.", "Saez-Rodriguez")),
+         year = year,
+         note = note,
+         url = "https://www.bioconductor.org/packages/release/bioc/html/BiRewire.html")
+
+
+
+bibentry(bibtype = "Article",
+         title = "Fast randomization of large genomic datasets while preserving alteration counts",
+         author = c(person("A.", "Gobbi"),
+                    person("F.", "Iorio"),
+                    person("K.J.", "Dawson"),
+                    person("D.C.", "Wedge"),
+                    person("D.", "Tamborero"),
+                    person("L.", "Alexandrov"),
+                    person("N.", "Lopez-Bigas"),
+                    person("M.J.", "Garnett"),
+                    person("G", "Jurman"),
+                    person("J.", "Saez-Rodriguez")),
+	doi="10.1093/bioinformatics/btu474",
+	journal="BMC Bioinformatics",
+	number=17,
+	volume=30,
+	pages="617-623",
+         year = 2014,
+         url = "http://bioinformatics.oxfordjournals.org/content/30/17/i617.full.pdf+html")
+
+bibentry(bibtype = "Article",
+         title = "Efficient randomization of biologicalnetworks while preserving functionalcharacterization of individual nodes",
+         author = c(person("F.", "Iorio"),
+person("M.", "Bernardo-Faura"),
+person("A.", "Gobbi"),
+person("T.", "Cokelaer"),
+person("G", "Jurman"),
+person("J.", "Saez-Rodriguez")),
+	doi="10.1186/s12859-016-1402-1",
+	journal="BMC Bioinformatics",
+	number=1,
+	volume=17,
+	pages="617-623",
+         year = 542,
+         url = "http://dx.doi.org/10.1186/s12859-016-1402-1")

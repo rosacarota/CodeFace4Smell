@@ -1,0 +1,38 @@
+adjacency               Create an adjacency matrix from an edgelist
+ae-to-be                American English to British English
+as.one.file             Write mailing list e-mails from several months
+                        in one file
+centrality.edgelist     Create a valued edgelist for 2-mode-network of
+                        people and words
+createedges             Create edgelist from forest (result of
+                        'makeforest')
+devel.content.closeness
+                        Closeness Centrality of R-devel Content-Based
+                        Communication Network
+devel.subjects.closeness
+                        Closeness Centrality of R-devel Subject-Based
+                        Communication Network
+edgelist                Create an adjacency matrix from an edgelist
+extract.commnet         Extract a subnetwork of a communication network
+find.aliases            Find e-mail and real name aliases
+gplot.snatm             'gplot' function of 'sna' version 1.5.
+help.content.closeness
+                        Closeness Centrality of R-help Content-Based
+                        Communication Network
+help.subjects.closeness
+                        Closeness Centrality of R-help Subject-Based
+                        Communication Network
+initiate.respond        Calculate the number of message initiations and
+                        responses per person in a mailing list
+makeforest              Extract meta data and content from mailing
+                        lists
+normalize               Normalize a numeric vector
+not.take.memory         Negative Alias Memory
+ordermatrix             Order the rows of a matrix according to the
+                        values in a certain column
+permutation             Permute an adjacency matrix
+prepare.text            Prepare Text and Calculate Term Frequencies
+reduce.clusters         Reduce number of clusters
+shrink                  Shrink a 2-mode-network
+take.memory             Positive Alias Memory
+wn.replace              Replace synonyms
