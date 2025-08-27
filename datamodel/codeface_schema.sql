@@ -46,6 +46,45 @@ CREATE TABLE IF NOT EXISTS `person` (
     ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
+DROP TABLE IF EXISTS `release_timeline`;
+CREATE TABLE `release_timeline` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `projectId` BIGINT NOT NULL,
+  `date` DATETIME NOT NULL,
+  `tag` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `rt_project_idx` (`projectId`),
+  CONSTRAINT `rt_project_fk`
+    FOREIGN KEY (`projectId`) REFERENCES `project`(`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+DROP TABLE IF EXISTS `release_range`;
+CREATE TABLE `release_range` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `projectId` BIGINT NOT NULL,
+  `releaseStartId` BIGINT NOT NULL,
+  `releaseEndId` BIGINT NOT NULL,
+  `releaseRCStartId` BIGINT NULL,
+  PRIMARY KEY (`id`),
+  KEY `rr_project_idx` (`projectId`),
+  KEY `rr_start_idx` (`releaseStartId`),
+  KEY `rr_end_idx` (`releaseEndId`),
+  KEY `rr_rc_start_idx` (`releaseRCStartId`),
+  CONSTRAINT `rr_project_fk`
+    FOREIGN KEY (`projectId`) REFERENCES `project`(`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `rr_start_fk`
+    FOREIGN KEY (`releaseStartId`) REFERENCES `release_timeline`(`id`)
+    ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `rr_end_fk`
+    FOREIGN KEY (`releaseEndId`) REFERENCES `release_timeline`(`id`)
+    ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `rr_rc_start_fk`
+    FOREIGN KEY (`releaseRCStartId`) REFERENCES `release_timeline`(`id`)
+    ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
 -- -----------------------------------------------------
 -- (… tutte le tabelle come già definite, nessuna modifica necessaria …)
 -- -----------------------------------------------------

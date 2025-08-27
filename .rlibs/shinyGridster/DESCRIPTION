@@ -20,5 +20,5 @@ GithubUsername: wch
 GithubRef: HEAD
 GithubSHA1: 6a0a5495dcc09e771a99e6a9b923bb0c1a135d3d
 NeedsCompilation: no
-Packaged: 2025-08-25 22:21:12 UTC; vagrant
-Built: R 4.5.1; ; 2025-08-25 22:21:13 UTC; unix
+Packaged: 2025-08-27 14:09:58 UTC; vagrant
+Built: R 4.5.1; ; 2025-08-27 14:09:58 UTC; unix
