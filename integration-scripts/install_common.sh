@@ -3,10 +3,6 @@ set -euo pipefail
 
 echo "[COMMON] Installing common binaries and libraries"
 
-# Preseed MySQL root password per evitare prompt
-echo "mysql-community-server mysql-community-server/root-pass password root" | sudo debconf-set-selections
-echo "mysql-community-server mysql-community-server/re-root-pass password root" | sudo debconf-set-selections
-
 # Aggiorna pacchetti di base
 sudo DEBIAN_FRONTEND=noninteractive apt-get -qq update
 sudo DEBIAN_FRONTEND=noninteractive \
@@ -18,7 +14,7 @@ sudo DEBIAN_FRONTEND=noninteractive \
   wget gnupg lsb-release software-properties-common curl \
   texlive default-jdk \
   git subversion nodejs exuberant-ctags \
-  sloccount graphviz doxygen \
+  sloccount graphviz doxygen libgraphviz-dev \
   build-essential gcc gfortran pkg-config \
   libxml2 libxml2-dev libcurl4-openssl-dev \
   libcairo2-dev libxt-dev \
@@ -31,20 +27,15 @@ sudo DEBIAN_FRONTEND=noninteractive \
   libmagick++-dev libprotobuf-dev protobuf-compiler \
   libssl-dev zlib1g-dev
 
-# ---- Installa MySQL (Oracle) ----
-echo "[COMMON] Adding official MySQL APT repository..."
-wget -q https://dev.mysql.com/get/mysql-apt-config_0.8.29-1_all.deb -O /tmp/mysql-apt-config.deb
-sudo DEBIAN_FRONTEND=noninteractive dpkg -i /tmp/mysql-apt-config.deb
-sudo apt-get -qq update
-
-echo "[COMMON] Installing MySQL server & client (no autostart)..."
+# ---- Installa MariaDB (compatibile MySQL) ----
+echo "[COMMON] Installing MariaDB server & client..."
 sudo DEBIAN_FRONTEND=noninteractive \
   NEEDRESTART_MODE=a \
-  apt-get -qqy install --no-install-recommends mysql-server mysql-client
+  apt-get -qqy install mariadb-server mariadb-client
 
-# Disabilita avvio automatico al provisioning
-sudo systemctl disable mysql || true
-sudo systemctl stop mysql || true
+# Evita che parta da solo durante il provisioning
+sudo systemctl disable mariadb || true
+sudo systemctl stop mariadb || true
 
 # ---- Upgrade cmake se serve (>= 3.18) ----
 if ! command -v cmake >/dev/null || [ "$(cmake --version | awk 'NR==1{print $3}')" \< "3.18.0" ]; then

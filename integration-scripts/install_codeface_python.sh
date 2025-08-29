@@ -37,17 +37,13 @@ echo "[PY] Provisioning Codeface (Python3)"
 sudo apt-get update -qq
 sudo apt-get install -y python3 python3-pip python3-dev build-essential
 
-# 2. Aggiorna pip + setuptools + wheel + importlib-metadata (fix bug EntryPoints)
+# 2. Aggiorna pip + setuptools + wheel + importlib-metadata
 sudo -H python3 -m pip install --upgrade pip setuptools wheel importlib-metadata
 
-# 3. Dipendenze aggiuntive richieste da alcuni pacchetti
-sudo -H pip3 install --upgrade testresources
+# 3. Dipendenze aggiuntive
+sudo -H pip3 install --upgrade testresources pymysql
 
-# 4. Driver MySQL compatibile con Python3
-#    (MySQL-python non esiste più → usiamo PyMySQL)
-sudo -H pip3 install --upgrade pymysql
-
-# 5. Installa tutte le dipendenze del progetto
+# 4. Installa tutte le dipendenze del progetto
 if [ -f /vagrant/python_requirements.txt ]; then
   echo "[PY] Installing project requirements..."
   sudo -H pip3 install -r /vagrant/python_requirements.txt
@@ -55,8 +51,25 @@ else
   echo "[PY] ⚠️ WARNING: requirements file not found!"
 fi
 
-# 6. Installa Codeface in modalità "editable" (così i cambiamenti locali sono visibili)
+# 5. Installa Codeface in modalità editable moderna (PEP517)
 cd /vagrant
-sudo -H pip3 install -e .
+echo "[PY] Installing Codeface with PEP517 (editable mode)..."
+sudo -H pip3 install --use-pep517 -e .
+
+# 6. Verifica installazione
+echo "[PY] ✅ Checking Codeface installation..."
+sudo -H pip3 show codeface || echo "[PY] ❌ Codeface non risulta installato!"
+
+# 7. Verifica comando
+if command -v codeface >/dev/null 2>&1; then
+  echo "[PY] ✅ Codeface command available: $(command -v codeface)"
+else
+  echo "[PY] ❌ Codeface command NOT found in PATH!"
+  exit 1
+fi
+
+# 8. Verifica metadata
+python3 -c "import importlib.metadata; print('[PY] ✅ Codeface metadata version:', importlib.metadata.version('codeface'))" || \
+  echo "[PY] ❌ importlib.metadata non trova Codeface!"
 
 echo "[PY] ✅ Codeface Python environment ready"
