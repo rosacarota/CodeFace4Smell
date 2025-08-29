@@ -33,24 +33,30 @@ set -euo pipefail
 
 echo "[PY] Provisioning Codeface (Python3)"
 
-# Python3 + toolchain base
+# 1. Installa Python3 + toolchain base
 sudo apt-get update -qq
 sudo apt-get install -y python3 python3-pip python3-dev build-essential
 
-# Aggiorna pip + setuptools + wheel + importlib-metadata (fix EntryPoints bug)
+# 2. Aggiorna pip + setuptools + wheel + importlib-metadata (fix bug EntryPoints)
 sudo -H python3 -m pip install --upgrade pip setuptools wheel importlib-metadata
 
-# Fix: installa testresources richiesto da launchpadlib
-sudo -H pip3 install testresources
+# 3. Dipendenze aggiuntive richieste da alcuni pacchetti
+sudo -H pip3 install --upgrade testresources
 
-# Fix: forza l'uso di PyMySQL invece di MySQL-python (non compatibile con Py3)
-sudo -H pip3 install pymysql
+# 4. Driver MySQL compatibile con Python3
+#    (MySQL-python non esiste più → usiamo PyMySQL)
+sudo -H pip3 install --upgrade pymysql
 
-# Installa requirements dal file del progetto (assicurati che NON contenga MySQL-python)
-sudo -H pip3 install -r /vagrant/python_requirements.txt
+# 5. Installa tutte le dipendenze del progetto
+if [ -f /vagrant/python_requirements.txt ]; then
+  echo "[PY] Installing project requirements..."
+  sudo -H pip3 install -r /vagrant/python_requirements.txt
+else
+  echo "[PY] ⚠️ WARNING: requirements file not found!"
+fi
 
-# Installa il progetto in modalità "editable" (globale)
+# 6. Installa Codeface in modalità "editable" (così i cambiamenti locali sono visibili)
 cd /vagrant
 sudo -H pip3 install -e .
 
-echo "[PY] ✅ Codeface Python package installed"
+echo "[PY] ✅ Codeface Python environment ready"

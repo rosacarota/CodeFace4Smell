@@ -19,43 +19,49 @@ Vagrant.configure("2") do |config|
   config.vm.boot_timeout = 1800
   config.ssh.insert_key = true
 
+  # Porte
   config.vm.network "forwarded_port", guest: 22,   host: 2222, id: "ssh", auto_correct: true
   config.vm.network "forwarded_port", guest: 8081, host: 8081,              auto_correct: true
   config.vm.network "forwarded_port", guest: 8100, host: 8100,              auto_correct: true
 
-  # NIENTE mount .rlibs per ora
-  config.vm.synced_folder "./.rlibs", "/opt/Rlibs", 
-    create: true, owner: "vagrant", group: "vagrant"
-
+  # Cache Rlibs condivisa (usa se presente, così non ricompila tutto ogni volta)
+  config.vm.synced_folder "./.rlibs", "/opt/Rlibs",
+    create: true, owner: "vagrant", group: "vagrant", mount_options: ["dmode=775,fmode=664"]
 
   config.vm.provider "virtualbox" do |vb|
     vb.gui    = true
-    vb.memory = 4096
-    vb.cpus   = 2
-    vb.customize ["modifyvm", :id, "--nictype1", "Am79C973"]     # NIC super compatibile
-    vb.customize ["modifyvm", :id, "--paravirtprovider", "legacy"]# evita freeze su xor
+    vb.memory = 8192   # 🔼 portata a 8 GB per evitare OOM con R
+    vb.cpus   = 4      # 🔼 portato a 4 core per build più veloce
+
+    # Opzioni di compatibilità / stabilità
+    vb.customize ["modifyvm", :id, "--nictype1", "Am79C973"]
+    vb.customize ["modifyvm", :id, "--paravirtprovider", "legacy"]
     vb.customize ["modifyvm", :id, "--ioapic", "on"]
     vb.customize ["modifyvm", :id, "--pae", "on"]
     vb.customize ["modifyvm", :id, "--hwvirtex", "on"]
-    vb.customize ["modifyvm", :id, "--audio", "none"]             # riduce interferenze
-    vb.customize ["modifyvm", :id, "--usbxhci", "off"]            # idem
-  end
+    vb.customize ["modifyvm", :id, "--audio", "none"]
+    vb.customize ["modifyvm", :id, "--usbxhci", "off"]
 
-  # ❌ rimuoviamo completamente il provider LXC
-  # config.vm.provider :lxc do |lxc, override| ... end
+    # Migliora stabilità I/O con cartelle condivise
+    vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/vagrant", "1"]
+  end
 
   if Vagrant.has_plugin?("vagrant-vbguest")
     config.vbguest.auto_update = false
   end
 
+  # Fix per TTY
   config.vm.provision "fix-no-tty", type: "shell", privileged: true,
     inline: "sed -i '/tty/!s/mesg n/tty -s \\&\\& mesg n/' /root/.profile"
 
+  # Mirror più veloce
   config.vm.provision "local-mirror", type: "shell", privileged: true,
     inline: "sed -i 's|http://[a-z\\.]*\\.ubuntu\\.com/ubuntu|mirror://mirrors\\.ubuntu\\.com/mirrors\\.txt|' /etc/apt/sources.list"
 
+  # Build
   config.vm.provision "build", type: "shell", privileged: false, inline: $build
-  config.vm.provision "test",  type: "shell", privileged: false,
+
+  # Test finale
+  config.vm.provision "test", type: "shell", privileged: false,
     inline: "cd /vagrant && bash integration-scripts/test_codeface.sh"
 end
-
