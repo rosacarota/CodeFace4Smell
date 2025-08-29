@@ -220,7 +220,7 @@ SET character_set_client = @saved_cs_client;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ALLOW_INVALID_DATES,ERROR_FOR_DIVISION_BY_ZERO,TRADITIONAL,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`codeface`@`localhost` PROCEDURE `update_per_cluster_statistics`()
+CREATE PROCEDURE `update_per_cluster_statistics`()
 BEGIN
 	TRUNCATE per_cluster_statistics;
 	INSERT INTO per_cluster_statistics SELECT * FROM per_cluster_statistics_view;
@@ -243,7 +243,7 @@ DELIMITER ;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`codeface`@`localhost` SQL SECURITY DEFINER */
+/*!50013 SQL SECURITY DEFINER */
 /*!50001 VIEW `revisions_view` AS select `p`.`id` AS `projectId`,`rr`.`id` AS `releaseRangeID`,`rt_s`.`date` AS `date_start`,`rt_e`.`date` AS `date_end`,`rt_rs`.`date` AS `date_rc_start`,`rt_s`.`tag` AS `tag`,concat(`rt_s`.`tag`,'-',`rt_e`.`tag`) AS `cycle` from ((((`release_range` `rr` join `release_timeline` `rt_s` on((`rr`.`releaseStartId` = `rt_s`.`id`))) join `release_timeline` `rt_e` on((`rr`.`releaseEndId` = `rt_e`.`id`))) left join `release_timeline` `rt_rs` on((`rr`.`releaseRCStartId` = `rt_rs`.`id`))) join `project` `p` on((`rr`.`projectId` = `p`.`id`))) order by `rr`.`id` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
