@@ -20,10 +20,10 @@
 
 import yaml
 import os.path
-import kerninfo
 import pickle
 import argparse
 from datetime import datetime
+from . import kerninfo
 
 from .VCS import gitVCS
 from .commit_analysis import createCumulativeSeries, createSeries, \
