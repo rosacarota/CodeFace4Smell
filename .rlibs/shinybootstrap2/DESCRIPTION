@@ -38,7 +38,7 @@ GithubUsername: rstudio
 GithubRef: HEAD
 GithubSHA1: 30236dd9a90879f87aa12215cc00181ae0ec05ee
 NeedsCompilation: no
-Packaged: 2025-08-29 17:04:22 UTC; vagrant
+Packaged: 2025-08-30 05:56:16 UTC; vagrant
 Author: Winston Chang [aut, cre],
   RStudio [cph],
   Mark Otto [ctb] (Bootstrap library),
@@ -50,4 +50,4 @@ Author: Winston Chang [aut, cre],
   Egor Khmelev [ctb, cph] (jslider library),
   SpryMedia Limited [ctb, cph] (DataTables library)
 Maintainer: Winston Chang <winston@rstudio.com>
-Built: R 4.5.1; ; 2025-08-29 17:04:22 UTC; unix
+Built: R 4.5.1; ; 2025-08-30 05:56:17 UTC; unix

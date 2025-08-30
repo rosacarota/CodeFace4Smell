@@ -15,7 +15,7 @@ fi
 echo "[DB] Waiting for MySQL/MariaDB to become available..."
 READY=false
 for i in {1..30}; do
-  if mysqladmin -uroot ping --silent 2>/dev/null; then
+  if mysqladmin -uroot -proot ping --silent 2>/dev/null; then
     READY=true
     echo "[DB] ✅ MySQL/MariaDB is ready."
     break
@@ -44,7 +44,7 @@ if [ "$READY" = false ]; then
   fi
 
   for i in {1..20}; do
-    if mysqladmin -uroot ping --silent 2>/dev/null; then
+    if mysqladmin -uroot -proot ping --silent 2>/dev/null; then
       echo "[DB] ✅ MySQL/MariaDB reset and ready."
       break
     fi
@@ -54,7 +54,7 @@ fi
 
 # 4. Imposta password per root e crea DB/utente
 echo "[DB] Setting root password and creating databases/users..."
-sudo mysql -uroot <<EOF
+mysql -uroot -proot <<EOF
 ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';
 CREATE DATABASE IF NOT EXISTS codeface DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE DATABASE IF NOT EXISTS codeface_testing DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -80,10 +80,22 @@ fi
 echo "[DB] Import schema in 'codeface'..."
 mysql -ucodeface -pcodeface codeface < "$DATAMODEL"
 
-# 7. Import schema in codeface_testing (senza DEFINER e rinominato)
+# 7. Import schema in codeface_testing (pulizia + rinomina schema)
 echo "[DB] Import schema in 'codeface_testing'..."
+
+# Droppa eventuali tabelle rimaste al posto delle viste
+mysql -uroot -proot codeface_testing <<EOF
+DROP TABLE IF EXISTS author_commit_stats_view;
+DROP TABLE IF EXISTS revisions_view;
+DROP TABLE IF EXISTS per_person_cluster_statistics_view;
+DROP TABLE IF EXISTS cluster_user_pagerank_view;
+DROP TABLE IF EXISTS per_cluster_statistics_view;
+DROP TABLE IF EXISTS pagerank_view;
+EOF
+
+# Genera schema sostituendo il nome
 TMPFILE=$(mktemp /tmp/codeface_testing.XXXXXX.sql)
-sed 's/DEFINER[ ]*=[ ]*[^*]*\*/\*/; s/`codeface`/`codeface_testing`/g' "$DATAMODEL" > "$TMPFILE"
+sed 's/`codeface`/`codeface_testing`/g' "$DATAMODEL" > "$TMPFILE"
 mysql -ucodeface -pcodeface codeface_testing < "$TMPFILE"
 rm -f "$TMPFILE"
 

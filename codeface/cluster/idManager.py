@@ -24,6 +24,7 @@ import urllib
 import json
 import string
 import random
+import urllib.parse
 
 class idManager:
     """Provide unique IDs for developers.
@@ -103,9 +104,12 @@ class idManager:
     def _query_user_id(self, name, email):
         """Query the ID database for a contributor ID"""
 
-        params = urllib.urlencode({'projectID': self._projectID,
-                                   'name': name,
-                                   'email': email})
+        params = urllib.parse.urlencode({
+            'projectID': self._projectID,
+            'name': name.encode('utf-8'),
+            'email': email.encode('utf-8')
+        })
+
         headers = { "Content-type":
                         "application/x-www-form-urlencoded; charset=utf-8",
                     "Accept": "text/plain" }
@@ -137,16 +141,17 @@ class idManager:
         """
 
         (name, email) = self._decompose_addr(addr)
-        if not (name, email) in self._cache:
+        if (name, email) not in self._cache:
             self._cache[(name, email)] = self._query_user_id(name, email)
         ID = self._cache[(name, email)]
 
         # Construct a local instance of PersonInfo for the contributor
         # if it is not yet available
-        if (not(self.persons.has_key(ID))):
+        if ID not in self.persons:
             self.persons[ID] = PersonInfo(self.subsys_names, ID, name, email)
 
         return ID
+
 
     def getPersons(self):
         return self.persons
@@ -159,6 +164,6 @@ class idManager:
         # to cause parsing problems in later stages
         name = name.replace('\"', "")
         name = name.replace("\'", "")
-        name = string.lstrip(string.rstrip(name))
+        name = name.rstrip().lstrip()
 
         return name

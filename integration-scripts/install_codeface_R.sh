@@ -48,3 +48,12 @@ rm -rf /opt/Rlibs/00LOCK* /opt/Rlibs/*/00LOCK* || true
 # eseguo come utente vagrant, con la cache configurata esplicitamente
 sudo -u vagrant env R_LIBS_USER=/opt/Rlibs R_LIBS_SITE=/opt/Rlibs \
   R --vanilla --no-save --no-restore -q -f /vagrant/packages.R
+
+echo "[R] installo pacchetti Bioconductor richiesti (Rgraphviz)"
+sudo -u vagrant env R_LIBS_USER=/opt/Rlibs R_LIBS_SITE=/opt/Rlibs \
+  R --vanilla --no-save --no-restore <<'EOF'
+if (!requireNamespace("BiocManager", quietly=TRUE)) {
+    install.packages("BiocManager", repos="https://cloud.r-project.org")
+}
+BiocManager::install("Rgraphviz", update=FALSE, ask=FALSE)
+EOF
