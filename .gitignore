@@ -12,6 +12,7 @@
 *.rda
 *.Rout
 *.diff
+*.out
 .vagrant/
 */#*
 .Rhistory
