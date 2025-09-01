@@ -71,13 +71,20 @@ class DBManager:
 
         self.cur = self.con.cursor()
 
-        # aumenta il pacchetto massimo per la sessione (no SUPER richiesto)
+        # aumenta il pacchetto massimo (compatibile con MySQL 5.x e 8.x)
+        max_packet_size = 1024 * 1024 * 256  # 256 MB
         try:
-            max_packet_size = 1024 * 1024 * 256  # 256 MB
+            # prima tenta SESSION (funziona su MySQL 5.x)
             self.doExec("SET SESSION max_allowed_packet=%s", (max_packet_size,))
         except Exception:
-            # non bloccare l'avvio se non permesso
-            pass
+            try:
+                # se fallisce (MySQL 8), prova GLOBAL
+                self.doExec("SET GLOBAL max_allowed_packet=%s", (max_packet_size,))
+            except Exception as e:
+                log.info("Impossibile modificare max_allowed_packet: %s", e)
+                # non bloccare l’avvio
+                pass
+
 
     def __del__(self):
         if self.con is not None:

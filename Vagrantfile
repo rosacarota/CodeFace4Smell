@@ -59,7 +59,7 @@ Vagrant.configure("2") do |config|
     inline: "sed -i 's|http://[a-z\\.]*\\.ubuntu\\.com/ubuntu|mirror://mirrors\\.ubuntu\\.com/mirrors\\.txt|' /etc/apt/sources.list"
 
   # Provision disabilitati: non parte più automaticamente
-  # config.vm.provision "build", type: "shell", privileged: false, inline: $build
+  config.vm.provision "build", type: "shell", privileged: false, inline: $build
   # config.vm.provision "test", type: "shell", privileged: false,
   #   inline: "cd /vagrant && bash integration-scripts/test_codeface.sh"
 end

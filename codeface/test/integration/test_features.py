@@ -15,6 +15,7 @@
 # All Rights Reserved.
 
 import unittest
+import pytest
 from codeface.test.integration.example_projects import example_project_func
 from codeface.test.integration.test_exampleprojects \
     import EndToEndTestSetup
@@ -34,7 +35,7 @@ class EndToEndOnlyTaggingTestSetup(EndToEndTestSetup):
 
     pass
 
-
+@pytest.mark.skip("Base class, not a real test")
 class TestEndToEndOnlyTagging(object):
     def testEndToEnd(self):
         self.p = example_project_func[self.example_project](self.tagging)
@@ -48,61 +49,61 @@ class TestEndToEndOnlyTagging(object):
             self.checkClean()
 
 
-#class TestEndToEndOnlyTaggingExample1Tag(
-#        EndToEndOnlyTaggingTestSetup, TestEndToEndOnlyTagging):
-#    example_project = 1
-#    tagging = "tag"
-#    correct_edges = None
-#
-#
-#class TestEndToEndOnlyTaggingExample1C2A(
-#        EndToEndOnlyTaggingTestSetup, TestEndToEndOnlyTagging):
-#    example_project = 1
-#    tagging = "committer2author"
-#    correct_edges = None
-#
-#
-#class TestEndToEndOnlyTaggingExample1Proximity(
-#        EndToEndOnlyTaggingTestSetup, TestEndToEndOnlyTagging):
-#    example_project = 1
-#    tagging = "proximity"
-#    add_ignore_tables = ["edgelist"]
-#    correct_edges = None
+class TestEndToEndOnlyTaggingExample1Tag(
+       EndToEndOnlyTaggingTestSetup, TestEndToEndOnlyTagging):
+   example_project = 1
+   tagging = "tag"
+   correct_edges = None
 
-#class TestEndToEndOnlyTaggingExample1Feature(
-#        EndToEndOnlyTaggingTestSetup, TestEndToEndOnlyTagging):
-#    example_project = 1
-#    tagging = "feature"
-#    add_ignore_tables = ["edgelist"]
-#    correct_edges = None
-#
-#
-#class TestEndToEndOnlyTaggingExample1Feature_File(
-#        EndToEndOnlyTaggingTestSetup, TestEndToEndOnlyTagging):
-#    example_project = 1
-#    tagging = "feature_file"
-#    add_ignore_tables = ["edgelist"]
-#    correct_edges = None
-#
-#
-#class TestEndToEndOnlyTaggingExample2Feature(
-#        EndToEndOnlyTaggingTestSetup, TestEndToEndOnlyTagging):
-#    example_project = 2
-#    tagging = "feature"
-#    add_ignore_tables = ["edgelist"]
-#    devs = ["Louie Loner", "Geoff Genius", "Bill Bully", "Max Maintainer",
-#            "Adam Awkward", "Peter Popular", "Clara Confident"]
-#    correct_edges = []
-#
-#
-#class TestEndToEndOnlyTaggingExample2Feature_File(
-#        EndToEndOnlyTaggingTestSetup, TestEndToEndOnlyTagging):
-#    example_project = 2
-#    tagging = "feature_file"
-#    add_ignore_tables = ["edgelist"]
-#    devs = ["Louie Loner", "Geoff Genius", "Bill Bully", "Max Maintainer",
-#            "Adam Awkward", "Peter Popular", "Clara Confident"]
-#    correct_edges = []
+
+class TestEndToEndOnlyTaggingExample1C2A(
+       EndToEndOnlyTaggingTestSetup, TestEndToEndOnlyTagging):
+   example_project = 1
+   tagging = "committer2author"
+   correct_edges = None
+
+
+class TestEndToEndOnlyTaggingExample1Proximity(
+       EndToEndOnlyTaggingTestSetup, TestEndToEndOnlyTagging):
+   example_project = 1
+   tagging = "proximity"
+   add_ignore_tables = ["edgelist"]
+   correct_edges = None
+
+class TestEndToEndOnlyTaggingExample1Feature(
+       EndToEndOnlyTaggingTestSetup, TestEndToEndOnlyTagging):
+   example_project = 1
+   tagging = "feature"
+   add_ignore_tables = ["edgelist"]
+   correct_edges = None
+
+
+class TestEndToEndOnlyTaggingExample1Feature_File(
+       EndToEndOnlyTaggingTestSetup, TestEndToEndOnlyTagging):
+   example_project = 1
+   tagging = "feature_file"
+   add_ignore_tables = ["edgelist"]
+   correct_edges = None
+
+
+class TestEndToEndOnlyTaggingExample2Feature(
+       EndToEndOnlyTaggingTestSetup, TestEndToEndOnlyTagging):
+   example_project = 2
+   tagging = "feature"
+   add_ignore_tables = ["edgelist"]
+   devs = ["Louie Loner", "Geoff Genius", "Bill Bully", "Max Maintainer",
+           "Adam Awkward", "Peter Popular", "Clara Confident"]
+   correct_edges = []
+
+
+class TestEndToEndOnlyTaggingExample2Feature_File(
+       EndToEndOnlyTaggingTestSetup, TestEndToEndOnlyTagging):
+   example_project = 2
+   tagging = "feature_file"
+   add_ignore_tables = ["edgelist"]
+   devs = ["Louie Loner", "Geoff Genius", "Bill Bully", "Max Maintainer",
+           "Adam Awkward", "Peter Popular", "Clara Confident"]
+   correct_edges = []
 
 
 class TestEndToEndOnlyTaggingExample3Feature(
@@ -303,9 +304,9 @@ class TestEndToEndOnlyTaggingExample3Feature_File(
     commit_dependency = \
         TestEndToEndOnlyTaggingExample3Feature.commit_dependency
 
-#class TestEndToEndOnlyTaggingExample2Tag(
-#        EndToEndOnlyTaggingTestSetup, TestEndToEndOnlyTagging):
-#    example_project = 2
-#    tagging = "tag"
-#    correct_edges = None
-#    #testEndToEnd = unittest.expectedFailure(TestEndToEndOnlyTagging.testEndToEnd)
+class TestEndToEndOnlyTaggingExample2Tag(
+       EndToEndOnlyTaggingTestSetup, TestEndToEndOnlyTagging):
+   example_project = 2
+   tagging = "tag"
+   correct_edges = None
+   #testEndToEnd = unittest.expectedFailure(TestEndToEndOnlyTagging.testEndToEnd)

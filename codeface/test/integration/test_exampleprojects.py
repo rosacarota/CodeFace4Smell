@@ -21,7 +21,7 @@ from tempfile import NamedTemporaryFile
 from textwrap import dedent
 from os.path import dirname, join as pathjoin
 from pkg_resources import load_entry_point
-
+import pytest
 from codeface.logger import set_log_level, start_logfile, log
 from .example_projects import example_project_func
 from codeface.project import project_analyse, mailinglist_analyse
@@ -108,9 +108,10 @@ class EndToEndTestSetup(unittest.TestCase):
         self.recreate = False
         # This config_file is added in the codeface test command handler
         if hasattr(self, 'config_file'):
-            self.codeface_conf = self.config_file
+            #self.codeface_conf = self.config_file
+            self.codeface_conf = '/vagrant/codeface_testing.conf'
         else:
-            self.codeface_conf = 'codeface.conf'
+            self.codeface_conf = '/vagrant/codeface_testing.conf'
 
     def add_ignored_tables(self, tables):
         self.ignore_tables = self.ignore_tables + tables
@@ -220,7 +221,7 @@ class EndToEndTestSetup(unittest.TestCase):
 
     def checkResult(self):
         results = self.getResults()
-        for table, res in results.iteritems():
+        for table, res in results.items():
             if table in self.ignore_tables:
                 if len(res) == 0:
                     print ("Table not filled (expected): ", table)
@@ -245,6 +246,7 @@ class EndToEndTestSetup(unittest.TestCase):
             res = dbm.doExec("SELECT * FROM {table}".format(table=table))
             self.assertEqual(res, 0,  msg="Table '{}' still dirty!".format(table))
 
+@pytest.mark.skip("Base class, not a real test")
 class TestEndToEnd(object):
     def testEndToEnd(self):
        self.p = example_project_func[self.example_project](self.tagging)
@@ -268,13 +270,13 @@ class TestEndToEndExample1C2A(EndToEndTestSetup, TestEndToEnd):
     tagging = "committer2author"
     correct_edges = None
 
-# class TestEndToEndExample1Proximity(EndToEndTestSetup, TestEndToEnd):
-#     ## Example project 1 does not create any opportunity for edges to connect
-#     ## developers using the proximity tagging approach
-#     example_project = 1
-#     tagging = "proximity"
-#     add_ignore_tables = ["edgelist", "cluster", "cluster_user_mapping", "pagerank_matrix", "pagerank"]
-#     correct_edges = None
+class TestEndToEndExample1Proximity(EndToEndTestSetup, TestEndToEnd):
+    ## Example project 1 does not create any opportunity for edges to connect
+    ## developers using the proximity tagging approach
+    example_project = 1
+    tagging = "proximity"
+    add_ignore_tables = ["edgelist", "cluster", "cluster_user_mapping", "pagerank_matrix", "pagerank"]
+    correct_edges = None
 
 class TestEndToEndExample2Proximity(EndToEndTestSetup, TestEndToEnd):
     example_project = 2
@@ -300,25 +302,25 @@ class TestEndToEndCaseInsensitivity(EndToEndTestSetup):
     example_project = 1
     tagging = "tag"
     correct_edges = None
-    #def testCaseInsensitivity(self):
-    #    self.p = example_project_func[self.example_project](self.tagging,
-    #                randomise_email_case=False)
-    #    with self.p:
-    #        self.setup_with_p(self.p)
-    #        self.clear_tables()
-    #        self.analyseEndToEnd()
-    #        self.mlEndToEnd()
-    #        self.checkResult()
-    #        result_normalcase = self.getResults()
-    #        self.checkClean()
-    #    self.p = example_project_func[self.example_project](self.tagging,
-    #                randomise_email_case=True)
-    #    with self.p:
-    #        self.setup_with_p(self.p)
-    #        self.clear_tables()
-    #        self.analyseEndToEnd()
-    #        self.mlEndToEnd()
-    #        self.checkResult()
-    #        result_randcase = self.getResults()
-    #        self.checkClean()
-    #    self.assertEqual(result_normalcase, result_randcase)
+    def testCaseInsensitivity(self):
+       self.p = example_project_func[self.example_project](self.tagging,
+                   randomise_email_case=False)
+       with self.p:
+           self.setup_with_p(self.p)
+           self.clear_tables()
+           self.analyseEndToEnd()
+           self.mlEndToEnd()
+           self.checkResult()
+           result_normalcase = self.getResults()
+           self.checkClean()
+       self.p = example_project_func[self.example_project](self.tagging,
+                   randomise_email_case=True)
+       with self.p:
+           self.setup_with_p(self.p)
+           self.clear_tables()
+           self.analyseEndToEnd()
+           self.mlEndToEnd()
+           self.checkResult()
+           result_randcase = self.getResults()
+           self.checkClean()
+       self.assertEqual(result_normalcase, result_randcase)
