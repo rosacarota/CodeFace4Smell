@@ -87,4 +87,8 @@ fi
 python3 -c "import importlib.metadata; print('[PY] ✅ Codeface metadata version:', importlib.metadata.version('codeface'))" || \
   echo "[PY] ❌ importlib.metadata non trova Codeface!"
 
-echo "[PY] ✅ Codeface Python environment ready"
+# 11. Installa pytest per i test di integrazione
+echo "[PY] Installing pytest..."
+sudo -H pip3 install pytest
+
+echo "[PY] ✅ Codeface Python environment ready (with pytest)"
