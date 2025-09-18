@@ -26,6 +26,7 @@ instead of the current handcoded configuration.
 '''
 import logging
 import os
+import io
 import multiprocessing
 from copy import copy
 
@@ -125,11 +126,22 @@ def _get_log_handler(stream=None):
     FORMAT = "%(asctime)s [$BOLD%(name)s$RESET] %(processName)s %(levelname)s: %(message)s"
     datefmt = '%Y-%m-%d %H:%M:%S'
 
-    if hasattr(handler.stream, "fileno") and os.isatty(handler.stream.fileno()):
+    use_colors = False
+    if hasattr(handler.stream, "fileno"):
+        try:
+            if os.isatty(handler.stream.fileno()):
+                use_colors = True
+        except (io.UnsupportedOperation, AttributeError):
+            # lo stream (es. StringIO) non supporta fileno → ignora
+            use_colors = False
+
+    if use_colors:
         handler.setFormatter(_ColoredFormatter(_insert_seqs(FORMAT), datefmt=datefmt))
     else:
         handler.setFormatter(logging.Formatter(_remove_seqs(FORMAT), datefmt=datefmt))
+
     return handler
+
 
 # Initialize the logger that prints to the console.
 # The initial level of DEBUG will be overwritten by the command line parsing

@@ -21,8 +21,8 @@ Encapsulates a configuration as an immutable dict
 
 import yaml
 from shutil import copyfile
-from collections import Mapping
-from logging import getLogger;
+from collections.abc import Mapping
+from logging import getLogger
 from codeface.linktype import LinkType
 
 log = getLogger(__name__)
@@ -65,18 +65,18 @@ class Configuration(Mapping):
         Load configuration from global/local files
         '''
         c = Configuration()
-        log.devinfo("Loading global configuration file '{}'".
+        log.debug("Loading global configuration file '{}'".
                 format(global_conffile))
         self._local_conf_name = local_conffile
         self._global_conf = c._load(global_conffile)
         c._conf.update(c._global_conf)
         if local_conffile:
-            log.devinfo("Loading project configuration file '{}'".
+            log.debug("Loading project configuration file '{}'".
                     format(local_conffile))
             self._project_conf = c._load(local_conffile)
             c._conf.update(c._project_conf)
         else:
-            log.devinfo("Not loading project configuration file!")
+            log.debug("Not loading project configuration file!")
         c._initialize()
         c._check_sanity()
         return c
@@ -84,7 +84,7 @@ class Configuration(Mapping):
     def _load(self, filename):
         '''Helper function that checks loading errors and logs them'''
         try:
-            return yaml.load(open(filename))
+            return yaml.safe_load(open(filename))
         except IOError:
             log.exception("Could not open configuration file '{}'".
                     format(filename))

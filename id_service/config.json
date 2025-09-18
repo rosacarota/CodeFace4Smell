@@ -1,0 +1,10 @@
+{
+  "dbhost": "localhost",
+  "dbuser": "codeface",
+  "dbpwd": "codeface",
+  "dbname": "codeface_testing",
+  "dbport": 3306,
+  "idServiceHostname": "localhost",
+  "idServicePort": 8080,
+  "loglevel": "info"
+}

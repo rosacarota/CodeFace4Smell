@@ -30,8 +30,8 @@ Vagrant.configure("2") do |config|
 
   config.vm.provider "virtualbox" do |vb|
     vb.gui    = true
-    vb.memory = 8192   # 🔼 portata a 8 GB per evitare OOM con R
-    vb.cpus   = 4      # 🔼 portato a 4 core per build più veloce
+    vb.memory = 8192
+    vb.cpus   = 4
 
     # Opzioni di compatibilità / stabilità
     vb.customize ["modifyvm", :id, "--nictype1", "Am79C973"]

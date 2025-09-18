@@ -50,10 +50,14 @@ BatchJobTuple = namedtuple('BatchJobTuple', [
 ])
 
 class BatchJob(BatchJobTuple):
-    def __init__(self, *args, **kwargs):
-        super(BatchJob, self).__init__(*args, **kwargs)
-        self.done = False
-        self.submitted = False
+    def __new__(cls, id, func, args, kwargs, deps, startmsg=None, endmsg=None):
+        # crea la namedtuple
+        obj = super(BatchJob, cls).__new__(cls, id, func, args, kwargs, deps, startmsg, endmsg)
+        # aggiungi attributi extra
+        obj.done = False
+        obj.submitted = False
+        return obj
+
 
 
 class BatchJobPool(object):

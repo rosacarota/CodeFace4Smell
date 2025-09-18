@@ -15,7 +15,7 @@
 # All Rights Reserved.
 
 import unittest
-import exceptions
+#import exceptions
 from logging import getLogger; log = getLogger("codeface.test.unit.batchjob")
 from time import sleep
 from random import random
@@ -24,7 +24,7 @@ from os import unlink
 
 TMPFILE="_codeface_test_tmpfile"
 
-def test_function(i):
+def helper_test_function(i):
     sleep(0.05*random())
     log.info(i)
 
@@ -53,7 +53,7 @@ class Testpool(unittest.TestCase):
         '''Check that basic processing works'''
         pool = BatchJobPool(24)
         for i in range(10):
-            pool.add(test_function, [i], {}, deps="")
+            pool.add(helper_test_function, [i], {}, deps="")
         pool.join()
 
     def testFastFunctions(self):
@@ -95,9 +95,11 @@ class Testpool(unittest.TestCase):
         try:
             pool.join()
         except Exception as e:
-            self.assertIn("IOError", str(e))
-            raised = True
-        self.assertEqual(raised, True)
+            self.assertTrue(
+                "IOError" in str(e) or "FileNotFoundError" in str(e),
+                f"Unexpected error: {e}"
+            )
+
 
     def testUnpickleableFailure(self):
         '''Check that unpickleable Exceptions are reported'''

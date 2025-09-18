@@ -22,8 +22,8 @@ GithubRef: HEAD
 GithubSHA1: 31e9ca1dc50087314c24ece95f2264f81caf9ff8
 GithubSubdir: pkg
 NeedsCompilation: no
-Packaged: 2025-09-07 10:24:42 UTC; vagrant
+Packaged: 2025-09-15 09:34:43 UTC; vagrant
 Author: Ingo Feinerer [aut, cre],
   Wolfgang Mauerer [aut]
 Maintainer: Ingo Feinerer <feinerer@logic.at>
-Built: R 4.5.1; ; 2025-09-07 10:24:42 UTC; unix
+Built: R 4.5.1; ; 2025-09-15 09:34:44 UTC; unix
