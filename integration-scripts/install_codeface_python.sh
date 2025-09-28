@@ -37,18 +37,27 @@ echo "[PY] Provisioning Codeface (Python3)"
 sudo apt-get update -qq
 sudo apt-get install -y python3 python3-pip python3-dev build-essential git
 
+echo "[PY] Installing 2to3 tool..."
+sudo apt-get install -y 2to3 python3-lib2to3 python3-distutils
+
 # 2. Aggiorna pip + setuptools + wheel + importlib-metadata
 sudo -H python3 -m pip install --upgrade pip setuptools wheel importlib-metadata
 
 # 3. Dipendenze aggiuntive
 sudo -H pip3 install --upgrade testresources pymysql
 
+# 3b. Sostituto moderno di pynotify (per cppstats con Python3)
+sudo -H pip3 install --upgrade notify2
+
+# 3c. Libreria statistica moderna (al posto di statlib/pstat)
+sudo -H pip3 install --upgrade scipy
+
 # 4. Installa tutte le dipendenze del progetto
 if [ -f /vagrant/python_requirements.txt ]; then
   echo "[PY] Installing project requirements..."
   sudo -H pip3 install -r /vagrant/python_requirements.txt
 else
-  echo "[PY] ⚠️ WARNING: requirements file not found!"
+  echo "[PY] WARNING: requirements file not found!"
 fi
 
 # 5. Installa Codeface in modalità editable moderna (PEP517)
@@ -56,39 +65,40 @@ cd /vagrant
 echo "[PY] Installing Codeface with PEP517 (editable mode)..."
 sudo -H pip3 install --use-pep517 -e .
 
-# 6. Scarica e installa codeBlock (se non esiste già)
-if [ ! -d /vagrant/codeBlock ]; then
-  echo "[PY] Cloning codeBlock repository..."
-  cd /vagrant
-  git clone https://github.com/siemens/codeBlock.git
-fi
+# # 6. Scarica e installa codeBlock (se non esiste già)
+# if [ ! -d /vagrant/codeBlock ]; then
+#   echo "[PY] Cloning codeBlock repository..."
+#   cd /vagrant
+#   git clone https://github.com/siemens/codeBlock.git
+# fi
 
-echo "[PY] Installing codeBlock..."
-cd /vagrant/codeBlock
-sudo -H pip3 install --use-pep517 -e .
-cd /vagrant
+# echo "[PY] Installing codeBlock..."
+# cd /vagrant/codeBlock
+# sudo -H pip3 install --use-pep517 -e .
+# cd /vagrant
 
 # 7. Verifica installazione di Codeface
-echo "[PY] ✅ Checking Codeface installation..."
-sudo -H pip3 show codeface || echo "[PY] ❌ Codeface non risulta installato!"
+echo "[PY] Checking Codeface installation..."
+sudo -H pip3 show codeface || echo "[PY] Codeface non risulta installato!"
 
-# 8. Verifica installazione di codeBlock
-sudo -H pip3 show codeBlock || echo "[PY] ⚠️ codeBlock non risulta installato!"
+# # 8. Verifica installazione di codeBlock
+# sudo -H pip3 show codeBlock || echo "[PY] CodeBlock non risulta installato!"
 
 # 9. Verifica comando codeface
 if command -v codeface >/dev/null 2>&1; then
-  echo "[PY] ✅ Codeface command available: $(command -v codeface)"
+  echo "[PY] Codeface command available: $(command -v codeface)"
 else
-  echo "[PY] ❌ Codeface command NOT found in PATH!"
+  echo "[PY] Codeface command NOT found in PATH!"
   exit 1
 fi
 
 # 10. Verifica metadata
-python3 -c "import importlib.metadata; print('[PY] ✅ Codeface metadata version:', importlib.metadata.version('codeface'))" || \
-  echo "[PY] ❌ importlib.metadata non trova Codeface!"
+python3 -c "import importlib.metadata; print('[PY] Codeface metadata version:', importlib.metadata.version('codeface'))" || \
+  echo "[PY] importlib.metadata non trova Codeface!"
 
 # 11. Installa pytest per i test di integrazione
 echo "[PY] Installing pytest..."
 sudo -H pip3 install pytest
 
-echo "[PY] ✅ Codeface Python environment ready (with pytest)"
+
+echo "[PY] Codeface Python environment ready (with pytest)"

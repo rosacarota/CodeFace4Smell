@@ -17,7 +17,6 @@
 """
 Utility functions for running external commands
 """
-
 import logging; log = logging.getLogger(__name__)
 import os
 import re
@@ -30,18 +29,31 @@ from glob import glob
 from math import sqrt
 from multiprocessing import Process, JoinableQueue, Lock
 from pickle import dumps, PicklingError
-from pkg_resources import resource_filename
+
+try:
+    from importlib.resources import files
+
+    def resource_filename(package, resource):
+        try:
+            return str(files(package) / resource)
+        except Exception:
+            import pkg_resources
+            return pkg_resources.resource_filename(package, resource)
+
+except ImportError:
+    from pkg_resources import resource_filename
+
 from subprocess import Popen, PIPE
 from tempfile import NamedTemporaryFile, mkdtemp
 from time import sleep
 from threading import enumerate as threading_enumerate
 from datetime import timedelta, datetime
 
-# compatibilità Python 2/3: Empty viene da queue (Py3) o Queue (Py2)
 try:
     from Queue import Empty     # Python 2
 except ImportError:
     from queue import Empty     # Python 3
+
 
 
 # Represents a job submitted to the batch pool.

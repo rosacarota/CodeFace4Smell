@@ -21,11 +21,11 @@ sudo DEBIAN_FRONTEND=noninteractive \
   libmysqlclient-dev \
   xorg-dev libx11-dev libgles2-mesa-dev libglu1-mesa-dev \
   libpoppler-dev libpoppler-glib-dev \
-  libarchive13 astyle xsltproc screen \
+  libarchive13 libarchive-dev astyle xsltproc screen \
   python3 python3-dev python3-pip python3-setuptools \
   python3-pkg-resources python3-numpy python3-matplotlib python3-lxml \
   libmagick++-dev libprotobuf-dev protobuf-compiler \
-  libssl-dev zlib1g-dev
+  libssl-dev zlib1g-dev cmake g++ libxslt1-dev
 
 # ---- Installa MariaDB (compatibile MySQL) ----
 echo "[COMMON] Installing MariaDB server & client..."
@@ -51,6 +51,22 @@ if ! command -v cmake >/dev/null || [ "$(cmake --version | awk 'NR==1{print $3}'
 
   sudo apt-get -qq update
   sudo apt-get -qqy install cmake
+fi
+
+# ---- Compila e installa srcML da sorgente ----
+if ! command -v srcml >/dev/null; then
+  echo "[COMMON] Building srcML from source..."
+  cd /tmp
+  rm -rf srcML
+  git clone https://github.com/srcML/srcML.git
+  cd srcML
+  mkdir build && cd build
+  cmake ..
+  make -j$(nproc)
+  sudo make install
+  sudo ldconfig
+else
+  echo "[COMMON] srcML già presente, skip."
 fi
 
 # ---- Compila Abseil ----
