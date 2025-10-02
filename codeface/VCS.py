@@ -1411,7 +1411,7 @@ class gitVCS (VCS):
         # and save it to a temporary location
         srcFile = tempfile.NamedTemporaryFile(suffix=fileExt)
         for line in file_layout_src:
-            srcFile.write(line)
+            srcFile.write(line.encode("utf-8"))
         srcFile.flush()
 
         # For certain programming languages we can use doxygen for a more

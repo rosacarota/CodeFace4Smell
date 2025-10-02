@@ -40,9 +40,14 @@ if [ "$READY" = false ]; then
   fi
   sudo rm -rf /var/lib/mysql/*
 
-  if command -v mysqld >/dev/null 2>&1; then
-    sudo mysqld --initialize-insecure --user=mysql
+  if mysql --version | grep -qi "MariaDB"; then
+    echo "[DB] Initializing datadir with mysql_install_db (MariaDB)..."
+    sudo mysql_install_db --user=mysql --datadir=/var/lib/mysql
+  else
+    echo "[DB] Initializing datadir with mysqld (MySQL)..."
+    sudo mysqld --initialize-insecure --user=mysql --datadir=/var/lib/mysql
   fi
+
 
   if systemctl list-unit-files | grep -q mariadb.service; then
     sudo systemctl start mariadb

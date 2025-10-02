@@ -225,8 +225,7 @@ def execute_command(cmd, ignore_errors=False, direct_io=False, cwd=None):
 
     if pipe.returncode != 0:
         if ignore_errors:
-            log.warning("Command '{}' failed with exit code {}. Ignored.".
-                        format(jcmd, pipe.returncode))
+            log.warning("Command '{}' failed with exit code {}. Ignored.".format(jcmd, pipe.returncode))
         else:
             if not direct_io:
                 log.info("Command '{}' stdout:".format(jcmd))
@@ -235,11 +234,17 @@ def execute_command(cmd, ignore_errors=False, direct_io=False, cwd=None):
                 log.info("Command '{}' stderr:".format(jcmd))
                 for line in stderr.decode().splitlines():
                     log.info(line)
-            msg = "Command '{}' failed with exit code {}.\n(stdout: {}\nstderr: {})".format(
-                jcmd, pipe.returncode, stdout.decode(), stderr.decode()
-            )
+                msg = "Command '{}' failed with exit code {}.\n(stdout: {}\nstderr: {})".format(
+                    jcmd, pipe.returncode, stdout.decode(), stderr.decode()
+                )
+            else:
+                msg = "Command '{}' failed with exit code {} (direct_io mode, no stdout/stderr captured)".format(
+                    jcmd, pipe.returncode
+                )
             log.error(msg)
             raise Exception(msg)
+    if direct_io:
+        return None
     return stdout.decode()
 
 

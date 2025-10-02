@@ -12,16 +12,19 @@ get.developer.class.test <- function() {
   return(res)
 }
 
+
 get.developer.class.centrality.test <- function() {
   threshold <- 0.8
-  g <- barabasi.game(300)
-  edgelist <- get.data.frame(g)
+  g <- sample_pa(300)
+  edgelist <- as_data_frame(g, what = "edges")
   vertex.ids <- c(as.vector(V(g)), 301:305)
-  developer.class <- get.developer.class.centrality(edgelist, vertex.ids,
-                                                    threshold, degree)
-  res <- sum(developer.class$core$centrality) < threshold*sum(degree(g))
+  developer.class <- get.developer.class.centrality(
+    edgelist, vertex.ids, threshold, degree
+  )
+  res <- sum(developer.class$core$centrality) < threshold * sum(degree(g))
   return(res)
 }
+
 
 test_that("get.developer.class returns expected values", {
       expect_true(get.developer.class.test())

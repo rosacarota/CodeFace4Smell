@@ -1,6 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
+cd ..
 # Avvia servizio Node
 cd "id_service"
 node id_service.js ../codeface.conf &
