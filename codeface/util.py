@@ -348,13 +348,25 @@ def check4ctags():
 
 
 def check4cppstats():
-    line = "cppstats v0.8.4"
     cmd = "/usr/bin/env cppstats --version".split()
-    res = execute_command(cmd)
-    if not res.startswith(line):
-        error_message = "expected the first line to start with '{}' but got '{}'".format(line, res[0])
-        log.error("program cppstats does not exist, or it is not working as expected ({})".format(error_message))
-        raise Exception("no working cppstats found ({})".format(error_message))
+    try:
+        res = execute_command(cmd).strip()
+        log.info(f"cppstats output: {res}")
+        if not res.startswith("cppstats v"):
+            raise Exception(f"unexpected cppstats output: {res}")
+
+        # Accetta tutte le versioni 0.8.x e 0.9.x
+        version = res.split("v")[-1]
+        major, minor, *_ = version.split(".")
+        if int(major) == 0 and int(minor) >= 8:
+            log.info(f"cppstats version OK ({res})")
+        else:
+            raise Exception(f"unsupported cppstats version: {res}")
+
+    except Exception as e:
+        error_message = f"cppstats check failed ({e})"
+        log.error(f"program cppstats does not exist, or it is not working as expected ({error_message})")
+        raise Exception(f"no working cppstats found ({error_message})")
 
 
 def parse_iso_git_date(date_string):

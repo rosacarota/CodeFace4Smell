@@ -45,13 +45,13 @@ test.global.analysis <- function () {
   edgelist[,c(1,2)] <- sapply(edgelist[,c(1,2)], function(id) id.to.name[id])
 
   ## Generate graph from database data
-  g.db <- graph.data.frame(edgelist)
+  g.db <- graph_from_data_frame(edgelist)
 
   ## Generate target graph that corresponds to the manipulated mbox test file
   edgelist.target <- data.frame(from=c("chatty kathy", "nasty nate"),
                                 to=c("bossy bill", "sneaky sam"),
                                 weight=1)
-  g.target <- graph.data.frame(edgelist.target)
+  g.target <- graph_from_data_frame(edgelist.target)
 
   ## Test for edge agreement
   res <- all(E(g.target) == E(g.db))

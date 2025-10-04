@@ -127,9 +127,13 @@ graph.difference <- function(g1,g2, weighted=FALSE) {
 ## Compare the results of the tag and non tag based graphs
 graph.comparison <- function(g.1, g.2) {
   ## Normalize graphs to have binary edge weight
-  E(g.1)$weight <- ceiling( scale.data(E(g.1)$weight, 0, 1) )
-  E(g.2)$weight <- ceiling( scale.data(E(g.2)$weight, 0, 1) )
-
+  if (length(E(g.1)$weight) > 0) {
+      E(g.1)$weight <- scale.data(E(g.1)$weight, 0, 1)
+  }
+  if (length(E(g.2)$weight) > 0) {
+    E(g.2)$weight <- ceiling( scale.data(E(g.2)$weight, 0, 1) )
+  }
+  
   intersectNames <- intersect(V(g.1)$Id, V(g.2)$Id)
   idx.1 <- match(intersectNames, V(g.1)$Id)
   idx.2 <- match(intersectNames, V(g.2)$Id)
@@ -170,8 +174,8 @@ run.graph.comparison <- function(con, pid.1, range.id.1, pid.2, range.id.2) {
   vertex.df.2 <- data.frame(name=graph.data.2$v.local.ids, Id=node.label.2)
 
   ## Create igraph objects
-  g.1 <- graph.data.frame(edgelist.1, vertices=vertex.df.1, directed=TRUE)
-  g.2 <- graph.data.frame(edgelist.2, vertices=vertex.df.2, directed=TRUE)
+  g.1 <- graph_from_data_frame(edgelist.1, vertices=vertex.df.1, directed=TRUE)
+  g.2 <- graph_from_data_frame(edgelist.2, vertices=vertex.df.2, directed=TRUE)
 
   res <- graph.comparison(g.1, g.2)
   return(res)

@@ -33,7 +33,7 @@ get.developer.class <- function(author.commit.count, threshold=0.8) {
 ## Determine developer class based on vertex centrality
 get.developer.class.centrality <- function(edgelist, vertex.ids, threshold=0.8,
                                            FUN=igraph::degree) {
-  graph <- graph.data.frame(edgelist, directed=TRUE,
+  graph <- graph_from_data_frame(edgelist, directed=TRUE,
                             vertices=data.frame(vertex.ids))
   centrality.vec <- sort(FUN(graph), decreasing=T)
   centrality.df <- data.frame(author=names(centrality.vec),

@@ -30,7 +30,7 @@ pagerank.type.valid <- function(pr.type) {
 annotate.cluster <- function(g) {
   V(g)$size <- sqrt(V(g)$rankValue*5000)
   if (length(E(g)$weight) > 0) {
-    E(g)$weight <- scale(E(g.1)$weight)
+    E(g)$weight <- scale(E(g)$weight)
   }
 
 

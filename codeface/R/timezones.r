@@ -142,9 +142,13 @@ do.update.timezone.information <- function(conf, project.id) {
   })
 
   dbSendQuery(conf$con, str_c(
-    "INSERT INTO commit (id, authorTimezones) VALUES ",
-    do.call(paste, c(zones, list(sep=", "))),
-    " ON DUPLICATE KEY UPDATE authorTimezones=VALUES(authorTimezones);"))
+    "UPDATE commit SET authorTimezones = CASE id ",
+    paste(sapply(1:nrow(res), function(i)
+      paste("WHEN", res$id[[i]], "THEN '",
+            timezone.string(res$authorDate[[i]],
+                            res$authorTimeOffset[[i]]), "'", sep=" ")), collapse=" "),
+    " END WHERE id IN (", paste(res$id, collapse=", "), ");"))
+
 
   logdevinfo(paste("Updated", length(zones), "timezone entries"))
 }

@@ -135,7 +135,7 @@ txt.comm.subsys <- function(.comm, .id.subsys, i) {
 
 get.rank.by.field <- function(.iddb, .field, N=dim(.iddb)[1]) {
   res <- .iddb[c("ID", "Name", .field)]
-  res <- res[order(res[c(.field)], decreasing=TRUE),]
+  res <- res[order(res[[.field]],  decreasing=TRUE), ]
   s <- sum(res[,3])
   res <- cbind(res, data.frame(percent=res[,3]/s*100))
   res <- cbind(res, data.frame(norm=scale.data(res[,3], 0, 1)))
@@ -171,7 +171,7 @@ col.to.hex <- function(prefix="0x", r,g,b) {
 ## Return indices of vertices that are in the largest connected subgraph
 largest.subgraph.idx <- function(graph) {
   ## Find all connected subgraphs
-  g.clust <- clusters(graph)
+  g.clust <- components(graph)
 
   ## Select the id of the largest cluster, and find all mathing indices
   clusters <- data.frame(id=1:length(g.clust$csize), size=g.clust$csize)
@@ -200,7 +200,7 @@ largest.subgraph <- function(graph) {
   idx.rmv <- setdiff(V(graph),idx)
 
   ## Remove all vertices that are not in the largest connected component
-  graph.connected <- delete.vertices(graph, idx.rmv)
+  graph.connected <- delete_vertices(graph, idx.rmv)
 
   return(graph.connected)
 }
@@ -235,42 +235,47 @@ tags.given.norep <- function(.id, .tags) {
 ##		Community Detection
 ##========================================================================
 oslom.community <- function(g) {
-  ## uses the OSLOM progam to generate an igraph-like communities object
+    ## uses the OSLOM progam to generate an igraph-like communities object
   ## Args:
   ##  g: igraph graph object
   ## Returns:
   ##  community: igraph-like communities object
   ##TODO: we need to figure out how to set this up better w.r.t. where the
   ##      OSLOM program files should be stored
+  if (ecount(g) == 0) {
+    warning("Graph has no edges, returning empty community object")
+    return(list(csize = 0))
+  }
   prog.loc <- getwd()
   file.name <- paste(prog.loc, "/oslom.dat", sep="")
   ## write graph to file
-  g.frame <- get.data.frame(g, what="edges")
+  g.frame <- as_data_frame(g, what="edges")
   g.frame["weight"] <- E(g)$weight
   write.table(g.frame, file.name, sep="\t", row.names=FALSE, col.names=FALSE)
-
   ## make system call to oslom
   oslom.prog <- paste(prog.loc, "/oslom_undir -w -t 1.0 -cp 1.0 -copra 10 -infomap 10 -f", sep="")
   cmd <- paste(oslom.prog, file.name, sep=" ")
   system(cmd, ignore.stdout=TRUE)
-
-  ## read output file
+    ## read output file
   community <- read.oslom(paste(file.name, "_oslo_files/tp_without_singletons", sep=""))
   return (community)
 }
 
-
-link.community <- function(g){
-  #########################################
+link.community <- function(g) {
+    #########################################
   ## Description:
   ##   Utilize linkcomm package to perform network decomposition
   ##   provided with an igraph graph object
   #########################################
   ## construct a directed and weighted edge list
-  edge.list.dir.we <- data.frame( cbind(get.edgelist(g), E(g)$weight))
-  ## perform decomposition
+  if (ecount(g) == 0) {
+    warning("Graph has no edges, returning empty community object")
+    return(list(csize = 0))
+  }
+  edge.list.dir.we <- data.frame(cbind(as_edgelist(g), E(g)$weight))
+    ## perform decomposition
   link.communities <- getLinkCommunities(edge.list.dir.we, hcmethod="single",
-										 directed=TRUE, plot=FALSE, verbose=FALSE)
+                                         directed=TRUE, plot=FALSE, verbose=FALSE)
   ## create an igraph community object to return results in accordance with
   ## existing infrastructure in handeling communities
   node.clust <- link.communities$nodeclusters
@@ -279,13 +284,12 @@ link.community <- function(g){
   csize      <- c()
   for (i in 1:num.clust) {
     membership[[i]] <- as.numeric(as.character(node.clust[node.clust$cluster == i,1]))
-	csize[i] <- length(membership[[i]])
+    csize[i] <- length(membership[[i]])
   }
   membership$csize <- csize
   class(membership) <- "overlapComm"
   return(membership)
 }
-
 
 ## Clique percolation. Stolen from http://igraph.wikidot.com/community-detection-in-
 ## Does not work on our graph. Maybe it works in an undirected version
@@ -299,9 +303,9 @@ clique.community <- function(graph, k) {
       }
     }
   }
-  clq.graph <- simplify(graph(edges))
+  clq.graph <- simplify(igraph::graph(edges))
   V(clq.graph)$name <- seq_len(vcount(clq.graph))
-  comps <- decompose.graph(clq.graph)
+  comps <- decompose_graph(clq.graph)
 
   lapply(comps, function(x) {
     unique(unlist(clq[ V(x)$name ]))
@@ -366,7 +370,7 @@ community.detection.disconnected <- function(g, cluster.algo) {
   csize.global      <- c()
 
   ## Find all connected subgraphs
-  g.conn.clust    <- clusters(g)
+  g.conn.clust    <- components(g)
   g.conn.mem      <- g.conn.clust$membership
   g.conn.clust.no <- g.conn.clust$no ## number of clusters
 
@@ -379,7 +383,7 @@ community.detection.disconnected <- function(g, cluster.algo) {
     sub.g.verts <- which(g.conn.mem == sub.g.id)
 
     ## Computed connected graph
-    g.conn <- induced.subgraph(g, sub.g.verts)
+    g.conn <- induced_subgraph(g, sub.g.verts)
 
     if (vcount(g.conn) != 1) {
       ## Perform clustering
@@ -437,7 +441,7 @@ spinglass.community.connected <- function(graph, spins=compute.num.spins(graph))
 	class(comms.new) <- "communities"
 
 	## perform normal spinglass clustering
-	comms <- spinglass.community(graph, spins=spins, update.rule="config")
+  comms <- cluster_spinglass(graph, spins=spins, update.rule="config")
 	## construct new communities instance
 	comms.new$modularity <- comms$modularity
 	## check if any communities are not disjoint
@@ -445,8 +449,8 @@ spinglass.community.connected <- function(graph, spins=compute.num.spins(graph))
 	for (comm.indx in 1:numComms){
 		## get vertex set corresponding to the comm.indx-th cluster
 		vert.set  <- which(comms$membership == comm.indx)
-		g.induced <- induced.subgraph(graph, vert.set)
-		clust     <- clusters(g.induced, mode="weak")
+		g.induced <- induced_subgraph(graph, vert.set)
+    clust     <- components(g.induced, mode="weak")
 
 		## if more than one cluster is found we need to split into two communities
 		for (i in 1:clust$no) {
@@ -484,7 +488,7 @@ minCommGraph <- function(graph, comm, min=10){
            function(x) { return(which(comm$membership==x)) }))))$values
 
 	  V(graph)$key <- 1:vcount(graph)
-	  graph.comm <- induced.subgraph(graph, verts)
+	  graph.comm <- induced_subgraph(graph, verts)
 	  ## use the unique key to determine the mapping of community membership to the
 	  ## new graph index
 	  comm$membership <- comm$membership[V(graph.comm)$key]
@@ -643,62 +647,115 @@ plot.comm.subsys <- function(.comm, .id.subsys, filename, .alg,
 ## spinglass.
 plot.group <- function(N, .tags, .iddb, .comm) {
   s <- which(.comm$membership==N)
-  g <- graph.adjacency(.tags[s,s], mode="directed")
+  g <- graph_from_adjacency_matrix(.tags[s,s], mode="directed")
   V(g)$name <- IDs.to.names(.iddb, V(g)$name)
   plot(g, vertex.label=IDs.to.names(.iddb, s))
 }
 
 
-## Given a single cluster of persons, construct an igraph object,
-## compute some attributes for proper visualisation, and export the
-## result as a graphviz dot format if a filename is provided.
+# ## Given a single cluster of persons, construct an igraph object,
+# ## compute some attributes for proper visualisation, and export the
+# ## result as a graphviz dot format if a filename is provided.
+# save.group <- function(conf, .tags, .iddb, idx, .prank, .filename=NULL, label) {
+#   ## Select the subset of the global graph that forms the community,
+#   ## and ensure that the per-cluster indices range from 1..|V(g.cluster)|
+#   subset <- .tags[idx, idx]
+
+#   ## A 1x1 matrix is not of class matrix, but of class numeric,
+#   ## so ncol() won't work any more in this case. Ensure that we are actually
+#   ## working with a matrix before explicitely setting the row and column
+#   ## names to consecutive numbers.
+#   if (class(subset) == "matrix") {
+#     rownames(subset) <- 1:ncol(subset)
+#     colnames(subset) <- 1:ncol(subset)
+#   }
+
+#   g <- graph_from_adjacency_matrix(subset, mode="directed", weighted=TRUE)
+
+#   ## as.character is important. The igraph C export routines bark
+#   ## otherwise (not sure what the actual issue is)
+#   ## NOTE: V(g)$name as label index does NOT work because the name attribute
+#   ## is _not_ stable.
+#   V(g)$label <- as.character(IDs.to.names(.iddb, idx))
+
+#   ## We also use the page rank to specify the font size of the vertex
+#   V(g)$fontsize <- scale.data(.prank$vector, 15, 50)[idx]
+
+#   ## The amount of changed lines is visualised by the nodes background colour:
+#   ## The darker, the more changes.
+#   fc <- as.character(as.integer(100-scale.data(log(.iddb$total+1),0,50)[idx]))
+#   V(g)$fillcolor <- paste("grey", fc, sep="")
+#   V(g)$style="filled"
+
+#   ## And one more bit: The width of the bounding box changes from thin
+#   ## to thick with the number of commits
+#   V(g)$penwidth <- as.character(scale.data(log(.iddb$numcommits+1),1,5)[idx])
+
+#   if(!is.na(label)) {
+#     g$label <- label
+#     g$fontsize <- 30
+#   }
+
+#   if (!is.null(.filename)) {
+#     ## Scale edge weights, extremely large weights will cause graphviz to
+#     ## fail during rendering
+#     g.scaled <- g
+#     E(g.scaled)$weights <- scale.data(log(E(g.scaled)$weights + 1), 0, 100)
+    
+#     write_graph(g.scaled, .filename, format="dot")
+#   }
+
+#   return(g)
+# }
+
 save.group <- function(conf, .tags, .iddb, idx, .prank, .filename=NULL, label) {
-  ## Select the subset of the global graph that forms the community,
-  ## and ensure that the per-cluster indices range from 1..|V(g.cluster)|
+  ## Select the subset of the global graph that forms the community
   subset <- .tags[idx, idx]
 
-  ## A 1x1 matrix is not of class matrix, but of class numeric,
-  ## so ncol() won't work any more in this case. Ensure that we are actually
-  ## working with a matrix before explicitely setting the row and column
-  ## names to consecutive numbers.
-  if (class(subset) == "matrix") {
-    rownames(subset) <- 1:ncol(subset)
-    colnames(subset) <- 1:ncol(subset)
+  ## Ensure the subset is a matrix, even for 1x1 cases
+  if (!is.matrix(subset)) {
+    subset <- matrix(subset, nrow=1, ncol=1)
   }
+  rownames(subset) <- 1:ncol(subset)
+  colnames(subset) <- 1:ncol(subset)
 
-  g <- graph.adjacency(subset, mode="directed", weighted=TRUE)
+  ## Build the igraph object (new API compatible)
+  g <- graph_from_adjacency_matrix(subset, mode="directed", weighted=TRUE)
 
-  ## as.character is important. The igraph C export routines bark
-  ## otherwise (not sure what the actual issue is)
-  ## NOTE: V(g)$name as label index does NOT work because the name attribute
-  ## is _not_ stable.
+  ## Assign stable vertex labels
   V(g)$label <- as.character(IDs.to.names(.iddb, idx))
 
-  ## We also use the page rank to specify the font size of the vertex
-  V(g)$fontsize <- scale.data(.prank$vector, 15, 50)[idx]
+  ## Use PageRank vector to set font size
+  if ("vector" %in% names(.prank)) {
+    pr_vals <- .prank$vector
+  } else {
+    pr_vals <- .prank
+  }
+  pr_vals[is.na(pr_vals)] <- 0
+  V(g)$fontsize <- scale.data(pr_vals, 15, 50)[idx]
 
-  ## The amount of changed lines is visualised by the nodes background colour:
-  ## The darker, the more changes.
-  fc <- as.character(as.integer(100-scale.data(log(.iddb$total+1),0,50)[idx]))
-  V(g)$fillcolor <- paste("grey", fc, sep="")
-  V(g)$style="filled"
+  ## Node background color = amount of changed lines
+  fc <- as.character(as.integer(100 - scale.data(log(.iddb$total + 1), 0, 50)[idx]))
+  V(g)$fillcolor <- paste0("grey", fc)
+  V(g)$style <- "filled"
 
-  ## And one more bit: The width of the bounding box changes from thin
-  ## to thick with the number of commits
-  V(g)$penwidth <- as.character(scale.data(log(.iddb$numcommits+1),1,5)[idx])
+  ## Width of bounding box changes with number of commits
+  V(g)$penwidth <- as.character(scale.data(log(.iddb$numcommits + 1), 1, 5)[idx])
 
-  if(!is.na(label)) {
+  ## Label for cluster
+  if (!is.na(label[1])) {
     g$label <- label
     g$fontsize <- 30
   }
 
+  ## Write DOT file if requested
   if (!is.null(.filename)) {
-    ## Scale edge weights, extremely large weights will cause graphviz to
-    ## fail during rendering
     g.scaled <- g
-    E(g.scaled)$weights <- scale.data(log(E(g.scaled)$weights + 1), 0, 100)
-    
-    write.graph(g.scaled, .filename, format="dot")
+    edge_weights <- E(g.scaled)$weight
+    if (length(edge_weights) > 0 && all(is.finite(edge_weights))) {
+      E(g.scaled)$weight <- scale.data(log(edge_weights + 1), 0, 100)
+    }
+  write_graph(g.scaled, .filename, format="dot")
   }
 
   return(g)
@@ -708,7 +765,7 @@ save.group <- function(conf, .tags, .iddb, idx, .prank, .filename=NULL, label) {
 ## Prepare graph data for database and insert
 store.graph.db <- function(conf, baselabel, idx, .iddb, g.reg, g.tr, j) {
   ## Construct a systematic representation of the graph for the data base
-  edges <- get.data.frame(g.reg, what="edges")
+  edges <- as_data_frame(g.reg, what="edges")
   colnames(edges) <- c("fromId", "toId")
   edges$fromId <- as.integer(edges$fromId)
   edges$toId <- as.integer(edges$toId)
@@ -832,6 +889,55 @@ save.cluster.stats.subsys <- function(.comm, .id.subsys, .elems,
   }
 }
 
+# save.all <- function(conf, .tags, .iddb, .prank.list, .comm, .filename.base=NULL,
+#                      label) {
+#   g.all.reg <- save.group(conf, .tags, .iddb, .iddb$ID, .prank.list$reg,
+#                           .filename=NULL, label=NA)
+#   g.all.tr <- save.group(conf, .tags, .iddb, .iddb$ID, .prank.list$tr,
+#                          .filename=NULL, label=NA)
+
+#   ## NOTE: The all-in-one graphs get a different suffix (ldot for "large
+#   ## dot") so that we can easily skip them when batch-processing graphviz
+#   ## images -- they take a long while to compute
+
+#   V(g.all.reg)$label <- .iddb$ID
+#   V(g.all.reg)$pencolor <- V(g.all.reg)$fillcolor
+
+#   V(g.all.tr)$label <- .iddb$ID
+#   V(g.all.tr)$pencolor <- V(g.all.reg)$fillcolor
+
+#   elems <- unique(.comm$membership)
+#   red <- as.integer(scale.data(0:(length(elems)+1), 0, 255))
+#   ##  grey <- as.integer(scale.data(0:(length(elems)+1), 0, 99))
+#   for (i in elems) {
+#     idx <- as.vector(which(.comm$membership==i))
+
+#     V(g.all.reg)[idx]$fillcolor <- col.to.hex("#", red[i+1], 0, 0)
+#     V(g.all.tr)[idx]$fillcolor <- col.to.hex("#", red[i+1], 0, 0)
+#   }
+
+#   if (!is.na(label)) {
+#     g.all.reg$label = label
+#     g.all.tr$label = label
+
+#     ## The global graph gets community index -1
+#     idx <- 1:length(.iddb$ID) ## Select all elements
+#     store.graph.db(conf, label, idx, .iddb, g.all.reg, g.all.tr, -1)
+#   }
+
+#   if (!is.null(.filename.base)) {
+#     filename.reg <- paste(.filename.base, "reg_all.ldot", sep="")
+#     filename.tr <- paste(.filename.base, "tr_all.ldot", sep="")
+
+#     write_graph(g.all.reg, filename.reg, format="dot")
+#     write_graph(g.all.tr, filename.tr, format="dot")
+#   }
+
+#   ## Community visualization
+#   filename.comm <- paste(.filename.base, "community.ldot", sep="")
+#   save.graph.graphviz(conf$con, conf$pid, conf$range.id, label, filename.comm)
+# }
+
 save.all <- function(conf, .tags, .iddb, .prank.list, .comm, .filename.base=NULL,
                      label) {
   g.all.reg <- save.group(conf, .tags, .iddb, .iddb$ID, .prank.list$reg,
@@ -872,14 +978,21 @@ save.all <- function(conf, .tags, .iddb, .prank.list, .comm, .filename.base=NULL
     filename.reg <- paste(.filename.base, "reg_all.ldot", sep="")
     filename.tr <- paste(.filename.base, "tr_all.ldot", sep="")
 
-    write.graph(g.all.reg, filename.reg, format="dot")
-    write.graph(g.all.tr, filename.tr, format="dot")
+  write_graph(g.all.reg, filename.reg, format="dot")
+  write_graph(g.all.tr, filename.tr, format="dot")
   }
+
+  ## 🧩 FIX: convert node names to characters before saving
+  try({
+    V(g.all.reg)$name <- as.character(V(g.all.reg)$name)
+    V(g.all.tr)$name  <- as.character(V(g.all.tr)$name)
+  }, silent = TRUE)
 
   ## Community visualization
   filename.comm <- paste(.filename.base, "community.ldot", sep="")
   save.graph.graphviz(conf$con, conf$pid, conf$range.id, label, filename.comm)
 }
+
 
 
 ## TODO: Investigate the results of inner.links and outer.links (maybe compute
@@ -892,7 +1005,7 @@ compute.community.links <- function(g, .comm, N) {
   ## outer.link over all vertices of community N
   idx <- which(.comm$membership==N)
   function(i) {
-    subspin <- spinglass.community(g.connected, vertex=V(g)[idx[i]])
+  subspin <- cluster_spinglass(g.connected, vertex=V(g)[idx[i]])
     return(c(subspin$inner.links, subspin$outer.links))
   }
 }
@@ -901,11 +1014,11 @@ compute.community.links <- function(g, .comm, N) {
 ##========================================================================
 compute.pagerank <- function(.tags, .damping=0.85, transpose=FALSE, weights=NULL) {
   if (transpose) {
-    g <- graph.adjacency(t(.tags), mode="directed", weighted=weights)
+    g <- graph_from_adjacency_matrix(t(.tags), mode="directed", weighted=weights)
   } else {
-    g <- graph.adjacency(.tags, mode="directed", weighted=weights)
+    g <- graph_from_adjacency_matrix(.tags, mode="directed", weighted=weights)
   }
-  ranks <- page.rank(g, directed=TRUE, damping=.damping)
+  ranks <- page_rank(g, directed=TRUE, damping=.damping)
 
   return(ranks)
 }
@@ -1066,7 +1179,7 @@ detect.communities <- function(g, ids, adjMatrix, prank.list, outdir,
   ## NOTE: The cluster decomposition is independent of the page
   ## rank calculation technique -- only the edge strengths, but not the
   ## page rank values influence the decomposition.
-  clear.all.clusters(conf, conf$range.id, label)
+  clear.all.components(conf, conf$range.id, label)
   save.groups(conf, adjMatrix, ids,
               g.community, prank.list, outdir, prefix,
 			  comm.quality, label=label)
@@ -1092,7 +1205,7 @@ performGraphAnalysis <- function(conf, adjMatrix, ids, outdir, id.subsys=NULL){
   adjMatrix <- adjMatrix * abs(diag(1, n, n) - 1)
 
   logdevinfo("Computing adjacency matrices", logger="cluster.persons")
-  g <- graph.adjacency(adjMatrix, mode="directed", weighted=TRUE)
+  g <- graph_from_adjacency_matrix(adjMatrix, mode="directed", weighted=TRUE)
   idx <- V(g)
 
   ## Working with the adjacency matrices is easier if the IDs are numbered
@@ -1177,7 +1290,7 @@ performGraphAnalysis <- function(conf, adjMatrix, ids, outdir, id.subsys=NULL){
                                              list(reg=pr.for.all, tr=pr.for.all.tr),
                                              outdir, "wt_", "Random Walk Community",
                                              MIN.CUT.FRACTION, MAX.CUT.SIZE,
-                                             walktrap.community)
+                                             cluster_walktrap)
 
   ##--------------------
   ## Community Quality
@@ -1219,7 +1332,7 @@ get.community.graph <- function(graph, community, prank, ids, outdir) {
 
   names <- ids$Name[influential.people]
 
-  g.contracted <- contract.vertices(graph, membership(community))
+  g.contracted <- contract(graph, membership(community))
   E(g.contracted)$weight <- 1
   g.simplified  <- simplify(g.contracted)
   V(g.simplified)$label <- names
@@ -1232,7 +1345,7 @@ get.community.graph <- function(graph, community, prank, ids, outdir) {
   ##fc <- as.character(as.integer(100-scale.data(log(.iddb$total+1),0,50)[idx]))
   V(g.simplified)$fillcolor <- paste("grey", 50, sep="")
   V(g.simplified)$style="filled"
-  write.graph(g.simplified, outdir, format="dot")
+  write_graph(g.simplified, outdir, format="dot")
 }
 
 runRandCompare <- function(nonTagDir, tagDir, outfile) {
@@ -1278,7 +1391,7 @@ runRandCompare <- function(nonTagDir, tagDir, outfile) {
 write.graph.2.file <- function(.filename, g, .iddb, idx) {
   V(g)$label <- as.character(IDs.to.names(.iddb, idx))
 
-  write.graph(g, .filename, format="dot")
+  write_graph(g, .filename, format="dot")
 }
 
 #########################################################################
@@ -1295,7 +1408,7 @@ experiment <- function(g, g.connected){
                                         # but takes quite a long time (and is also not suitable for most
   o# community detection algorithms)
 
-  ranks <- page.rank(g)
+  ranks <- page_rank(g)$vector
                                         # Map the page rank values to [0,100]
   ranks.norm <-  ranks
   ranks.norm$vector <- scale.data(ranks.norm$vector, 0, 100)
@@ -1320,11 +1433,11 @@ test.community.quality <- function() {
 
   adj.matrix <- matrix(data = c(r.1,r.2,r.3,r.4,r.5,r.6,r.7,r.8), ncol = 8, nrow = 8)
 
-  g <- graph.adjacency(adj.matrix)
+  g <- graph_from_adjacency_matrix(adj.matrix)
 
 
   ## Test that modularity is correct
-  g.spincommunity <- spinglass.community(g)
+  g.spincommunity <- cluster_spinglass(g)
   igraph.modularity.result <- modularity(g, g.spincommunity$membership)
   modularity.result        <- sum(community.metric(g, g.spincommunity, "modularity"))
   if( !(igraph.modularity.result == modularity.result)){
@@ -1349,7 +1462,7 @@ test.community.quality.modularity <- function() {
 
   adj.matrix <- t(matrix(data = c(r.1,r.2,r.3,r.4,r.5,r.6,r.7,r.8), ncol = 8, nrow = 8))
 
-  g <- graph.adjacency(adj.matrix)
+  g <- graph_from_adjacency_matrix(adj.matrix)
   g.clust <- list()
   g.clust$membership <- c(1,1,1,2,2,3,3,3)
 

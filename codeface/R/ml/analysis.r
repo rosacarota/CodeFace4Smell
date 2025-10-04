@@ -801,7 +801,7 @@ store.initiate.response <- function(conf, ir, ml.id, range.id) {
 
 store.communication.graph <- function(conf, communication.network, range.id) {
   g <- graph.adjacency(communication.network)
-  edgelist <- get.data.frame(g, what="edges")
+  edgelist <- as_data_frame(g, what="edges")
   colnames(edgelist) <- c("fromId", "toId")
   edgelist <- gen.weighted.edgelist(edgelist)
   type <- "email"

@@ -45,7 +45,7 @@ gen.twomode.dot <- function(con, g, outfile) {
 
   E(g)$penwidth <- E(g)$weight*5
 
-  write.graph(g, outfile, format="dot")
+  write_graph(g, outfile, format="dot")
   ## NOTE: Process the resulting file with
   ## dot file.dot -Kneato -Gsplines=true -Goverlap=prism -Tpdf -o/path/to/file.pdf
 }
@@ -57,7 +57,7 @@ get.twomode.graph <- function(con, type, ml, range.id) {
   vertices.df <- query.twomode.vertices(con, type, ml, range.id)
   edges.df <- query.twomode.edgelist(con, type, ml, range.id)
 
-  g <- graph.data.frame(edges.df, directed=FALSE, vertices=vertices.df)
+  g <- graph_from_data_frame(edges.df, directed=FALSE, vertices=vertices.df)
 
   return(g)
 }

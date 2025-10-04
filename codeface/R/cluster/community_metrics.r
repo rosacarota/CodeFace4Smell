@@ -28,9 +28,9 @@ edge.weight.to.multi <- function(g) {
   ##	g.multi: igraph graph object with multiple edges and non-weighted edges
   mult.edges <- c()
   mult.edges <-unlist(mapply(function(x.1,x.2,w) rep(c(x.1,x.2), times=w-1),
-                      get.edgelist(g)[,1], get.edgelist(g)[,2],
+                      as_edgelist(g)[,1], as_edgelist(g)[,2],
                       E(g)$weight))
-  g.multi <- add.edges(g, mult.edges)
+  g.multi <- add_edges(g, mult.edges)
   return(g.multi)
 }
 ##############################################
@@ -41,7 +41,7 @@ edge.weight.to.multi <- function(g) {
 community.quality.modularization <- function(graph, community.vertices,
                                              membership.vec) {
   ## Get graph composed solely of vertices belonging to the community
-  subgraph <- induced.subgraph(graph, community.vertices)
+  subgraph <- induced_subgraph(graph, community.vertices)
 
   ## Get all vertices not belonging to the community
   not.community.vertices <- setdiff(V(graph), community.vertices)
@@ -100,13 +100,13 @@ community.quality.modularization <- function(graph, community.vertices,
 #######################################
 community.quality.conductance <- function(graph, community.vertices) {
   ## Get graph composed solely of vertices belonging to the community
-  cluster.subgraph <- induced.subgraph(graph, community.vertices)
+  cluster.subgraph <- induced_subgraph(graph, community.vertices)
 
   ## get weighted degree for subgraphs
-  intra.degree <- graph.strength(cluster.subgraph, mode="all")
+  intra.degree <- strength(cluster.subgraph, mode="all")
 
   ## degree of vertices in community
-  community.vertices.degree <- graph.strength(graph, community.vertices,
+  community.vertices.degree <- strength(graph, community.vertices,
 											  mode="all")
 
   ## sum all degrees from vertices
@@ -121,7 +121,7 @@ community.quality.conductance <- function(graph, community.vertices) {
 
 community.quality.wilcox <- function (graph, community.vertices) {
   ## Get graph composed solely of vertices belonging to the community
-  subgraph <- induced.subgraph(graph, community.vertices)
+  subgraph <- induced_subgraph(graph, community.vertices)
 
   ## Measure the degree for intra-community edges
   intra.degree <- degree(subgraph)
@@ -151,18 +151,18 @@ community.quality.wilcox <- function (graph, community.vertices) {
 ######################################################################
 community.quality.modularity <- function(graph, community.vertices) {
   ## Get graph composed solely of vertices belonging to the community
-  subgraph <- induced.subgraph(graph, community.vertices)
+  subgraph <- induced_subgraph(graph, community.vertices)
 
   ## Number of edges interal to community
-  community.num.edges = sum(graph.strength(subgraph, mode="all")) / 2
+  community.num.edges = sum(strength(subgraph, mode="all")) / 2
   ## Total number of edge is graph
-  m = sum(graph.strength(graph, mode="all")) / 2
+  m = sum(strength(graph, mode="all")) / 2
 
   ## Measure the degree for intra-community edges
   intra.degree <- igraph::degree(subgraph)
 
   ## Degree of vertices in community
-  community.vertices.degree <- graph.strength(graph, community.vertices, mode="all")
+  community.vertices.degree <- strength(graph, community.vertices, mode="all")
 
   ## Calculate final result
   f.1 <- community.num.edges / m
@@ -263,7 +263,7 @@ plot.t.test <- function(random.samples, test.values, t.test, shapiro.test, title
 rewired.graph.samples <- function(graph, cluster.algo, metric, niter) {
   ## Check if loops exist in the original graph, this information is necessary
   ## to choose the appropriate rewiring strategy
-  loops.exist <- any(is.loop(graph))
+  loops.exist <- any(is_loop(graph))
   if (loops.exist) {
     rewire.mode = "loops"
   }
@@ -273,7 +273,7 @@ rewired.graph.samples <- function(graph, cluster.algo, metric, niter) {
 
   ## Perform iterations
   graph.multi <- edge.weight.to.multi(graph)
-  graph.multi <- remove.vertex.attribute(graph.multi, 'name')
+  graph.multi <- delete_vertex_attr(graph.multi, 'name')
 
   compute.rewire <- function(i) {
     ## Rewire graph, randomize the graph while maintaining the degree distribution
@@ -358,49 +358,49 @@ community.metric <- function(graph, community, test) {
   else if (test == "betweenness") {
     metric.vec <- sapply(community.id,
                           function(x) {
-                            g.sub <- induced.subgraph(graph, members[[x]])
+                            g.sub <- induced_subgraph(graph, members[[x]])
                             return(betweenness(g.sub))
                           })
   }
   else if(test == "transitivity") {
     metric.vec <- sapply(community.id,
                            function(x) {
-                             g.sub <- induced.subgraph(graph, members[[x]])
+                             g.sub <- induced_subgraph(graph, members[[x]])
                              return (transitivity(g.sub,type="local"))
                            })
   }
   else if(test == "out.weight") {
     metric.vec <- sapply(community.id,
         function(x) {
-          g.sub <- induced.subgraph(graph, members[[x]])
-          return (graph.strength(g.sub, mode="out"))
+          g.sub <- induced_subgraph(graph, members[[x]])
+          return (strength(g.sub, mode="out"))
         })
   }
   else if(test == "in.weight") {
     metric.vec <- sapply(community.id,
         function(x) {
-          g.sub <- induced.subgraph(graph, members[[x]])
-          return (graph.strength(g.sub, mode="in"))
+          g.sub <- induced_subgraph(graph, members[[x]])
+          return (strength(g.sub, mode="in"))
         })
   }
   else if(test == "out.deg") {
     metric.vec <- sapply(community.id,
         function(x) {
-          g.sub <- induced.subgraph(graph, members[[x]])
+          g.sub <- induced_subgraph(graph, members[[x]])
           return (igraph::degree(g.sub, mode="out"))
         })
   }
   else if(test == "in.deg") {
     metric.vec <- sapply(community.id,
         function(x) {
-          g.sub <- induced.subgraph(graph, members[[x]])
+          g.sub <- induced_subgraph(graph, members[[x]])
           return (igraph::degree(g.sub, mode="in"))
         })
   }
   else if(test == "diameter") {
     metric.vec <- sapply(community.id,
         function(x) {
-          g.sub <- induced.subgraph(graph, members[[x]])
+          g.sub <- induced_subgraph(graph, members[[x]])
           return (diameter(g.sub))
         })
   }
@@ -429,14 +429,14 @@ compute.community.metrics <- function(g, comm) {
   res$intra.out.weight <- community.metric(g, comm, "out.weight")
   res$intra.diameter   <- community.metric(g, comm, "diameter")
   ## inter-community
-  g.con     <- contract.vertices(g, membership(comm), vertex.attr.comb=toString)
+  g.con     <- contract(g, membership(comm), vertex.attr.comb=toString)
   g.con.sim <- simplify(g.con)
   res$inter.betweeness   <- betweenness(g.con.sim)
   res$inter.transitivity <- transitivity(g.con.sim, type="local")
   res$inter.in.deg       <- degree(g.con.sim, mode="in")
   res$inter.out.deg      <- degree(g.con.sim, mode="out")
-  res$inter.in.weight    <- graph.strength(g.con.sim, mode="in")
-  res$inter.out.weight   <- graph.strength(g.con.sim, mode="out")
+  res$inter.in.weight    <- strength(g.con.sim, mode="in")
+  res$inter.out.weight   <- strength(g.con.sim, mode="out")
   res$inter.diameter     <- diameter(g.con.sim)
   res$num.comms          <- vcount(g.con.sim)
   ## quality
@@ -471,7 +471,7 @@ generate.community.tables <- function(con, cluster.method, analysis.method) {
           get.graph.data.local(con, p.id, r.id, cluster.method))
     graph <- lapply(graph.data,
         function(x) {
-          graph.data.frame(x$edgelist, directed=TRUE,
+          graph_from_data_frame(x$edgelist, directed=TRUE,
               vertices=data.frame(x$v.local.ids))})
 
     ## Compute community metrics

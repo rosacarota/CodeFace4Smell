@@ -118,7 +118,7 @@ store.twomode.graph <- function(con, g, type, ml.id, range.id) {
 
   ## Store the graph into the database by decomposing it into a member
   ## and edge list
-  vertices.df <- get.data.frame(g, what="vertices")
+  vertices.df <- as_data_frame(g, what="vertices")
 
   ## Vertex type encoding: 0 denotes person, 1 denotes keyword
   vertices.df$type <- factor(vertices.df$type, levels=c("person", "keyword"),
@@ -134,7 +134,7 @@ store.twomode.graph <- function(con, g, type, ml.id, range.id) {
   }
 
   ## Avoid using SQL keynames as column labels
-  edges.df <- get.data.frame(g, what="edges")[,c("from", "to", "weight")]
+  edges.df <- as_data_frame(g, what="edges")[,c("from", "to", "weight")]
   colnames(edges.df) <- c("fromVert", "toVert", "weight")
   edges.df$fromVert <- as.numeric(edges.df$fromVert)
   edges.df <- cbind(releaseRangeId=range.id, source=type,

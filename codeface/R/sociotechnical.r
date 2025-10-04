@@ -65,7 +65,7 @@ load.mailinglist.graph <- function(conf, start.date, end.date) {
     stop()
   }
   ## Generate the graph and assign db ids and devs names to vertices
-  mail.graph <- graph.data.frame(res, directed=FALSE)
+  mail.graph <- graph_from_data_frame(res, directed=FALSE)
   ids <- V(mail.graph)$name
   names <- lapply(ids, function(id) { get.person.name(conf$con, id) })
   V(mail.graph)$name <- names
@@ -97,7 +97,7 @@ load.global.graph <- function(mail.graph, code.graph) {
   }
   
   ## retrieve collaboration edges and add them to the global graph
-  code.df <- get.data.frame(code.graph)
+  code.df <- as_data_frame(code.graph)
   for (edge in 1:nrow(code.df)) {
     name1 <- code.df[edge, 1]
     name2 <- code.df[edge, 2]
@@ -329,7 +329,7 @@ community.metric.mean.communicability <- function (mail.graph, code.graph) {
   }
   
   ## for each collaboration compute its in-communicability value
-  collaborations <- get.edgelist(code.graph)
+  collaborations <- as_edgelist(code.graph)
   mai <- c()
   for (coll in 1:length(E(code.graph))) {
     id.dev1 <- V(code.graph)[V(code.graph)$name == collaborations[coll, 1]]$id
@@ -714,9 +714,9 @@ sociotechnical.analysis <- function (sociotechdir, codedir, conf) {
     code.graph <- load.code.graph(rangedir)
     global.graph <- load.global.graph(mail.graph, code.graph)
     ## find cummunities within the communication and collaboration graph
-    mail.clusters <- walktrap.community(mail.graph, weights=E(mail.graph)$weight)
-    code.clusters <- walktrap.community(code.graph, weights=E(code.graph)$weight)
-    global.clusters <- walktrap.community(global.graph, weights=E(global.graph)$weight)
+    mail.clusters <- cluster_walktrap(mail.graph, weights=E(mail.graph)$weight)
+    code.clusters <- cluster_walktrap(code.graph, weights=E(code.graph)$weight)
+    global.clusters <- cluster_walktrap(global.graph, weights=E(global.graph)$weight)
     
     ## Check community smells
     smell.org.silo <- community.smell.organisational.silo(mail.graph, code.graph)

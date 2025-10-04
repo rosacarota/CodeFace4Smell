@@ -75,7 +75,7 @@ construct.cluster <- function(con, cluster.id, technique=0) {
     return(NULL)
   }
 
-  g <- graph.data.frame(edges, vertices=members)
+  g <- graph_from_data_frame(edges, vertices=members)
   return(g)
 }
 

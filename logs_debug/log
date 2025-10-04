@@ -1,0 +1,88 @@
+2025-10-03 17:22:49 [codeface.configuration] MainProcess DEBUG: Loading global configuration file '/vagrant/codeface.conf'
+2025-10-03 17:22:49 [codeface.configuration] MainProcess DEBUG: Loading project configuration file '/tmp/codeface_test_project2_waanvs/.git/testproject.conf'
+2025-10-03 17:22:49 [codeface.project] MainProcess INFO: => Setting up project 'codeface_test_project2_waanvs'
+2025-10-03 17:22:49 [codeface.dbmanager] MainProcess DEBUG: Establishing MySQL connection to codeface@localhost:3306, DB 'codeface'
+2025-10-03 17:22:49 [codeface.dbmanager] MainProcess INFO: DBE args: (1621, "SESSION variable 'max_allowed_packet' is read-only. Use SET GLOBAL to assign the value")
+2025-10-03 17:22:49 [codeface.dbmanager] MainProcess CRITICAL: MySQL error 1621 during "SET SESSION max_allowed_packet=268435456": SESSION variable 'max_allowed_packet' is read-only. Use SET GLOBAL to assign the value
+2025-10-03 17:22:49 [codeface.dbmanager] MainProcess INFO: DBE args: (1227, 'Access denied; you need (at least one of) the SUPER privilege(s) for this operation')
+2025-10-03 17:22:49 [codeface.dbmanager] MainProcess CRITICAL: MySQL error 1227 during "SET GLOBAL max_allowed_packet=268435456": Access denied; you need (at least one of) the SUPER privilege(s) for this operation
+2025-10-03 17:22:49 [codeface.dbmanager] MainProcess INFO: Impossibile modificare max_allowed_packet: (1227, 'Access denied; you need (at least one of) the SUPER privilege(s) for this operation')
+2025-10-03 17:22:49 [codeface.dbmanager] MainProcess DEVINFO: Creating new project codeface_test_project2_waanvs/tag
+2025-10-03 17:22:49 [codeface.dbmanager] MainProcess DEVINFO: Using project codeface_test_project2_waanvs/tag with ID 83
+2025-10-03 17:22:49 [codeface.dbmanager] MainProcess WARNING: Deleting and re-creating project codeface_test_project2_waanvs/tag.
+2025-10-03 17:22:49 [codeface.dbmanager] MainProcess DEVINFO: Creating new project codeface_test_project2_waanvs/tag
+2025-10-03 17:22:49 [codeface.dbmanager] MainProcess DEVINFO: Using project codeface_test_project2_waanvs/tag with ID 84
+2025-10-03 17:22:49 [codeface.dbmanager] MainProcess INFO: Adding 3 new releases...
+2025-10-03 17:22:49 [codeface.dbmanager] MainProcess DEVINFO: Using project codeface_test_project2_waanvs/tag with ID 84
+2025-10-03 17:22:50 [codeface.util] MainProcess INFO:   -> Revision range v0_release..v1_release: Analysing commits...
+2025-10-03 17:22:50 [codeface.dbmanager] MainProcess DEBUG: Establishing MySQL connection to codeface@localhost:3306, DB 'codeface'
+2025-10-03 17:22:50 [codeface.dbmanager] MainProcess INFO: DBE args: (1621, "SESSION variable 'max_allowed_packet' is read-only. Use SET GLOBAL to assign the value")
+2025-10-03 17:22:50 [codeface.dbmanager] MainProcess CRITICAL: MySQL error 1621 during "SET SESSION max_allowed_packet=268435456": SESSION variable 'max_allowed_packet' is read-only. Use SET GLOBAL to assign the value
+2025-10-03 17:22:50 [codeface.dbmanager] MainProcess INFO: DBE args: (1227, 'Access denied; you need (at least one of) the SUPER privilege(s) for this operation')
+2025-10-03 17:22:50 [codeface.dbmanager] MainProcess CRITICAL: MySQL error 1227 during "SET GLOBAL max_allowed_packet=268435456": Access denied; you need (at least one of) the SUPER privilege(s) for this operation
+2025-10-03 17:22:50 [codeface.dbmanager] MainProcess INFO: Impossibile modificare max_allowed_packet: (1227, 'Access denied; you need (at least one of) the SUPER privilege(s) for this operation')
+2025-10-03 17:22:50 [codeface.cluster.cluster] MainProcess DEVINFO: Creating data base for v0_release..v1_release
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git log --no-merges --format=%ct -1 v0_release
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git log --no-merges --format=%ct -1 v1_release
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git log -M -C --no-merges --pretty=format:%ct %H %at %ai v0_release..v1_release
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git log -M -C --no-merges --pretty=format:%ct %H %at %ai v1_rc_1..v1_release
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat 4e1f9daf88f2208753ad5b64f2f641c84498e143
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --ignore-space-change 4e1f9daf88f2208753ad5b64f2f641c84498e143
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --patience 4e1f9daf88f2208753ad5b64f2f641c84498e143
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --patience --ignore-space-change 4e1f9daf88f2208753ad5b64f2f641c84498e143
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat 6fd38f3b83b6fe80da9d14c3a43e294e6bf728d0
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --ignore-space-change 6fd38f3b83b6fe80da9d14c3a43e294e6bf728d0
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --patience 6fd38f3b83b6fe80da9d14c3a43e294e6bf728d0
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --patience --ignore-space-change 6fd38f3b83b6fe80da9d14c3a43e294e6bf728d0
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat 43913fe3fd287177408bf186b105492600cd7292
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --ignore-space-change 43913fe3fd287177408bf186b105492600cd7292
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --patience 43913fe3fd287177408bf186b105492600cd7292
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --patience --ignore-space-change 43913fe3fd287177408bf186b105492600cd7292
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat 9b9857a9dc6e40072ef5f103ae44729bec717bcf
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --ignore-space-change 9b9857a9dc6e40072ef5f103ae44729bec717bcf
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --patience 9b9857a9dc6e40072ef5f103ae44729bec717bcf
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --patience --ignore-space-change 9b9857a9dc6e40072ef5f103ae44729bec717bcf
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat 96a470cace2d1e6a6bc983ea29253703e80642a1
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --ignore-space-change 96a470cace2d1e6a6bc983ea29253703e80642a1
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --patience 96a470cace2d1e6a6bc983ea29253703e80642a1
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --patience --ignore-space-change 96a470cace2d1e6a6bc983ea29253703e80642a1
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat 86be366758f7978f663438404b2c7b237aabf526
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --ignore-space-change 86be366758f7978f663438404b2c7b237aabf526
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --patience 86be366758f7978f663438404b2c7b237aabf526
+2025-10-03 17:22:50 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --patience --ignore-space-change 86be366758f7978f663438404b2c7b237aabf526
+2025-10-03 17:22:51 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat c31f5d85cbb2cdac0e33825e2f4f54e88f0c9472
+2025-10-03 17:22:51 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --ignore-space-change c31f5d85cbb2cdac0e33825e2f4f54e88f0c9472
+2025-10-03 17:22:51 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --patience c31f5d85cbb2cdac0e33825e2f4f54e88f0c9472
+2025-10-03 17:22:51 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --patience --ignore-space-change c31f5d85cbb2cdac0e33825e2f4f54e88f0c9472
+2025-10-03 17:22:51 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat 19ed28730787cadb7209bd1e43aabd54a5734c39
+2025-10-03 17:22:51 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --ignore-space-change 19ed28730787cadb7209bd1e43aabd54a5734c39
+2025-10-03 17:22:51 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --patience 19ed28730787cadb7209bd1e43aabd54a5734c39
+2025-10-03 17:22:51 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --patience --ignore-space-change 19ed28730787cadb7209bd1e43aabd54a5734c39
+2025-10-03 17:22:51 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat fab5f6359b9df96367dcf6c73c61b7d04689b27f
+2025-10-03 17:22:51 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --ignore-space-change fab5f6359b9df96367dcf6c73c61b7d04689b27f
+2025-10-03 17:22:51 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --patience fab5f6359b9df96367dcf6c73c61b7d04689b27f
+2025-10-03 17:22:51 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --patience --ignore-space-change fab5f6359b9df96367dcf6c73c61b7d04689b27f
+2025-10-03 17:22:51 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat c9501ad4e843bc861899d2e5d416f866fe5195c4
+2025-10-03 17:22:51 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --ignore-space-change c9501ad4e843bc861899d2e5d416f866fe5195c4
+2025-10-03 17:22:51 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --patience c9501ad4e843bc861899d2e5d416f866fe5195c4
+2025-10-03 17:22:51 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --patience --ignore-space-change c9501ad4e843bc861899d2e5d416f866fe5195c4
+2025-10-03 17:22:51 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat 54acd6d5b793f615781a6b86d070562af8a2167f
+2025-10-03 17:22:51 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --ignore-space-change 54acd6d5b793f615781a6b86d070562af8a2167f
+2025-10-03 17:22:51 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --patience 54acd6d5b793f615781a6b86d070562af8a2167f
+2025-10-03 17:22:51 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --patience --ignore-space-change 54acd6d5b793f615781a6b86d070562af8a2167f
+2025-10-03 17:22:51 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat ceba3d53836ec9c1ac86039d0e3d81210255248c
+2025-10-03 17:22:51 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --ignore-space-change ceba3d53836ec9c1ac86039d0e3d81210255248c
+2025-10-03 17:22:51 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --patience ceba3d53836ec9c1ac86039d0e3d81210255248c
+2025-10-03 17:22:51 [codeface.util] MainProcess DEBUG: Running command: git --git-dir=/tmp/codeface_test_project2_waanvs/.git show --format=full --shortstat --numstat --patience --ignore-space-change ceba3d53836ec9c1ac86039d0e3d81210255248c
+2025-10-03 17:22:51 [codeface.cluster.cluster] MainProcess DEVINFO: Shelving the VCS object
+2025-10-03 17:22:51 [codeface.cluster.cluster] MainProcess DEVINFO: Finished shelving the VCS object
+2025-10-03 17:22:51 [codeface.dbmanager] MainProcess DEVINFO: Using project codeface_test_project2_waanvs/tag with ID 84
+2025-10-03 17:22:51 [codeface.cluster.cluster] MainProcess DEVINFO: Reading from data base /tmp/codeface_test_project2_waanvs/.git/results/codeface_test_project2_waanvs/tag/v0_release-v1_release/vcs_analysis.db...
+2025-10-03 17:22:51 [codeface.VCS] MainProcess DEVINFO: Using cached data to extract commit information
+2025-10-03 17:22:51 [codeface.dbmanager] MainProcess DEVINFO: Using project codeface_test_project2_waanvs/tag with ID 84
+2025-10-03 17:22:52 [codeface.dbmanager] MainProcess DEVINFO: Using project codeface_test_project2_waanvs/tag with ID 84
+2025-10-03 17:22:52 [codeface.dbmanager] MainProcess DEVINFO: Using project codeface_test_project2_waanvs/tag with ID 84
+2025-10-03 17:22:52 [codeface.util] MainProcess INFO:   -> Revision range v0_release..v1_release: Commit analysis done.
+2025-10-03 17:22:52 [codeface.util] MainProcess INFO:   -> Revision range v0_release..v1_release: Detecting clusters...
+2025-10-03 17:22:52 [codeface.util] MainProcess DEBUG: Running command: /vagrant/codeface/R/cluster/persons.r --loglevel devinfo --logfile /tmp/codeface_test_project2_waanvs/.git/log.R.r0 -c /vagrant/codeface.conf -p /tmp/codeface_test_project2_waanvsew8ihnqt /tmp/codeface_test_project2_waanvs/.git/results/codeface_test_project2_waanvs/tag/v0_release-v1_release 83
+2025-10-03 17:23:01 [codeface.util] MainProcess ERROR: Command '/vagrant/codeface/R/cluster/persons.r --loglevel devinfo --logfile /tmp/codeface_test_project2_waanvs/.git/log.R.r0 -c /vagrant/codeface.conf -p /tmp/codeface_test_project2_waanvsew8ihnqt /tmp/codeface_test_project2_waanvs/.git/results/codeface_test_project2_waanvs/tag/v0_release-v1_release 83' failed with exit code 1 (direct_io mode, no stdout/stderr captured)

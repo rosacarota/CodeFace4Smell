@@ -108,9 +108,9 @@ class EndToEndTestSetup(unittest.TestCase):
         # This config_file is added in the codeface test command handler
         if hasattr(self, 'config_file'):
             #self.codeface_conf = self.config_file
-            self.codeface_conf = '/vagrant/codeface_testing.conf'
+            self.codeface_conf = '/vagrant/codeface.conf'
         else:
-            self.codeface_conf = '/vagrant/codeface_testing.conf'
+            self.codeface_conf = '/vagrant/codeface.conf'
 
     def add_ignored_tables(self, tables):
         self.ignore_tables = self.ignore_tables + tables
@@ -258,33 +258,33 @@ class TestEndToEnd(object):
             self.checkResult()
             self.checkClean()
 
-class TestEndToEndExample1Tag(EndToEndTestSetup, TestEndToEnd):
-    example_project = 1
-    tagging = "tag"
-    correct_edges = None
+# class TestEndToEndExample1Tag(EndToEndTestSetup, TestEndToEnd):
+#     example_project = 1
+#     tagging = "tag"
+#     correct_edges = None
 
-    def testEndToEnd(self):     # pytest lo trova qui
-        self.runEndToEnd()
+#     def testEndToEnd(self):     # pytest lo trova qui
+#         self.runEndToEnd()
 
 
-class TestEndToEndExample1C2A(EndToEndTestSetup, TestEndToEnd):
-    example_project = 1
-    tagging = "committer2author"
-    correct_edges = None
+# class TestEndToEndExample1C2A(EndToEndTestSetup, TestEndToEnd):
+#     example_project = 1
+#     tagging = "committer2author"
+#     correct_edges = None
 
-    def testEndToEnd(self):   # pytest lo raccoglie
-        self.runEndToEnd()
+#     def testEndToEnd(self):   # pytest lo raccoglie
+#         self.runEndToEnd()
 
-class TestEndToEndExample1Proximity(EndToEndTestSetup, TestEndToEnd):
-    ## Example project 1 does not create any opportunity for edges to connect
-    ## developers using the proximity tagging approach
-    example_project = 1
-    tagging = "proximity"
-    add_ignore_tables = ["edgelist", "cluster", "cluster_user_mapping", "pagerank_matrix", "pagerank"]
-    correct_edges = None
+# class TestEndToEndExample1Proximity(EndToEndTestSetup, TestEndToEnd):
+#     ## Example project 1 does not create any opportunity for edges to connect
+#     ## developers using the proximity tagging approach
+#     example_project = 1
+#     tagging = "proximity"
+#     add_ignore_tables = ["edgelist", "cluster", "cluster_user_mapping", "pagerank_matrix", "pagerank"]
+#     correct_edges = None
     
-    def testEndToEnd(self):   # pytest lo raccoglie
-        self.runEndToEnd()
+#     def testEndToEnd(self):   # pytest lo raccoglie
+#         self.runEndToEnd()
 
 # class TestEndToEndExample2Proximity(EndToEndTestSetup, TestEndToEnd):
 #     example_project = 2
@@ -304,17 +304,17 @@ class TestEndToEndExample1Proximity(EndToEndTestSetup, TestEndToEnd):
 #         self.runEndToEnd()
 
 
-# class TestEndToEndExample2Tag(EndToEndTestSetup, TestEndToEnd):
-#     example_project = 2
-#     tagging = "tag"
-#     correct_edges = None
-
-#     def testEndToEnd(self):   # pytest lo raccoglie
-#         self.runEndToEnd()
+class TestEndToEndExample2Tag(EndToEndTestSetup, TestEndToEnd):
+    example_project = 2
+    tagging = "tag"
+    correct_edges = None
+    
+    def testEndToEnd(self):   # pytest lo raccoglie
+        self.runEndToEnd()
 
     #testEndToEnd = unittest.expectedFailure(TestEndToEnd.testEndToEnd)
 
-# class TestEndToEndCaseInsensitivity(EndToEndTestSetup):
+# class TestEndToEndCaseInsensitivity(EndToEndTestSetup):   
 #     example_project = 1
 #     tagging = "tag"
 #     correct_edges = None

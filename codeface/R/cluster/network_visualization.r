@@ -68,11 +68,11 @@ min.edge.count <- function(g, comm, rank) {
 
   ## Find all edges that cross communities and remove them
   cross.comm.edges     <- E(g)[crossing(comm,g)]
-  g.inter.comm.removed <- delete.edges(g, cross.comm.edges)
+  g.inter.comm.removed <- delete_edges(g, cross.comm.edges)
 
   ## Find edge weight of combined cross community edges, the multiple edges
   ## between communities are summed by the simplify(..) function
-  g.contracted <- simplify(contract.vertices(g, comm$membership))
+  g.contracted <- simplify(contract(g, comm$membership))
 
   ## Assign the edge weight between the important people of each community
   num.comms <- vcount(g.contracted)
@@ -113,8 +113,8 @@ layoutCommunity <- function(g, comm, grid.layout=FALSE) {
 
   ## collapse communities to single node
   if(!grid.layout) {
-    g.contracted      <- simplify(contract.vertices(g,membership(comm)))
-    layout.contracted <- layout.fruchterman.reingold(g.contracted)
+    g.contracted      <- simplify(contract(g, comm$membership))
+    layout.contracted <- layout_with_fr(g.contracted)
   }
   g$layout <- matrix(nrow=vcount(g), ncol=2)
   nm <- length(levels(as.factor(comm$membership)))
@@ -126,7 +126,7 @@ layoutCommunity <- function(g, comm, grid.layout=FALSE) {
 
   for(cc in levels(as.factor(comm$membership))) {
     f <- delete.vertices(g,comm$membership!=cc)
-    f$layout <- layout.fruchterman.reingold(f)
+    f$layout <- layout_with_fr(f)
     if(!grid.layout) {
       i <- i+1
       x <- layout.contracted[i,1]
@@ -344,7 +344,7 @@ save.graph.igraph <- function(g, comm, filename, plot.size=7, format="png") {
   ##  igraph plot of the graphs community structure
   cluster.conductance <- community.metric(g, comm, "conductance")
   pie.vertex      <- assignCommCol(g, comm)
-  g               <- min.edge.count(g, comm, page.rank(g))
+  g               <- min.edge.count(g, comm, page_rank(g))
   g               <- simplify(g, remove.multiple=TRUE,remove.loops=TRUE)
   comm.domain.col <- mapCommSig2Color(cluster.conductance)$value
   comm.layout     <- layoutCommunity(g,comm,FALSE)
@@ -403,7 +403,7 @@ save.graph.graphviz <- function(con, pid, range.id, cluster.method, filename,
   }
 
   ## Create igraph object and perform manipulations
-  g <- graph.data.frame(edgelist, directed=TRUE,
+  g <- graph_from_data_frame(edgelist, directed=TRUE,
                         vertices=data.frame(node.local.ids))
   V(g)$Id <- 1:vcount(g)
   ## remove communities of size 1
@@ -421,48 +421,89 @@ save.graph.graphviz <- function(con, pid, range.id, cluster.method, filename,
   g.min.simp <- simplify(g.min, remove.multiple=TRUE,remove.loops=TRUE)
 
   ## Convert to Rgraph object via graph object
-  From    <- as.character(get.edgelist(g.min.simp)[,1])
-  To      <- as.character(get.edgelist(g.min.simp)[,2])
-  edge.df <- data.frame(From=From, To=To)
+  # From    <- as.character(as_edgelist(g.min.simp)[,1])
+  # To      <- as.character(as_edgelist(g.min.simp)[,2])
+  # edge.df <- data.frame(From=From, To=To)
+  # weights <- E(g.min.simp)$weight
+  # g.NEL <- ftM2graphNEL(as.matrix(edge.df), W=weights, V=V(g.min.simp)$name,
+  #                       edgemode="directed")
+  # subgraph.list <- compute.subgraph.list(g.NEL, comm)
+  # g.viz <- agopen(g.NEL, "pieGraph", subGList=subgraph.list)
+
+  # ## Compute graph node and cluster colors
+  # pie.vertex  <- assignCommCol(g, comm)
+  # comm.col    <- mapCommSig2Color(cluster.conductance)$value
+
+  # ## Cluster Attributes
+  # cluster.id <- sort(unique(comm$membership))-1
+  # ## border thickness
+  # clusterData(g.viz, cluster.id, "penwidth") <- "75"
+  # ## background color
+  # clusterData(g.viz, cluster.id,"bgcolor") <- comm.col
+  # ## border style
+  # clusterData(g.viz, cluster.id, "style") <- "bold"
+  # ## border color
+  # clusterData(g.viz, cluster.id, "color") <- pie.vertex$comm.col
+  # ## cluster label
+  # central.node.idx <- important.community.nodes(comm, node.rank)
+  # clusterData(g.viz, cluster.id, "label") <- paste("ID ",cluster.id + 1, sep="")
+  # clusterData(g.viz, cluster.id, "fontsize") <- "120"
+
+  From    <- as.character(as_edgelist(g.min.simp)[, 1])
+  To      <- as.character(as_edgelist(g.min.simp)[, 2])
+  edge.df <- data.frame(From = From, To = To)
+
   weights <- E(g.min.simp)$weight
-  g.NEL <- ftM2graphNEL(as.matrix(edge.df), W=weights, V=V(g.min.simp)$name,
-                        edgemode="directed")
+
+  ## --- FIX: Ensure node names are character strings ---
+  if (is.numeric(V(g.min.simp)$name)) {
+    V(g.min.simp)$name <- as.character(V(g.min.simp)$name)
+  }
+  node_names <- as.character(V(g.min.simp)$name)
+
+  ## Create the graphNEL safely
+  g.NEL <- ftM2graphNEL(as.matrix(edge.df),
+                        W = weights,
+                        V = node_names,
+                        edgemode = "directed")
+
+  ## Build visualization subgraph
   subgraph.list <- compute.subgraph.list(g.NEL, comm)
-  g.viz <- agopen(g.NEL, "pieGraph", subGList=subgraph.list)
+  g.viz <- agopen(g.NEL, "pieGraph", subGList = subgraph.list)
 
   ## Compute graph node and cluster colors
-  pie.vertex  <- assignCommCol(g, comm)
-  comm.col    <- mapCommSig2Color(cluster.conductance)$value
+  pie.vertex <- assignCommCol(g, comm)
+  comm.col   <- mapCommSig2Color(cluster.conductance)$value
 
   ## Cluster Attributes
-  cluster.id <- sort(unique(comm$membership))-1
-  ## border thickness
-  clusterData(g.viz, cluster.id, "penwidth") <- "75"
-  ## background color
-  clusterData(g.viz, cluster.id,"bgcolor") <- comm.col
-  ## border style
-  clusterData(g.viz, cluster.id, "style") <- "bold"
-  ## border color
-  clusterData(g.viz, cluster.id, "color") <- pie.vertex$comm.col
-  ## cluster label
+  cluster.id <- sort(unique(comm$membership)) - 1
+
+  ## Styling attributes
+  clusterData(g.viz, cluster.id, "penwidth")  <- "75"
+  clusterData(g.viz, cluster.id, "bgcolor")   <- comm.col
+  clusterData(g.viz, cluster.id, "style")     <- "bold"
+  clusterData(g.viz, cluster.id, "color")     <- pie.vertex$comm.col
+  clusterData(g.viz, cluster.id, "label")     <- paste("ID ", cluster.id + 1, sep = "")
+  clusterData(g.viz, cluster.id, "fontsize")  <- "120"
+
+  ## Identify central nodes in each community
   central.node.idx <- important.community.nodes(comm, node.rank)
-  clusterData(g.viz, cluster.id, "label") <- paste("ID ",cluster.id + 1, sep="")
-  clusterData(g.viz, cluster.id, "fontsize") <- "120"
+
+  ## --- FIX: Use node names instead of numeric indices ---
+  n.idx <- node_names  # invece di 1:vcount(g)
 
   ## Node Attributes
-  n.idx <-  as.character(1:vcount(g))
   nodeDataDefaults(g.viz, c("style","shape")) <- c("wedged", "ellipse")
   nodeData(g.viz, n.idx, "label")     <- ""
   ## pie chart color
   nodeData(g.viz, n.idx, "fillcolor") <-
     format.color.weight(pie.vertex$color, pie.vertex$fracs)
   ## node size
-  nodeData(g.viz, n.idx, "width") <- as.character(
-		  scale.data(node.rank, 0.75, 5))
-  nodeData(g.viz, n.idx, "height") <- as.character(
-		  scale.data(node.rank, 0.75, 5))
+  nodeData(g.viz, n.idx, "width") <- as.character(scale.data(node.rank, 0.75, 5))
+  nodeData(g.viz, n.idx, "height") <- as.character(scale.data(node.rank, 0.75, 5))
   ## node label
   nodeData(g.viz, n.idx, "label") <- as.character(node.global.ids)
+
 
   ## Require at least two edges, otherwise there will be errors down the line
   N <- nrow(edge.df)
