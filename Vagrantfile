@@ -14,6 +14,7 @@ bash integration-scripts/install_cppstats.sh
 bash integration-scripts/setup_database.sh
 SCRIPT
 
+
 Vagrant.configure("2") do |config|
   config.vm.box = "bento/ubuntu-20.04"
   config.vm.boot_timeout = 1800
@@ -62,4 +63,23 @@ Vagrant.configure("2") do |config|
   config.vm.provision "build", type: "shell", privileged: false, inline: $build
   # config.vm.provision "test", type: "shell", privileged: false,
   #   inline: "cd /vagrant && bash integration-scripts/test_codeface.sh"
+  
+  config.vm.provision "shiny", type: "shell", privileged: false, inline: <<-SHELL
+    echo "[Shiny] Installing minimal Shiny runtime (pure R, no Node)..."
+
+    # Install R and Shiny package
+    sudo apt-get update -y
+    sudo apt-get install -y r-base
+    R -e "if(!require('shiny')) install.packages('shiny', repos='https://cloud.r-project.org')"
+
+    # Create a service-like script for Shiny
+    SHINY_DIR="/vagrant/codeface/R/shiny"
+    LOG_FILE="/home/vagrant/shiny-server.log"
+    PORT=8081
+
+    echo "[Shiny] Launching server from $SHINY_DIR on port $PORT..."
+    nohup R -e \"shiny::runApp('$SHINY_DIR', host='0.0.0.0', port=$PORT)\" > $LOG_FILE 2>&1 &
+
+    echo "[Shiny ✅] Shiny is running on http://localhost:$PORT"
+  SHELL
 end
