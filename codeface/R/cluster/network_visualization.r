@@ -344,7 +344,7 @@ save.graph.igraph <- function(g, comm, filename, plot.size=7, format="png") {
   ##  igraph plot of the graphs community structure
   cluster.conductance <- community.metric(g, comm, "conductance")
   pie.vertex      <- assignCommCol(g, comm)
-  g               <- min.edge.count(g, comm, page_rank(g))
+  g               <- min.edge.count(g, comm, page_rank(g)$vector)
   g               <- simplify(g, remove.multiple=TRUE,remove.loops=TRUE)
   comm.domain.col <- mapCommSig2Color(cluster.conductance)$value
   comm.layout     <- layoutCommunity(g,comm,FALSE)

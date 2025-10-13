@@ -153,7 +153,7 @@ def computeSnapshotCollaboration(file_commit, cmtList, id_mgr, link_type,
     #------------------------
     maxDist     = 25
     author      = True
-    fileState   = file_commit.getFileSnapShot()
+    fileState   = fileState = file_commit if isinstance(file_commit, dict) else file_commit.getFileSnapShot()
     revCmtIds   = file_commit.getrevCmts()
     revCmts     = [cmtList[revCmtId] for revCmtId in revCmtIds]
 
@@ -1533,16 +1533,36 @@ def computeProximityLinks(fileCommitList, cmtList, id_mgr, link_type, \
     Collaboration is quantified by a single metric indicating the
     strength of collaboration between two individuals.
     '''
-    for fileCommit in fileCommitList.values():
+    # for fileCommit in fileCommitList.values():
 
+    #     if speedUp:
+    #         computeSnapshotCollaboration(fileCommit, cmtList, id_mgr, link_type,
+    #                                      startDate)
+    #     else:
+    #         [computeSnapshotCollaboration(fileSnapShot[1], [fileSnapShot[0]],
+    #                                 cmtList, id_mgr, link_type, startDate)
+    #                                 for fileSnapShot
+    #                                 in fileCommit.getFileSnapShots().items()]
+
+    for fileCommit in fileCommitList.values():
         if speedUp:
-            computeSnapshotCollaboration(fileCommit, cmtList, id_mgr, link_type,
-                                         startDate)
+            # se qui fileCommit è un oggetto "file", passagli lo snapshot, non l’oggetto
+            computeSnapshotCollaboration(
+                fileCommit.getFileSnapShot(),
+                cmtList=cmtList,
+                id_mgr=id_mgr,
+                link_type=link_type,
+                startDate=startDate
+            )
         else:
-            [computeSnapshotCollaboration(fileSnapShot[1], [fileSnapShot[0]],
-                                    cmtList, id_mgr, link_type, startDate)
-                                    for fileSnapShot
-                                    in fileCommit.getFileSnapShots().items()]
+            for commit_id, snapshot in fileCommit.getFileSnapShots().items():
+                computeSnapshotCollaboration(
+                    snapshot,
+                    cmtList=[commit_id],
+                    id_mgr=id_mgr,
+                    link_type=link_type,
+                    startDate=startDate
+                )
 
 
 def compute_feature_proximity_links_per_file(

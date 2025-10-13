@@ -258,50 +258,50 @@ class TestEndToEnd(object):
             self.checkResult()
             self.checkClean()
 
-# class TestEndToEndExample1Tag(EndToEndTestSetup, TestEndToEnd):
-#     example_project = 1
-#     tagging = "tag"
-#     correct_edges = None
+class TestEndToEndExample1Tag(EndToEndTestSetup, TestEndToEnd):
+    example_project = 1
+    tagging = "tag"
+    correct_edges = None
 
-#     def testEndToEnd(self):     # pytest lo trova qui
-#         self.runEndToEnd()
+    def testEndToEnd(self):     # pytest lo trova qui
+        self.runEndToEnd()
 
 
-# class TestEndToEndExample1C2A(EndToEndTestSetup, TestEndToEnd):
-#     example_project = 1
-#     tagging = "committer2author"
-#     correct_edges = None
+class TestEndToEndExample1C2A(EndToEndTestSetup, TestEndToEnd):
+    example_project = 1
+    tagging = "committer2author"
+    correct_edges = None
 
-#     def testEndToEnd(self):   # pytest lo raccoglie
-#         self.runEndToEnd()
+    def testEndToEnd(self):   # pytest lo raccoglie
+        self.runEndToEnd()
 
-# class TestEndToEndExample1Proximity(EndToEndTestSetup, TestEndToEnd):
-#     ## Example project 1 does not create any opportunity for edges to connect
-#     ## developers using the proximity tagging approach
-#     example_project = 1
-#     tagging = "proximity"
-#     add_ignore_tables = ["edgelist", "cluster", "cluster_user_mapping", "pagerank_matrix", "pagerank"]
-#     correct_edges = None
+class TestEndToEndExample1Proximity(EndToEndTestSetup, TestEndToEnd):
+    ## Example project 1 does not create any opportunity for edges to connect
+    ## developers using the proximity tagging approach
+    example_project = 1
+    tagging = "proximity"
+    add_ignore_tables = ["edgelist", "cluster", "cluster_user_mapping", "pagerank_matrix", "pagerank"]
+    correct_edges = None
     
-#     def testEndToEnd(self):   # pytest lo raccoglie
-#         self.runEndToEnd()
+    def testEndToEnd(self):   # pytest lo raccoglie
+        self.runEndToEnd()
 
-# class TestEndToEndExample2Proximity(EndToEndTestSetup, TestEndToEnd):
-#     example_project = 2
-#     tagging = "proximity"
-#     add_ignore_tables = ["edgelist"]
-#     devs = ["Louie Loner", "Geoff Genius", "Bill Bully", "Max Maintainer",
-#             "Adam Awkward", "Peter Popular", "Clara Confident"]
-#     correct_edges = [[[devs[0], devs[5], 1.0],
-#                       [devs[1], devs[6], 1.0],
-#                       [devs[2], devs[4], 1.0],
-#                       [devs[3], devs[2], 1.0],
-#                       [devs[3], devs[4], 1.0],
-#                       [devs[4], devs[2], 1.0],
-#                       [devs[5], devs[0], 1.0]]]
+class TestEndToEndExample2Proximity(EndToEndTestSetup, TestEndToEnd):
+    example_project = 2
+    tagging = "proximity"
+    add_ignore_tables = ["edgelist"]
+    devs = ["Louie Loner", "Geoff Genius", "Bill Bully", "Max Maintainer",
+            "Adam Awkward", "Peter Popular", "Clara Confident"]
+    correct_edges = [[[devs[0], devs[5], 1.0],
+                      [devs[1], devs[6], 1.0],
+                      [devs[2], devs[4], 1.0],
+                      [devs[3], devs[2], 1.0],
+                      [devs[3], devs[4], 1.0],
+                      [devs[4], devs[2], 1.0],
+                      [devs[5], devs[0], 1.0]]]
         
-#     def testEndToEnd(self):   # pytest lo raccoglie
-#         self.runEndToEnd()
+    def testEndToEnd(self):   # pytest lo raccoglie
+        self.runEndToEnd()
 
 
 class TestEndToEndExample2Tag(EndToEndTestSetup, TestEndToEnd):

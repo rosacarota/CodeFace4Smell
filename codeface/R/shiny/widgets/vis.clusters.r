@@ -106,7 +106,7 @@ createWidgetClass(
 initWidget.widget.clusters <- function(w) {
   # Call superclass
   w <- NextMethod(w)
-  w$cluster.list <- reactive({prepare.components(conf$con, w$pid(), w$view())})
+  w$cluster.list <- reactive({prepare.clusters(conf$con, w$pid(), w$view())})
   return(w)
 }
 
