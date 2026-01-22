@@ -38,3 +38,15 @@ build/
 dist/
 vendor/
 .coverage
+
+# Python cache
+__pycache__/
+
+# Pytest cache
+.pytest_cache/
+pytest-cache-files-*/
+
+# Debug logs
+logs_debug/
+vagrant_debug.log
+ubuntu-*.log
