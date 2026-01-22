@@ -30,7 +30,7 @@ Vagrant.configure("2") do |config|
     create: true, owner: "vagrant", group: "vagrant", mount_options: ["dmode=775,fmode=664"]
 
   config.vm.provider "virtualbox" do |vb|
-    vb.gui    = true
+    vb.gui    = false
     vb.memory = 8192
     vb.cpus   = 4
 
@@ -72,8 +72,8 @@ Vagrant.configure("2") do |config|
     sudo apt-get install -y r-base
     R -e "if(!require('shiny')) install.packages('shiny', repos='https://cloud.r-project.org')"
 
-    # Create a service-like script for Shiny
-    SHINY_DIR="/vagrant/codeface/R/shiny"
+    # Create a service-like script for Shiny - now pointing to the REAL dashboard
+    SHINY_DIR="/vagrant/codeface/R/shiny/apps/dashboard"
     LOG_FILE="/home/vagrant/shiny-server.log"
     PORT=8081
 

@@ -296,8 +296,8 @@ shinyServer(function(input, output, session) {
   observe({
     dat <- input$selectedpids
     dat <- if(is.null(dat)) { list() } else { dat }
-    ## TODO: pathLevel=1 does not seem to work
-    updateCookieInput(session, "qacompareids", dat, pathLevel=0, expiresInDays=1)
+    ## Changed pathLevel to 1 for Shiny-Server integration
+    updateCookieInput(session, "qacompareids", dat, pathLevel=1, expiresInDays=1)
   })
 
   ##
