@@ -1,0 +1,116 @@
+version: '3.8'
+
+services:
+  # ============================================================================
+  # Database Service - MariaDB
+  # ============================================================================
+  codeface-db:
+    image: mariadb:10.11
+    container_name: codeface-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: codeface
+      MYSQL_USER: codeface
+      MYSQL_PASSWORD: codeface
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./docker/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
+      - ./datamodel:/datamodel:ro
+    ports:
+      - "3306:3306"
+    command: --max-allowed-packet=256M
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - codeface-network
+
+  # ============================================================================
+  # Main Application Service
+  # ============================================================================
+  codeface-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: codeface-app
+    restart: unless-stopped
+    depends_on:
+      codeface-db:
+        condition: service_healthy
+    environment:
+      - DB_HOST=codeface-db
+      - DB_USER=codeface
+      - DB_PASSWORD=codeface
+      - DB_NAME=codeface
+    volumes:
+      # Mount source code for development
+      - ./codeface:/app/codeface
+      - ./conf:/app/conf
+      # Mount configuration files
+      - ./codeface.conf:/app/codeface.conf:ro
+      - ./codeface_testing.conf:/app/codeface_testing.conf:ro
+      # R package cache (persistent across rebuilds)
+      - r-libs:/opt/Rlibs
+      # Results and logs
+      - ./res:/app/res
+      - ./log:/app/log
+    ports:
+      - "8100:8100"  # id_service
+    networks:
+      - codeface-network
+    stdin_open: true
+    tty: true
+
+  # ============================================================================
+  # R Shiny Dashboard Service
+  # ============================================================================
+  codeface-shiny:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: codeface-shiny
+    restart: unless-stopped
+    depends_on:
+      - codeface-db
+    environment:
+      - DB_HOST=codeface-db
+      - DB_USER=codeface
+      - DB_PASSWORD=codeface
+      - DB_NAME=codeface
+    volumes:
+      # Mount Shiny dashboard code
+      - ./codeface/R/shiny:/app/codeface/R/shiny:ro
+      # Mount configuration files (needed by dashboard)
+      - ./codeface.conf:/app/codeface.conf:ro
+      - ./codeface_testing.conf:/app/codeface_testing.conf:ro
+      - ./conf:/app/conf:ro
+      # Results and logs (needed to display analysis data)
+      - ./res:/app/res:ro
+      - ./log:/app/log
+      # R package cache
+      - r-libs:/opt/Rlibs:ro
+    ports:
+      - "8081:8081"
+    networks:
+      - codeface-network
+    command: >
+      R -e "shiny::runApp('/app/codeface/R/shiny/apps/dashboard', host='0.0.0.0', port=8081)"
+
+# ============================================================================
+# Volumes
+# ============================================================================
+volumes:
+  db-data:
+    driver: local
+  r-libs:
+    driver: local
+
+# ============================================================================
+# Networks
+# ============================================================================
+networks:
+  codeface-network:
+    driver: bridge

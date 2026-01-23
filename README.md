@@ -1,6 +1,18 @@
-# Installation notes for Codeface
+# Installation# CodeFace4Smell
 
-## Installing Codeface
+**CodeFace4Smell** is a fork of CodeFace (https://github.com/siemens/codeface) extended for smell analysis.
+
+## Docker Setup (Recommended)
+
+For detailed instructions, see **[DOCKER_GUIDE.md](DOCKER_GUIDE.md)**.
+
+### Quick Start
+```bash
+docker-compose up -d --build
+```
+Access dashboard at: http://localhost:8081
+
+## Vagrant Setup (Legacy)
 The recommended way to set up a Codeface instance is via
 vagrant. Clone the repository and run
 

@@ -1,0 +1,71 @@
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Vagrant
+.vagrant/
+Vagrantfile
+ubuntu-*.log
+vagrant_debug.log
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+pytest-cache-files-*/
+*.egg-info/
+.coverage
+build/
+dist/
+
+# R
+.Rhistory
+.RData
+.Rprofile
+.rlibs/
+*.Rout
+error.dump.rda
+
+# Node.js
+node_modules/
+node-v*.tar.gz
+node-v*/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs and temporary files
+log/
+logs_debug/
+*.log
+*.tmp
+*.temp
+
+# Database
+db/
+*.db
+
+# Results and test data
+res/
+rep/
+testdat/
+performance/results/
+
+# Vendor (will be cloned during build)
+vendor/
+
+# Documentation build
+auto/
+
+# Archives
+*.tar.gz
+*.tar.bz2
+*.zip

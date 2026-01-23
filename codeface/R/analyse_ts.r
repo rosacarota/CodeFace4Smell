@@ -43,22 +43,24 @@ get.series.boundaries <- function(conn) {
   ## and split it into start/end date timestamp, and possibly also
   ## the release candidate start time stamp (the first entry is
   ## the hash mark of the comment line)
-  elems = str_split(readLines(conn, n=1), "\t")[[1]][-1:0]
+  elems <- str_split(readLines(conn, n = 1), "\t")[[1]][-1:0]
 
-  boundaries <- data.frame(date.start = tstamp.to.POSIXct(elems[1]),
-                           date.end = tstamp.to.POSIXct(elems[2]))
+  boundaries <- data.frame(
+    date.start = tstamp.to.POSIXct(elems[1]),
+    date.end = tstamp.to.POSIXct(elems[2])
+  )
 
   if (length(elems) == 3) {
-    boundaries$date.rc.start= tstamp.to.POSIXct(elems[3])
+    boundaries$date.rc.start <- tstamp.to.POSIXct(elems[3])
   } else {
-    boundaries$date.rc.start = NA
+    boundaries$date.rc.start <- NA
   }
 
-  return (boundaries)
+  return(boundaries)
 }
 
 boundaries.include.rc <- function(boundaries) {
-  return (!is.na(boundaries$rc_start))
+  return(!is.na(boundaries$rc_start))
 }
 
 compute.next.timestamp <- function(time, last.time) {
@@ -69,13 +71,15 @@ compute.next.timestamp <- function(time, last.time) {
   ## between this and the last event, but add one.
 
   ## Correct for identical dates
-  if (time == last.time)
+  if (time == last.time) {
     time <- time + dseconds(1)
+  }
 
   ## Correct for negative time differences (can arise from multiple
   ## consecutive identical time stamps)
-  if (time < last.time)
+  if (time < last.time) {
     time <- last.time + dseconds(1)
+  }
 
   return(time)
 }
@@ -83,12 +87,14 @@ compute.next.timestamp <- function(time, last.time) {
 ## Take a list of commits and make their date indices unique by
 ## adding a one second offset to identical ones.
 make.index.unique <- function(dat, subset) {
-  dat$commitDate <- ymd_hms(dat$commitDate, quiet=TRUE)
+  dat$commitDate <- ymd_hms(dat$commitDate, quiet = TRUE)
   last.timestamp <- min(dat$commitDate) - dseconds(1)
 
   for (i in 1:length(dat$commitDate)) {
-    dat$commitDate[[i]] <- compute.next.timestamp(dat$commitDate[[i]],
-                                                  last.timestamp)
+    dat$commitDate[[i]] <- compute.next.timestamp(
+      dat$commitDate[[i]],
+      last.timestamp
+    )
     last.timestamp <- dat$commitDate[[i]]
   }
 
@@ -113,25 +119,28 @@ gen.full.ts <- function(conf) {
   for (i in 1:length(ts)) {
     ts[[i]]$ChangedLines <- ts[[i]]$AddedLines + ts[[i]]$DeletedLines
     full.series[[i]] <- na.omit(xts(ts[[i]]$ChangedLines,
-                                    order.by=ts[[i]]$commitDate))
-    full.series[[i]] <- trim.series(full.series[[i]], boundaries$date.start[i],
-                                    boundaries$date.end[i])
+      order.by = ts[[i]]$commitDate
+    ))
+    full.series[[i]] <- trim.series(
+      full.series[[i]], boundaries$date.start[i],
+      boundaries$date.end[i]
+    )
   }
 
-  full.series <- full.series[sapply(full.series, length)!=0]
+  full.series <- full.series[sapply(full.series, length) != 0]
   full.series <- do.call(c, full.series)
 
-  return (full.series)
+  return(full.series)
 }
 
 gen.rev.list <- function(revisions) {
- rev.list <- vector("list", length(revisions)-1)
+  rev.list <- vector("list", length(revisions) - 1)
 
- for (i in 2:length(revisions)) {
-    rev.list[[i-1]] <- paste(revisions[[i-1]], "-", revisions[[i]], sep="")
+  for (i in 2:length(revisions)) {
+    rev.list[[i - 1]] <- paste(revisions[[i - 1]], "-", revisions[[i]], sep = "")
   }
 
- return (rev.list)
+  return(rev.list)
 }
 
 ## NOTE: width is the width of the rolling window, so series.monthly
@@ -150,13 +159,21 @@ process.ts <- function(series) {
   series.cumulative <- cumsum(series)
 
   ## NOTE: R can only merge two data frames at once
-  series.merged <- merge(gen.df.from.ts(series.weekly,
-                                        type="Averaged (small window)"),
-                         gen.df.from.ts(series.monthly,
-                                        type="Averaged (large window)"), all=TRUE)
+  series.merged <- merge(
+    gen.df.from.ts(series.weekly,
+      type = "Averaged (small window)"
+    ),
+    gen.df.from.ts(series.monthly,
+      type = "Averaged (large window)"
+    ),
+    all = TRUE
+  )
   series.merged <- merge(series.merged,
-                         gen.df.from.ts(series.cumulative,
-                                        type="Cumulative"), all=TRUE)
+    gen.df.from.ts(series.cumulative,
+      type = "Cumulative"
+    ),
+    all = TRUE
+  )
 
   return(series.merged)
 }
@@ -165,8 +182,8 @@ process.ts <- function(series) {
 ## Given a release range, compute a summary statistics for _all_ clusters
 ## in the release for a given clustering method and page rank technique
 compute.release.clusters.stats <- function(conf, range.id,
-                                           cluster.method=cluster.methods[1],
-                                           technique=0) {
+                                           cluster.method = cluster.methods[1],
+                                           technique = 0) {
   if (!cluster.method.valid(cluster.method)) {
     stop("Internal error: Specify a supported clustering type!")
   }
@@ -178,7 +195,8 @@ compute.release.clusters.stats <- function(conf, range.id,
     ## We query the statistics resolved per-cluster, per-person,
     ## and then average over all persons
     cluster.stats <- query.cluster.person.stats(conf$con, cluster.id,
-                                                person.id=NULL)
+      person.id = NULL
+    )
     num.members <- dim(cluster.stats)[1]
     cluster.stats$num.members <- num.members
 
@@ -198,16 +216,17 @@ summarise.clusters.stats <- function(clusters.stats) {
   }
 
   res <- ddply(clusters.stats, .(cluster.id, num.members), summarise,
-               prank.median=median(rankValue),
-               num.changes.median=median(total),
-               sum.changes=sum(total),
-               num.commits.median=median(numcommits),
-               sum.commits=sum(numcommits))
+    prank.median = median(rankValue),
+    num.changes.median = median(total),
+    sum.changes = sum(total),
+    num.commits.median = median(numcommits),
+    sum.commits = sum(numcommits)
+  )
 
   ## Scale the summary statistics for average statements per member
   ## (pp = "per person")
-  res$sum.commits.pp <- res$sum.commits/res$num.members
-  res$sum.changes.pp <- res$sum.changes/res$num.members
+  res$sum.commits.pp <- res$sum.commits / res$num.members
+  res$sum.changes.pp <- res$sum.changes / res$num.members
 
   return(res)
 }
@@ -220,7 +239,7 @@ summarise.clusters.stats <- function(clusters.stats) {
 ## of later speedups is, however, important because on-demand
 ## queries in the web frontend will then proceed much faster.
 do.cluster.analysis <- function(resdir, graphdir, conf,
-                                cluster.method=cluster.methods[1]) {
+                                cluster.method = cluster.methods[1]) {
   if (!cluster.method.valid(cluster.method)) {
     stop("Internal error: Specify a supported clustering method!")
   }
@@ -230,22 +249,26 @@ do.cluster.analysis <- function(resdir, graphdir, conf,
   clusters.summary <- vector("list", dim(cycles)[1])
 
   ## Stage 1: Perform per-release operations
-  logdevinfo("Preparing per-release cluster plots", logger="analyse_ts")
+  logdevinfo("Preparing per-release cluster plots", logger = "analyse_ts")
   cycles <- get.cycles(conf)
 
-  clusters.stats.list <- mclapply.db(conf, seq_along(cycles$range.id),
-                                     function(conf, i) {
-    clusters.stats <- compute.release.clusters.stats(conf, cycles$range.id[[i]],
-                                                     cluster.method)
+  clusters.stats.list <- mclapply.db(
+    conf, seq_along(cycles$range.id),
+    function(conf, i) {
+      clusters.stats <- compute.release.clusters.stats(
+        conf, cycles$range.id[[i]],
+        cluster.method
+      )
 
-    ## NOTE: clusters.stats can return an empty list, which happens when
-    ## there are no clusters. Return a NULL element in this case.
-    if(!is.null(clusters.stats)) {
+      ## NOTE: clusters.stats can return an empty list, which happens when
+      ## there are no clusters. Return a NULL element in this case.
+      if (!is.null(clusters.stats)) {
         clusters.stats$cycle <- cycles$cycle[[i]]
-    }
+      }
 
-    return (clusters.stats)
-  })
+      return(clusters.stats)
+    }
+  )
 
   dummy <- mclapply(seq_along(clusters.stats.list), function(i) {
     range.id <- cycles$range.id[[i]]
@@ -256,21 +279,34 @@ do.cluster.analysis <- function(resdir, graphdir, conf,
     ## to sqrt-transform a boxplot. Purists would deem it inappropriate,
     ## but I'm not sure if we should just ignore these voices in our heads.
     if (!is.null(clusters.stats)) {
-        g <- ggplot(clusters.stats, aes(x=cluster.id, y=rankValue)) +
-            geom_boxplot(position="dodge") + scale_y_log10() +
-                xlab("Cluster No.") + ylab("Page rank (median)")
-        ggsave(file.path(graphdir, paste("cluster_prank_",
-                                         conf$boundaries$tag[i],
-                                         ".pdf", sep="")),
-               g, width=7, height=7)
+      g <- ggplot(clusters.stats, aes(x = cluster.id, y = rankValue)) +
+        geom_boxplot(position = "dodge") +
+        scale_y_log10() +
+        xlab("Cluster No.") +
+        ylab("Page rank (median)")
+      ggsave(
+        file.path(graphdir, paste("cluster_prank_",
+          conf$boundaries$tag[i],
+          ".pdf",
+          sep = ""
+        )),
+        g,
+        width = 7, height = 7
+      )
 
-        g <- ggplot(clusters.stats, aes(x=cluster.id, y=total)) +
-            geom_boxplot(position="dodge") + scale_y_sqrt() +
-                xlab("Cluster No.") + ylab("Amount of code changes (add+del)")
-        ggsave(file.path(graphdir, paste("cluster_code_changes_",
-                                         conf$boundaries$tag[i], ".pdf",
-                                         sep="")),
-               g, width=7, height=7)
+      g <- ggplot(clusters.stats, aes(x = cluster.id, y = total)) +
+        geom_boxplot(position = "dodge") +
+        scale_y_sqrt() +
+        xlab("Cluster No.") +
+        ylab("Amount of code changes (add+del)")
+      ggsave(
+        file.path(graphdir, paste("cluster_code_changes_",
+          conf$boundaries$tag[i], ".pdf",
+          sep = ""
+        )),
+        g,
+        width = 7, height = 7
+      )
     }
   })
 
@@ -278,34 +314,46 @@ do.cluster.analysis <- function(resdir, graphdir, conf,
   ## Stage 2: Perform global operations on all releases
   ## TODO: Augment the date labels with release specifications; additionally,
   ## sort the clusters by average page rank per release
-  logdevinfo("Preparing global cluster plots", logger="analyse_ts")
+  logdevinfo("Preparing global cluster plots", logger = "analyse_ts")
 
   ## Only consider releases that do have clusters
   valid.idx <- sapply(clusters.stats.list, function(x) {
-      length(x$cluster.id) > 0 })
+    length(x$cluster.id) > 0
+  })
   clusters.stats.list <- clusters.stats.list[valid.idx]
   clusters.all <- do.call(rbind, clusters.stats.list)
 
-  clusters.summary.all <- do.call(rbind, lapply(clusters.stats.list,
-                                                summarise.clusters.stats))
+  clusters.summary.all <- do.call(rbind, lapply(
+    clusters.stats.list,
+    summarise.clusters.stats
+  ))
 
   ## For very small projects, it can happen that there is not even a single
   ## subcluster for all releases
   if (!all(sapply(clusters.all, is.null))) {
-    g <- ggplot(clusters.all, aes(x=cluster.id, y=rankValue)) +
-      geom_boxplot(position="dodge") + scale_y_log10() + xlab("Cluster No.") +
-        ylab("Page rank") + facet_wrap(~cycle, scales="free_x")
-    ggsave(file.path(graphdir, "cluster_prank_ts.pdf"), g, width=12, height=8)
+    g <- ggplot(clusters.all, aes(x = cluster.id, y = rankValue)) +
+      geom_boxplot(position = "dodge") +
+      scale_y_log10() +
+      xlab("Cluster No.") +
+      ylab("Page rank") +
+      facet_wrap(~cycle, scales = "free_x")
+    ggsave(file.path(graphdir, "cluster_prank_ts.pdf"), g, width = 12, height = 8)
 
-    clusters.molten <- melt(clusters.all, id.vars=c("cluster.id", "cycle"),
-                            measure.vars=c("rankValue", "total", "numcommits"))
+    clusters.molten <- melt(clusters.all,
+      id.vars = c("cluster.id", "cycle"),
+      measure.vars = c("rankValue", "total", "numcommits")
+    )
     clusters.molten$cycle <- as.factor(clusters.molten$cycle)
 
-    g <- ggplot(clusters.molten, aes(x=cluster.id, y=value)) +
-      geom_boxplot(position="dodge") + scale_y_log10() + xlab("Cluster No.") +
-        ylab("Magnitude of covariate") + facet_grid(variable~cycle, scales="free")
+    g <- ggplot(clusters.molten, aes(x = cluster.id, y = value)) +
+      geom_boxplot(position = "dodge") +
+      scale_y_log10() +
+      xlab("Cluster No.") +
+      ylab("Magnitude of covariate") +
+      facet_grid(variable ~ cycle, scales = "free")
     ggsave(file.path(graphdir, "cluster_comparison_ts.pdf"), g,
-           width=12, height=8)
+      width = 12, height = 8
+    )
   }
 }
 
@@ -326,15 +374,15 @@ clusters.simple.similarity <- function(conf, c1.id, c2.id) {
 
   clust.isct <- intersect(c1.members, c2.members)
 
-  if (length(clust.isct) < MIN.SIMILARITY/100*smaller.size) {
-    return (0.0)
+  if (length(clust.isct) < MIN.SIMILARITY / 100 * smaller.size) {
+    return(0.0)
   }
 
-  return(length(clust.isct)/larger.size)
+  return(length(clust.isct) / larger.size)
 }
 
 ## Compute a mapping which clusters belong together across releases
-determine.cluster.mapping <- function(conf, cluster.method=cluster.methods[1]) {
+determine.cluster.mapping <- function(conf, cluster.method = cluster.methods[1]) {
   if (!cluster.method.valid(cluster.method)) {
     stop("Internal error: Specify a supported clustering type!")
   }
@@ -359,59 +407,63 @@ determine.cluster.mapping <- function(conf, cluster.method=cluster.methods[1]) {
 
     ## boundaries.index can be used as index into conf$boundaries
     ## to determine
-    return(data.frame(new.cluster=TRUE, label=NA, cluster.id=cluster.ids,
-                      boundaries.index=i))
+    return(data.frame(
+      new.cluster = TRUE, label = NA, cluster.id = cluster.ids,
+      boundaries.index = i
+    ))
   })
 
   ## Labelling the clusters in the first release is simple: Just use
   ## consecutive numbers. Every cluster is necessarily new.
-  res[[1]]$label = 0:(length(res[[1]]$label)-1)
+  res[[1]]$label <- 0:(length(res[[1]]$label) - 1)
   next.label <- length(res[[1]]$label)
 
   ## Compute similarities between all clusters in range i and the
   ## clusters in range i+1.
-  for (i in 1:(length(res)-1)) {
-    logdevinfo(paste("Computing for range", i), logger="analyze_ts")
-    clust.sim <- expand.grid(c1=res[[i]]$cluster.id,
-                             c2=res[[i+1]]$cluster.id)
+  for (i in 1:(length(res) - 1)) {
+    logdevinfo(paste("Computing for range", i), logger = "analyze_ts")
+    clust.sim <- expand.grid(
+      c1 = res[[i]]$cluster.id,
+      c2 = res[[i + 1]]$cluster.id
+    )
     clust.sim$sim <- sapply(1:dim(clust.sim)[1], function(j) {
-      c.ids <- clust.sim[j,]
+      c.ids <- clust.sim[j, ]
       ## We could save some effort by querying the cluster members once
       ## and then re-using the results.
       return(clusters.simple.similarity(conf, c.ids$c1, c.ids$c2))
     })
 
     ## Remove total mismatches, and sort the matches by decreasing strength
-    clust.sim <- clust.sim[clust.sim$sim>0,]
-    clust.sim <- clust.sim[sort(clust.sim$sim, index.return=TRUE, decreasing=TRUE)$ix,]
+    clust.sim <- clust.sim[clust.sim$sim > 0, ]
+    clust.sim <- clust.sim[sort(clust.sim$sim, index.return = TRUE, decreasing = TRUE)$ix, ]
 
     ## Systematically pick the best matches
     for (j in 1:dim(clust.sim)[1]) {
       ## Given the assignment from c1 to c2, determine which label c1 has in
       ## the previous range
-      c1 = clust.sim[j,]$c1
-      c2 = clust.sim[j,]$c2
+      c1 <- clust.sim[j, ]$c1
+      c2 <- clust.sim[j, ]$c2
 
-      label.c1 <- res[[i]][which(res[[i]]$cluster.id == c1),]$label
+      label.c1 <- res[[i]][which(res[[i]]$cluster.id == c1), ]$label
 
       ## If c2 does not yet have a label (labels that were assigned earlier
       ## have higher prio because they stem from higher similarity values)
       ## _and_ if the label is not yet used, assign it to c2
-      label.c2 <- res[[i+1]][which(res[[i+1]]$cluster.id == c2),]$label
+      label.c2 <- res[[i + 1]][which(res[[i + 1]]$cluster.id == c2), ]$label
 
-      if(is.na(label.c2) & !(label.c1 %in% res[[i+1]]$label)) {
-        res[[i+1]][which(res[[i+1]]$cluster.id == c2),]$label <- label.c1
+      if (is.na(label.c2) & !(label.c1 %in% res[[i + 1]]$label)) {
+        res[[i + 1]][which(res[[i + 1]]$cluster.id == c2), ]$label <- label.c1
       }
     }
 
     ## Finally, assign new labels to all clusters that have not been
     ## labelled yet.
-    unlabelled.idx <- which(is.na(res[[i+1]]$label))
-    labelled.idx <- which(!is.na(res[[i+1]]$label))
+    unlabelled.idx <- which(is.na(res[[i + 1]]$label))
+    labelled.idx <- which(!is.na(res[[i + 1]]$label))
 
     if (length(unlabelled.idx) > 0) {
-      res[[i+1]][unlabelled.idx,]$label <-
-        next.label:(next.label+length(unlabelled.idx)-1)
+      res[[i + 1]][unlabelled.idx, ]$label <-
+        next.label:(next.label + length(unlabelled.idx) - 1)
     }
 
     next.label <- next.label + length(unlabelled.idx)
@@ -419,7 +471,7 @@ determine.cluster.mapping <- function(conf, cluster.method=cluster.methods[1]) {
     ## Mark all clusters that have been carried over from the
     ## previous release
     if (length(labelled.idx) > 0) {
-      res[[i+1]][labelled.idx,]$new.cluster <- FALSE
+      res[[i + 1]][labelled.idx, ]$new.cluster <- FALSE
     }
   }
 
@@ -430,7 +482,7 @@ do.commit.analysis <- function(resdir, graphdir, conf) {
   subset <- c("CmtMsgBytes", "ChangedFiles", "DiffSize", "NumTags", "inRC")
   ts <- get.commits.by.ranges(conf, subset, normalise.commit.dat)
 
-  logdevinfo("Plotting the commit information time series", logger="analyse_ts")
+  logdevinfo("Plotting the commit information time series", logger = "analyse_ts")
   ## Stage 1: Plot the complete commit information time series
   ts <- do.call(rbind, ts)
 
@@ -453,7 +505,8 @@ do.commit.analysis <- function(resdir, graphdir, conf) {
   }
 
   ts.molten <- melt(ts[c("revision", "date", subset)],
-                    id=id.types)
+    id = id.types
+  )
   if (has.rcs) {
     levels(ts.molten$inRC) <- c("No", "Yes")
   }
@@ -461,19 +514,19 @@ do.commit.analysis <- function(resdir, graphdir, conf) {
   ## TODO: Does not work when date is used instead of revision,
   ## which is the desirable alternative
   if (has.rcs) {
-    g <- ggplot(data=ts.molten, aes(x=revision, y=value, colour=inRC))
+    g <- ggplot(data = ts.molten, aes(x = revision, y = value, colour = inRC))
   } else {
-    g <- ggplot(data=ts.molten, aes(x=revision, y=value))
+    g <- ggplot(data = ts.molten, aes(x = revision, y = value))
   }
 
-  g <- g + geom_boxplot(fill="NA") + scale_y_log10() +
-    facet_wrap(~variable, scales="free") + xlab("Revision") +
-      ylab("Value (log. scale)") +
-      scale_colour_discrete("Release\nCandidate")
-  ggsave(file.path(graphdir, "ts_commits.pdf"), g, width=12, height=8)
+  g <- g + geom_boxplot(fill = "NA") + scale_y_log10() +
+    facet_wrap(~variable, scales = "free") + xlab("Revision") +
+    ylab("Value (log. scale)") +
+    scale_colour_discrete("Release\nCandidate")
+  ggsave(file.path(graphdir, "ts_commits.pdf"), g, width = 12, height = 8)
 
   ## Export the SVG representation to the data base
-  ggsave(file.path(graphdir, "ts_commits.svg"), g, width=12, height=8)
+  ggsave(file.path(graphdir, "ts_commits.svg"), g, width = 12, height = 8)
   dat.svg <- readLines(file.path(graphdir, "ts_commits.svg"))
   ## TODO: Do the actual DB export
   file.remove(file.path(graphdir, "ts_commits.svg"))
@@ -484,33 +537,35 @@ do.commit.analysis <- function(resdir, graphdir, conf) {
   max.year <- year(max(ts.molten$date))
 
   dummy <- sapply(seq(min.year, max.year), function(year) {
-    if (dim(ts.molten[year(ts.molten$date)==year,])[1] == 0) {
-      logdevinfo(paste("Skipping annual commit time series for", year, "(no release)"), logger="analyse_ts")
+    if (dim(ts.molten[year(ts.molten$date) == year, ])[1] == 0) {
+      logdevinfo(paste("Skipping annual commit time series for", year, "(no release)"), logger = "analyse_ts")
       return(NA)
     }
-    logdevinfo(paste("Creating annual commit time series for", year), logger="analyse_ts")
-    dat <- ts.molten[year(ts.molten$date)==year,]
+    logdevinfo(paste("Creating annual commit time series for", year), logger = "analyse_ts")
+    dat <- ts.molten[year(ts.molten$date) == year, ]
 
     # Don't plot tagging information if there are no tags
-    has.tags <- sum(dat[dat$variable=="NumTags",]$value)
+    has.tags <- sum(dat[dat$variable == "NumTags", ]$value)
 
     if (!has.tags) {
-      dat <- dat[dat$variable!="NumTags",]
+      dat <- dat[dat$variable != "NumTags", ]
     }
 
     if (has.rcs) {
-      g <- ggplot(data=dat, aes(x=revision, y=value, colour=inRC))
+      g <- ggplot(data = dat, aes(x = revision, y = value, colour = inRC))
     } else {
-      g <- ggplot(data=dat, aes(x=revision, y=value))
+      g <- ggplot(data = dat, aes(x = revision, y = value))
     }
-    g <- g + geom_boxplot(fill="NA") + scale_y_log10() +
-        facet_wrap(~variable, scales="free") + xlab("Revision") +
-        ylab("Value (log. scale)") +
-        scale_colour_discrete("Release\nCandidate") +
-        ggtitle(paste("Commit time series for year", year))
-    ggsave(file.path(graphdir, paste("ts_commits_", year, ".pdf", sep="")),
-           g, width=12, height=8)
-    })
+    g <- g + geom_boxplot(fill = "NA") + scale_y_log10() +
+      facet_wrap(~variable, scales = "free") + xlab("Revision") +
+      ylab("Value (log. scale)") +
+      scale_colour_discrete("Release\nCandidate") +
+      ggtitle(paste("Commit time series for year", year))
+    ggsave(file.path(graphdir, paste("ts_commits_", year, ".pdf", sep = "")),
+      g,
+      width = 12, height = 8
+    )
+  })
 }
 
 do.ts.analysis <- function(resdir, graphdir, conf) {
@@ -524,51 +579,60 @@ do.ts.analysis <- function(resdir, graphdir, conf) {
   ## version of boundaries used for plotting which includes
   ## the boundaries
   ranges <- ddply(series.merged, .(type), summarise,
-                  ymin=min(value), ymax=max(value))
+    ymin = min(value), ymax = max(value)
+  )
 
   num.types <- length(unique(ranges$type))
   res <- vector("list", num.types)
   for (i in 1:num.types) {
-    res[[i]] <- cbind(conf$boundaries, ranges[i,])
+    res[[i]] <- cbind(conf$boundaries, ranges[i, ])
   }
   boundaries.plot <- do.call(rbind, res)
 
   ## Visualisation
   ## TODO: log and sqrt transform are reasonable for the averaged, but not
   ## for the cumulative series
-  g <- ggplot(series.merged, aes(x=time, y=value)) + geom_line() +
-    facet_grid(type~., scale="free_y") +
-    geom_vline(aes(xintercept=as.numeric(date.end), colour="red"),
-               data=boundaries.plot) +
+  g <- ggplot(series.merged, aes(x = time, y = value)) +
+    geom_line() +
+    facet_grid(type ~ ., scale = "free_y") +
+    geom_vline(aes(xintercept = as.numeric(date.end), colour = "red"),
+      data = boundaries.plot
+    ) +
     scale_fill_manual(values = alpha(c("blue", "red"), .1)) +
-    xlab("Time") + ylab("Amount of changes") +
-    ggtitle(paste("Code changes for project '", conf$description, "'", sep=""))
+    xlab("Time") +
+    ylab("Amount of changes") +
+    ggtitle(paste("Code changes for project '", conf$description, "'", sep = ""))
 
   ## na.omit is required to remove all cycles that don't contain
   ## rc regions.
   if (dim(na.omit(boundaries.plot))[1] > 0) {
     ## Only plot release candidate regions if there are any, actually
-    g <- g + geom_rect(aes(NULL, NULL, xmin=date.rc.start,
-                           xmax=date.end, ymin=ymin, ymax=ymax, fill="blue"),
-                       data=na.omit(boundaries.plot))
-
+    g <- g + geom_rect(
+      aes(NULL, NULL,
+        xmin = date.rc.start,
+        xmax = date.end, ymin = ymin, ymax = ymax, fill = "blue"
+      ),
+      data = na.omit(boundaries.plot)
+    )
   }
 
-  ggsave(file.path(graphdir, "ts.pdf"), g, width=16, height=7)
+  ggsave(file.path(graphdir, "ts.pdf"), g, width = 16, height = 7)
 
   ## Store the complete time series information into the database
-  logdevinfo("Storing time series data into database", logger="analyse_ts")
+  logdevinfo("Storing time series data into database", logger = "analyse_ts")
   for (type in unique(series.merged$type)) {
     plot.name <- str_c("Progress TS [", type, "]")
     plot.id <- get.clear.plot.id(conf, plot.name)
 
-    series.sub <- series.merged[series.merged$type==type,]
+    series.sub <- series.merged[series.merged$type == type, ]
 
-    dat <- data.frame(time=as.character(series.sub$time),
-                      value=series.sub$value,
-                      value_scaled=series.sub$value.scaled,
-                      plotId=plot.id)
-    res <- dbWriteTable(conf$con, "timeseries", dat, append=TRUE, row.names=FALSE)
+    dat <- data.frame(
+      time = as.character(series.sub$time),
+      value = series.sub$value,
+      value_scaled = series.sub$value.scaled,
+      plotId = plot.id
+    )
+    res <- dbWriteTable(conf$con, "timeseries", dat, append = TRUE, row.names = FALSE)
     if (!res) {
       stop("Internal error: Could not write timeseries into database!")
     }
@@ -579,20 +643,25 @@ do.ts.analysis <- function(resdir, graphdir, conf) {
   max.year <- year(max(series.merged$time))
 
   dummy <- sapply(seq(min.year, max.year), function(year) {
-    logdevinfo(paste("Creating annual time series for", year), logger="analyse_ts")
-    g.year <- g + xlim(dmy(paste("1-1-", year, sep=""), quiet=TRUE, tz = "UTC"),
-                       dmy(paste("31-12-", year, sep=""), quiet=TRUE, tz = "UTC")) +
-              ggtitle(paste("Code changes in ", year, " for project '",
-                            conf$description, "'", sep=""))
+    logdevinfo(paste("Creating annual time series for", year), logger = "analyse_ts")
+    g.year <- g + xlim(
+      dmy(paste("1-1-", year, sep = ""), quiet = TRUE, tz = "UTC"),
+      dmy(paste("31-12-", year, sep = ""), quiet = TRUE, tz = "UTC")
+    ) +
+      ggtitle(paste("Code changes in ", year, " for project '",
+        conf$description, "'",
+        sep = ""
+      ))
 
-    ggsave(paste(graphdir, "/ts_", year, ".pdf", sep=""), g.year,
-           width=16, height=7)
+    ggsave(paste(graphdir, "/ts_", year, ".pdf", sep = ""), g.year,
+      width = 16, height = 7
+    )
   })
   ## All-in-one graph with scaled axes (ugly)
-#  g <- ggplot(series.merged, aes(x=time, y=value.scaled, colour=type)) +
-#    geom_line() + geom_vline(aes(xintercept=as.numeric(rel.date)),
-#                             data=full.ts$releases)
-#  print(g)
+  #  g <- ggplot(series.merged, aes(x=time, y=value.scaled, colour=type)) +
+  #    geom_line() + geom_vline(aes(xintercept=as.numeric(rel.date)),
+  #                             data=full.ts$releases)
+  #  print(g)
 }
 
 ## Perform analyses that concern the per-release structure of projects
@@ -606,11 +675,13 @@ do.release.analysis <- function(resdir, graphdir, conf) {
   plot.id <- get.clear.plot.id(conf, plot.name)
 
   dat <- compute.release.distance(series.merged, conf)
-  if (!is.na(dat)) { # if too few revisions are present, skip further analysis
-    dat <- data.frame(time=as.character(conf$boundaries$date.end[-1]), value=dat,
-                      value_scaled=dat, plotId=plot.id)
+  if (!all(is.na(dat))) { # if too few revisions are present, skip further analysis
+    dat <- data.frame(
+      time = as.character(conf$boundaries$date.end[-1]), value = dat,
+      value_scaled = dat, plotId = plot.id
+    )
 
-    res <- dbWriteTable(conf$con, "timeseries", dat, append=TRUE, row.names=FALSE)
+    res <- dbWriteTable(conf$con, "timeseries", dat, append = TRUE, row.names = FALSE)
     if (!res) {
       stop("Internal error: Could not write release distance TS into database!")
     }
@@ -624,152 +695,167 @@ do.release.analysis <- function(resdir, graphdir, conf) {
 ## Given the sloccount time series fragments in dat, create
 ## coherent time series for a particular type and store the resulting
 ## time series in the data base
-process.sloccount.ts <- function(con, pid, dat, type="total.cost") {
-    if (!(type %in% c("person.months", "total.cost", "schedule.months",
-                      "avg.devel"))) {
-        type <- "total.cost"
+process.sloccount.ts <- function(con, pid, dat, type = "total.cost") {
+  if (!(type %in% c(
+    "person.months", "total.cost", "schedule.months",
+    "avg.devel"
+  ))) {
+    type <- "total.cost"
+  }
+
+  ## Adaptively change values to suitable units
+  if (type == "total.cost") {
+    if (max(dat$total.cost) > 5000 * 1000) {
+      dat$total.cost <- dat$total.cost / (1000 * 1000)
+      total.cost.unit <- "MEUR"
+    } else if (max(dat$total.cost) > 5000) {
+      dat$total.cost <- dat$total.cost / 1000
+      total.cost.unit <- "kEUR"
+    } else {
+      total.cost.unit <- "EUR"
     }
+  }
 
-    ## Adaptively change values to suitable units
-    if (type =="total.cost") {
-        if (max(dat$total.cost) > 5000*1000) {
-            dat$total.cost <- dat$total.cost/(1000*1000)
-            total.cost.unit <- "MEUR"
-        } else if (max(dat$total.cost) > 5000) {
-            dat$total.cost <- dat$total.cost/1000
-            total.cost.unit <- "kEUR"
-        } else {
-            total.cost.unit <- "EUR"
-        }
+  if (type == "person.months" || type == "schedule.months") {
+    if (max(dat[, type]) > 24) {
+      dat[, type] <- dat[, type] / 12
+      duration.unit <- "Years"
+    } else {
+      duration.unit <- "Months"
     }
+  }
 
-    if (type=="person.months" || type=="schedule.months") {
-        if (max(dat[,type]) > 24) {
-            dat[,type] <- dat[,type]/12
-            duration.unit <- "Years"
-        } else {
-            duration.unit <- "Months"
-        }
-    }
+  label <- switch(type,
+    person.months = str_c("Person ", duration.unit),
+    total.cost = str_c("Cost [", total.cost.unit, "]"),
+    avg.devel = "Average # of Developers",
+    schedule.months = str_c("Scheduled duration [", duration.unit, "]")
+  )
 
-    label <- switch(type,
-                    person.months = str_c("Person ", duration.unit),
-                    total.cost = str_c("Cost [", total.cost.unit, "]"),
-                    avg.devel = "Average # of Developers",
-                    schedule.months = str_c("Scheduled duration [", duration.unit, "]"))
+  ## It's admissible to remove outliers for the ressource plots because
+  ## all measured/derived quantities are supposed to be continuous.
+  ## Since we randomly select commits to obtain snapshots that are analysed,
+  ## outliers are possible when we hit a commit on a branch that is substantially
+  ## different than the surrounding main development state.
+  dat.ts <- xts(dat[, type], order.by = dat$time)
+  dat.ts <- na.omit(apply.monthly(dat.ts, median))
+  ts.df <- ts.to.df(dat.ts)
 
-    ## It's admissible to remove outliers for the ressource plots because
-    ## all measured/derived quantities are supposed to be continuous.
-    ## Since we randomly select commits to obtain snapshots that are analysed,
-    ## outliers are possible when we hit a commit on a branch that is substantially
-    ## different than the surrounding main development state.
-    dat.ts <- xts(dat[,type], order.by=dat$time)
-    dat.ts <- na.omit(apply.monthly(dat.ts, median))
-    ts.df <- ts.to.df(dat.ts)
-
-    return(list(ts.df=ts.df, label=label))
+  return(list(ts.df = ts.df, label = label))
 }
 
 ## Dispatch sloccount time series construction for the various possible
 ## alternatives
 do.sloccount.analysis <- function(conf, pid) {
-    if (conf$sloccount == FALSE) {
-      return(NULL)
+  if (conf$sloccount == FALSE) {
+    return(NULL)
+  }
+
+  ## The plot id has already been created in complexity.r
+  plot.id <- get.plot.id(conf, "sloccount")
+  dat <- query.sloccount.ts(conf$con, plot.id)
+
+  for (type in c(
+    "person.months", "total.cost", "schedule.months",
+    "avg.devel"
+  )) {
+    res <- process.sloccount.ts(conf$con, pid, dat, type)
+
+    plot.name <- str_c("sloccount (", type, ")")
+    plot.id <- get.clear.plot.id(conf, plot.name, labely = res$label)
+
+    dat.out <- data.frame(
+      time = res$ts.df$t, value = res$ts.df$val,
+      value_scaled = 0, plotId = plot.id
+    )
+
+    res <- dbWriteTable(conf$con, "timeseries", dat.out,
+      append = TRUE,
+      row.names = FALSE
+    )
+    if (!res) {
+      stop("Internal error: Could not sloccount TS into database!")
     }
-
-    ## The plot id has already been created in complexity.r
-    plot.id <- get.plot.id(conf, "sloccount")
-    dat <- query.sloccount.ts(conf$con, plot.id)
-
-    for (type in c("person.months", "total.cost", "schedule.months",
-                   "avg.devel")) {
-        res <- process.sloccount.ts(conf$con, pid, dat, type)
-
-        plot.name <- str_c("sloccount (", type, ")")
-        plot.id <- get.clear.plot.id(conf, plot.name, labely=res$label)
-
-        dat.out <- data.frame(time=res$ts.df$t, value=res$ts.df$val,
-                              value_scaled=0, plotId=plot.id)
-
-        res <- dbWriteTable(conf$con, "timeseries", dat.out, append=TRUE,
-                            row.names=FALSE)
-        if (!res) {
-            stop("Internal error: Could not sloccount TS into database!")
-        }
-    }
+  }
 }
 
 ## Compute time serie based on understand complexity analysis results
 do.understand.analysis <- function(conf, pid) {
-    if (conf$understand == FALSE) {
-      return(NULL)
+  if (conf$understand == FALSE) {
+    return(NULL)
+  }
+
+  ## The plot id for the raw data has already been created in complexity.r
+  plot.id.base <- get.plot.id(conf, "understand_raw")
+
+  ## Choose two metrics as example. Other suitable metrics
+  ## should be determined.
+  for (type in c("RatioCommentToCode", "CountPath")) {
+    dat <- query.understand.ts(conf$con, plot.id.base, type)
+
+    plot.name <- str_c("Understand (", type, ")")
+    plot.id <- get.clear.plot.id(conf, plot.name, labely = type)
+
+    dat.out <- data.frame(
+      time = dat$time, value = dat$value,
+      value_scaled = 0, plotId = plot.id
+    )
+
+    res <- dbWriteTable(conf$con, "timeseries", dat.out,
+      append = TRUE,
+      row.names = FALSE
+    )
+    if (!res) {
+      stop("Internal error: Could not write understand TS into database!")
     }
-
-    ## The plot id for the raw data has already been created in complexity.r
-    plot.id.base <- get.plot.id(conf, "understand_raw")
-
-    ## Choose two metrics as example. Other suitable metrics
-    ## should be determined.
-    for (type in c("RatioCommentToCode", "CountPath")) {
-        dat <- query.understand.ts(conf$con, plot.id.base, type)
-
-        plot.name <- str_c("Understand (", type, ")")
-        plot.id <- get.clear.plot.id(conf, plot.name, labely=type)
-
-        dat.out <- data.frame(time=dat$time, value=dat$value,
-                              value_scaled=0, plotId=plot.id)
-
-        res <- dbWriteTable(conf$con, "timeseries", dat.out, append=TRUE,
-                            row.names=FALSE)
-        if (!res) {
-            stop("Internal error: Could not write understand TS into database!")
-        }
-    }
+  }
 }
 
 
 ######################### Dispatcher ###################################
 config.script.run({
-  conf <- config.from.args(positional.args=list("resdir"),
-                           require.project=TRUE)
+  conf <- config.from.args(
+    positional.args = list("resdir"),
+    require.project = TRUE
+  )
   resdir <- conf$resdir
   graphdir <- file.path(resdir, "graphs")
-  logdevinfo(paste("graphdir is", graphdir), logger="analyze_ts")
-  dir.create(graphdir, showWarnings=FALSE, recursive=TRUE)
+  logdevinfo(paste("graphdir is", graphdir), logger = "analyze_ts")
+  dir.create(graphdir, showWarnings = FALSE, recursive = TRUE)
 
   if (conf$profile) {
     ## R cannot store line number profiling information before version 3.
     if (R.Version()$major >= 3) {
-      Rprof(filename="ts.rprof", line.profiling=TRUE)
+      Rprof(filename = "ts.rprof", line.profiling = TRUE)
     } else {
-      Rprof(filename="ts.rprof")
+      Rprof(filename = "ts.rprof")
     }
   }
 
   conf <- init.mc(conf)
   do.ts.analysis(resdir, graphdir, conf)
-  logdevinfo("-> Finished time series base analysis", logger="analyse_ts")
+  logdevinfo("-> Finished time series base analysis", logger = "analyse_ts")
   ## NOTE: The processed (smoothed, cumulated) time series are available in the
   ## database only after do.ts.analysis(), so this task does not commute
   ## with the ones below.
 
   do.commit.analysis(resdir, graphdir, conf)
-  logdevinfo("-> Finished commit analysis", logger="analyse_ts")
+  logdevinfo("-> Finished commit analysis", logger = "analyse_ts")
 
   do.cluster.analysis(resdir, graphdir, conf)
-  logdevinfo("-> Finished cluster analysis", logger="analyse_ts")
+  logdevinfo("-> Finished cluster analysis", logger = "analyse_ts")
 
   do.release.analysis(resdir, graphdir, conf)
-  logdevinfo("-> Finished release analysis", logger="analyse_ts")
+  logdevinfo("-> Finished release analysis", logger = "analyse_ts")
 
   do.update.timezone.information(conf, conf$pid)
-  logdevinfo("-> Finished time zone analysis", logger="analyse_ts")
+  logdevinfo("-> Finished time zone analysis", logger = "analyse_ts")
 
   do.sloccount.analysis(conf, conf$pid)
-  logdevinfo("-> Finished sloccount time series analysis", logger="analyse_ts")
+  logdevinfo("-> Finished sloccount time series analysis", logger = "analyse_ts")
 
   do.understand.analysis(conf, conf$pid)
-  logdevinfo("-> Finished complexity time series analysis", logger="analyse_ts")
+  logdevinfo("-> Finished complexity time series analysis", logger = "analyse_ts")
 
   Rprof(NULL)
 })
