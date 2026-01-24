@@ -19,14 +19,14 @@
 library(png)
 library(grid)
 
-source("../../timezones.r", chdir=TRUE)
+source("../../timezones.r", chdir = TRUE)
 
 ## This image was obtained from
 ## http://commons.wikimedia.org/wiki/File:UTC_hue4map_X_world_Robinson.png
 ## License: Creative Commons CC0 1.0 Universal Public Domain Dedication
 ## It is modified to ease computer identification of the time zones as
 ## described in the following.
-image <- readPNG("tz.png")
+image <- readPNG("/app/codeface/R/shiny/widgets/tz.png")
 
 ## Map red/green values in the map onto time zones:
 ## "Red" values can be:
@@ -40,18 +40,18 @@ image <- readPNG("tz.png")
 ## where intensity must be between 0.0 and 1.0. Zones where intensity
 ## is 0 are treated as "not active".
 get.tz.image <- function(timezone.intensity) {
-  image.int <- image*255
+  image.int <- image * 255
   new.image <- image
-  where.0x80 <- image.int[,,1] == 0x80
-  where.0x40 <- image.int[,,1] == 0x40
-  where.0x41 <- image.int[,,1] == 0x41
+  where.0x80 <- image.int[, , 1] == 0x80
+  where.0x40 <- image.int[, , 1] == 0x40
+  where.0x41 <- image.int[, , 1] == 0x41
   where.any <- where.0x80 | where.0x40 | where.0x41
   ## Set all land areas to be black at 20% opacity
-  new.image[,,1:3][where.any] <- 0.0
-  new.image[,,4][where.any] <- 0.2
+  new.image[, , 1:3][where.any] <- 0.0
+  new.image[, , 4][where.any] <- 0.2
 
   for (name in names(timezone.intensity)) {
-    raw.intensity <-  timezone.intensity[[name]]
+    raw.intensity <- timezone.intensity[[name]]
     if (raw.intensity > 0) {
       if (name %in% tz.no.dst) {
         index.green <- which(tz.no.dst == name)
@@ -67,10 +67,10 @@ get.tz.image <- function(timezone.intensity) {
       }
       ## Set selected areas to be red with the opacity
       ## proportional to the intensity (but at least 20%)
-      intensity <- raw.intensity*(1 - 0.2) + 0.2
-      where <- index.red & (image.int[,,2] == index.green)
-      new.image[,,1][where] <- 1.0
-      new.image[,,4][where] <- intensity
+      intensity <- raw.intensity * (1 - 0.2) + 0.2
+      where <- index.red & (image.int[, , 2] == index.green)
+      new.image[, , 1][where] <- 1.0
+      new.image[, , 4][where] <- intensity
     }
   }
   new.image
@@ -103,7 +103,7 @@ renderWidget.widget.timezones.test1 <- function(w) {
 listViews.widget.timezones.test1 <- function(w) {
   reactive({
     tz <- 0:length(timezones)
-    names(tz)[2:(length(timezones)+1)] <- timezones
+    names(tz)[2:(length(timezones) + 1)] <- timezones
     names(tz)[1] <- "All"
     tz
   })
@@ -122,7 +122,7 @@ renderWidget.widget.timezones.test2 <- function(w) {
     # this is: num [1:745, 1:1425, 1:4]
     active.tz <- list()
     minutes <- as.integer(w$view())
-    active.zones <- timestamp.offset.to.timezone(as.POSIXct(1400000000, origin="1970-01-01"), minutes)
+    active.zones <- timestamp.offset.to.timezone(as.POSIXct(1400000000, origin = "1970-01-01"), minutes)
     for (tz in active.zones) {
       active.tz[tz] <- 1.0
     }
@@ -133,7 +133,7 @@ renderWidget.widget.timezones.test2 <- function(w) {
 
 listViews.widget.timezones.test2 <- function(w) {
   reactive({
-    minutes <- (-12*2):(12*2)*30
+    minutes <- (-12 * 2):(12 * 2) * 30
     names(minutes) <- as.character(minutes)
     minutes
   })
@@ -153,31 +153,42 @@ initWidget.widget.timezones.commits <- function(w) {
   w <- NextMethod(w)
   w$data <- reactive({
     ## Query all commits that have author timezones
-    res <- dbGetQuery(conf$con, str_c("SELECT authorTimezones,",
-                                      " COUNT(*) as count",
-                                      " FROM commit WHERE",
-                                      " projectId=", w$pid(),
-                                      " GROUP BY authorTimezones"
-                                      ))
+    res <- dbGetQuery(conf$con, str_c(
+      "SELECT authorTimezones, ",
+      " COUNT(*) as count",
+      " FROM commit WHERE",
+      " projectId=", w$pid(),
+      " GROUP BY authorTimezones"
+    ))
 
     ## Set up a list of timezone names : 0
-    tzcount <- lapply(timezones, function(x) {0})
+    tzcount <- lapply(timezones, function(x) {
+      0
+    })
     names(tzcount) <- timezones
 
     ## Process all commits and fill the list
     lst <- Reduce(function(l, i) {
       if (!is.na(res$authorTimezones[[i]])) {
-        zones <- unlist(strsplit(res$authorTimezones[[i]], split=";",
-                                 fixed=TRUE))
-        l[zones] <- unlist(l[zones]) + res$count[[i]]
+        zones <- unlist(strsplit(res$authorTimezones[[i]],
+          split = ";",
+          fixed = TRUE
+        ))
+        # Only process zones that exist in our timezone list
+        valid_zones <- zones[zones %in% names(l)]
+        if (length(valid_zones) > 0) {
+          l[valid_zones] <- unlist(l[valid_zones]) + res$count[[i]]
+        }
       }
       l
-    }, 1:nrow(res), init=tzcount)
+    }, 1:nrow(res), init = tzcount)
 
     ## Normalise intensity to the maximum number of commits in a time zone
     max.val <- max(unlist(lst))
     if (max.val > 0) {
-      lst <- lapply(lst, function(x) { x * 1.0/max.val })
+      lst <- lapply(lst, function(x) {
+        x * 1.0 / max.val
+      })
     }
     lst
   })
@@ -212,9 +223,10 @@ renderWidget.widget.timezones.commits <- function(w) {
     grid.raster(this.image)
 
     if (no.data) {
-      grid.text("No data available!", rot=20,
-                gp=gpar(fontsize=40, col="darkgrey"))
+      grid.text("No data available!",
+        rot = 20,
+        gp = gpar(fontsize = 40, col = "darkgrey")
+      )
     }
   })
 }
-

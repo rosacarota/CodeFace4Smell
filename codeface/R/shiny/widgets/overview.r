@@ -17,16 +17,26 @@
 ## All Rights Reserved.
 
 ## This file should contain the overview widgets for the main dashboard
-source("../symbols.r", chdir=TRUE)
-source("../figures.of.merit.r", chdir=TRUE)
+source("../symbols.r", chdir = TRUE)
+source("../figures.of.merit.r", chdir = TRUE)
 
 combine.status <- function(status.list) {
   status.individual <- c(unlist(status.list))
+  # Remove error statuses
   status.individual <- status.individual[!(as.integer(status.individual) == as.integer(status.error))]
+  # Remove NA values
+  status.individual <- status.individual[!is.na(status.individual)]
+
   if (length(status.individual) == 0) {
     status.error
   } else {
-    as.status(status.codes[mean(status.individual)])
+    # Convert to integer for mean calculation, then back to status
+    mean.val <- mean(as.integer(status.individual))
+    if (is.na(mean.val)) {
+      status.error
+    } else {
+      as.status(status.codes[round(mean.val)])
+    }
   }
 }
 
@@ -40,7 +50,7 @@ as.color <- function(status) {
   status.codes.colors[[which(status.codes == status)]]
 }
 
-good.warn.bad.if <- function(x, good.limit, warn.limit, err.limit=0) {
+good.warn.bad.if <- function(x, good.limit, warn.limit, err.limit = 0) {
   if (x > good.limit) {
     status.good
   } else if (x > warn.limit) {
@@ -59,32 +69,38 @@ text.enumerate <- function(lst) {
   } else if (l == 1) {
     return(as.character(lst[[1]]))
   } else {
-    paste(do.call(function(...) { paste(..., sep=", ") }, as.list(lst[1:l-1])), "and", lst[l])
+    paste(do.call(function(...) {
+      paste(..., sep = ", ")
+    }, as.list(lst[1:l - 1])), "and", lst[l])
   }
 }
 
 ## Provide a round status indicator with the given background color
 ## and containing the specified symbol.
 make.indicator <- function(symbol, color) {
-  div(style=paste("margin: auto; ", "width: 50px; ", "height: 50px;",
-                  " -webkit-border-radius: 25px;",
-                  "-moz-border-radius: 25px;",
-                  "border-radius: 25px;",
-                  #"border-width:0.1px; border-style:solid; border-color:black;",
-                  "box-shadow: 2px 2px 2.5px rgb(0,0,0);",
-                  "line-height: 50px; text-align: center; vertical-align: middle;",
-                  "font-size: 30px;",
-                  "background-color:", color, ";"),
-                  symbol)
+  div(
+    style = paste(
+      "margin: auto; ", "width: 50px; ", "height: 50px;",
+      " -webkit-border-radius: 25px;",
+      "-moz-border-radius: 25px;",
+      "border-radius: 25px;",
+      # "border-width:0.1px; border-style:solid; border-color:black;",
+      "box-shadow: 2px 2px 2.5px rgb(0,0,0);",
+      "line-height: 50px; text-align: center; vertical-align: middle;",
+      "font-size: 30px;",
+      "background-color:", color, ";"
+    ),
+    symbol
+  )
 }
 
 
 ## Return HTML for an overview box
-overview.html <- function(title, bigtext, subtitle, link, subtitle.size="100%") {
+overview.html <- function(title, bigtext, subtitle, link, subtitle.size = "100%") {
   tagList(
-    tags$div(class="grid_title", title),
-    tags$div(class='grid_bigtext', style="font-size:120px; line-height: 80px; text-align: center", bigtext),
-    tags$div(style=paste("font-size:", subtitle.size, "; text-align: center; font-size: 60px; line-height: 40px; margin-top: 25px"), subtitle)
+    tags$div(class = "grid_title", title),
+    tags$div(class = "grid_bigtext", style = "font-size:120px; line-height: 80px; text-align: center", bigtext),
+    tags$div(style = paste("font-size:", subtitle.size, "; text-align: center; font-size: 60px; line-height: 40px; margin-top: 25px"), subtitle)
   )
 }
 
@@ -92,8 +108,12 @@ overview.html <- function(title, bigtext, subtitle, link, subtitle.size="100%") 
 initWidget.widget.overview <- function(w) {
   # Call superclass
   w <- NextMethod(w)
-  w$project.name <- reactive({query.project.name(conf$con, w$pid())})
-  w$cycles <- reactive({get.cycles.con(conf$con, w$pid())})
+  w$project.name <- reactive({
+    query.project.name(conf$con, w$pid())
+  })
+  w$cycles <- reactive({
+    get.cycles.con(conf$con, w$pid())
+  })
   w$data <- reactive({
     pid <- w$pid()
     cycles <- w$cycles()
@@ -115,8 +135,8 @@ createWidgetClass(
   "Project Processing Status", "Short, one-widget project processing status",
   c("invisible"),
   1, 1,
-  html=htmlOutput,
-  detailpage=list()
+  html = htmlOutput,
+  detailpage = list()
 )
 
 initWidget.widget.overview.processing <- function(w) {
@@ -125,7 +145,11 @@ initWidget.widget.overview.processing <- function(w) {
   w$status <- reactive({
     list(
       commits = good.warn.bad.if(w$data()$n.commits, 100, 10),
-      timeseries = if (w$data()$n.tsplots > 0) { status.good } else { status.bad },
+      timeseries = if (w$data()$n.tsplots > 0) {
+        status.good
+      } else {
+        status.bad
+      },
       issues = good.warn.bad.if(w$data()$n.issues, 10, 0),
       ml = good.warn.bad.if(w$data()$n.mail.threads, 100, 10),
       complexity = good.warn.bad.if(w$data()$n.understand.plots, 1, 0)
@@ -146,23 +170,26 @@ renderWidget.widget.overview.processing <- function(w) {
     indicator.ml <- make.indicator(symbol.email, as.color(w$status()$ml))
     indicator.complexity <- make.indicator(symbol.analysis, as.color(w$status()$complexity))
 
-    link <- paste("?projectid=", w$pid(), sep="")
-    overview.html(w$project.name(), indicator.summary,
-              tags$table(width="100%", tags$tr(
-                                 tags$td(indicator.commits),
-                                 tags$td(indicator.timeseries),
-                                 tags$td(indicator.issues),
-                                 tags$td(indicator.ml),
-                                 tags$td(indicator.complexity)
-                                 )),
-              link
+    link <- paste("?projectid=", w$pid(), sep = "")
+    overview.html(
+      w$project.name(), indicator.summary,
+      tags$table(width = "100%", tags$tr(
+        tags$td(indicator.commits),
+        tags$td(indicator.timeseries),
+        tags$td(indicator.issues),
+        tags$td(indicator.ml),
+        tags$td(indicator.complexity)
+      )),
+      link
     )
   })
 }
 
 widgetColor.widget.overview.processing <- function(w) {
   ## Also consider errors as "bad"
-  reactive({as.color(status.codes[mean(c(unlist(w$status())))])})
+  reactive({
+    as.color(status.codes[mean(c(unlist(w$status())))])
+  })
 }
 
 
@@ -172,8 +199,8 @@ createWidgetClass(
   "Project Summary", "Short, one-widget project summary",
   NULL, # no topical restrictions
   1, 1,
-  html=htmlOutput,
-  detailpage=list(app="dashboard", topic="overview")
+  html = htmlOutput,
+  detailpage = list(app = "dashboard", topic = "overview")
 )
 
 initWidget.widget.overview.project <- function(w) {
@@ -201,15 +228,16 @@ renderWidget.widget.overview.project <- function(w) {
     indicator.communication <- make.indicator(symbol.communication, as.color(w$status()$communication))
     indicator.complexity <- make.indicator(symbol.complexity, as.color(w$status()$complexity))
 
-    link <- paste("?projectid=", w$pid(), sep="")
-    overview.html(w$project.name(), indicator.summary,
-              tags$table(width="100%", tags$tr(
-                                 tags$td(indicator.collaboration),
-                                 tags$td(indicator.construction),
-                                 tags$td(indicator.communication),
-                                 tags$td(indicator.complexity)
-                                 )),
-              link
+    link <- paste("?projectid=", w$pid(), sep = "")
+    overview.html(
+      w$project.name(), indicator.summary,
+      tags$table(width = "100%", tags$tr(
+        tags$td(indicator.collaboration),
+        tags$td(indicator.construction),
+        tags$td(indicator.communication),
+        tags$td(indicator.complexity)
+      )),
+      link
     )
   })
 }
@@ -233,16 +261,16 @@ widgetExplanation.widget.overview.project <- function(w) {
     }
     res <- list()
     if (length(good) > 0) {
-      res <- c(res, paste("This project has good marks in ", text.enumerate(good), ".", sep=""))
+      res <- c(res, paste("This project has good marks in ", text.enumerate(good), ".", sep = ""))
     }
     if (length(warn) > 0) {
-      res <- c(res, paste("Warnings have been reported for ", text.enumerate(warn), ".", sep=""))
+      res <- c(res, paste("Warnings have been reported for ", text.enumerate(warn), ".", sep = ""))
     }
     if (length(bad) > 0) {
-      res <- c(res, paste("There seem to be problems in ", text.enumerate(bad), ".", sep=""))
+      res <- c(res, paste("There seem to be problems in ", text.enumerate(bad), ".", sep = ""))
     }
     if (length(error) > 0) {
-      res <- c(res, paste("No analysis has been done for ", text.enumerate(error), ".", sep=""))
+      res <- c(res, paste("No analysis has been done for ", text.enumerate(error), ".", sep = ""))
     }
     res <- c(res, "Click 'details...' to get more information on the evaluations.")
     do.call(paste, res)
@@ -256,8 +284,8 @@ createWidgetClass(
   "Communication", "Information on how developers communicate",
   c("overview", "communication"),
   1, 1,
-  html=htmlOutput,
-  detailpage=list(app="dashboard", topic="communication")
+  html = htmlOutput,
+  detailpage = list(app = "dashboard", topic = "communication")
 )
 
 createWidgetClass(
@@ -265,8 +293,8 @@ createWidgetClass(
   "Collaboration", "Information on how developers collaborate",
   c("overview", "collaboration"),
   1, 1,
-  html=htmlOutput,
-  detailpage=list(app="dashboard", topic="collaboration")
+  html = htmlOutput,
+  detailpage = list(app = "dashboard", topic = "collaboration")
 )
 
 createWidgetClass(
@@ -274,8 +302,8 @@ createWidgetClass(
   "Complexity", "Information on code complexity",
   c("overview", "complexity"),
   1, 1,
-  html=htmlOutput,
-  detailpage=list(app="dashboard", topic="complexity")
+  html = htmlOutput,
+  detailpage = list(app = "dashboard", topic = "complexity")
 )
 
 createWidgetClass(
@@ -283,56 +311,80 @@ createWidgetClass(
   "Construction", "Information on the construction and architecture of the project",
   c("overview", "construction"),
   1, 1,
-  html=htmlOutput,
-  detailpage=list(app="dashboard", topic="construction")
+  html = htmlOutput,
+  detailpage = list(app = "dashboard", topic = "construction")
 )
 
 initWidget.widget.overview.communication <- function(w) {
   # Call superclass
   w <- NextMethod(w)
-  w$figure.of.merit <- reactive({ figure.of.merit.communication(w$pid()) })
+  w$figure.of.merit <- reactive({
+    figure.of.merit.communication(w$pid())
+  })
   w$symbol <- symbol.communication
   w$symbols <- symbols.emotion
-  w$link <- reactive({ paste("?topic=communication&projectid=", w$pid(), sep="") })
-  w$status <- reactive({ w$figure.of.merit()$status })
+  w$link <- reactive({
+    paste("?topic=communication&projectid=", w$pid(), sep = "")
+  })
+  w$status <- reactive({
+    w$figure.of.merit()$status
+  })
   return(w)
 }
 
 initWidget.widget.overview.collaboration <- function(w) {
   # Call superclass
   w <- NextMethod(w)
-  w$figure.of.merit <- reactive({ figure.of.merit.collaboration(w$pid()) })
+  w$figure.of.merit <- reactive({
+    figure.of.merit.collaboration(w$pid())
+  })
   w$symbol <- symbol.collaboration
   w$symbols <- symbols.gestures
-  w$link <- reactive({ paste("?topic=collaboration&projectid=", w$pid(), sep="") })
-  w$status <- reactive({ w$figure.of.merit()$status })
+  w$link <- reactive({
+    paste("?topic=collaboration&projectid=", w$pid(), sep = "")
+  })
+  w$status <- reactive({
+    w$figure.of.merit()$status
+  })
   return(w)
 }
 
 initWidget.widget.overview.construction <- function(w) {
   # Call superclass
   w <- NextMethod(w)
-  w$figure.of.merit <- reactive({ figure.of.merit.construction(w$pid()) })
+  w$figure.of.merit <- reactive({
+    figure.of.merit.construction(w$pid())
+  })
   w$symbol <- symbol.construction
   w$symbols <- symbols.abstract
-  w$link <- reactive({ paste("?topic=construction&projectid=", w$pid(), sep="") })
-  w$status <- reactive({ w$figure.of.merit()$status })
+  w$link <- reactive({
+    paste("?topic=construction&projectid=", w$pid(), sep = "")
+  })
+  w$status <- reactive({
+    w$figure.of.merit()$status
+  })
   return(w)
 }
 
 initWidget.widget.overview.complexity <- function(w) {
   # Call superclass
   w <- NextMethod(w)
-  w$figure.of.merit <- reactive({ figure.of.merit.complexity(w$pid()) })
+  w$figure.of.merit <- reactive({
+    figure.of.merit.complexity(w$pid())
+  })
   w$symbol <- symbol.complexity
   w$symbols <- symbols.arrows.up.is.bad
-  w$link <- reactive({ paste("?topic=complexity&projectid=", w$pid(), sep="") })
-  w$status <- reactive({ w$figure.of.merit()$status })
+  w$link <- reactive({
+    paste("?topic=complexity&projectid=", w$pid(), sep = "")
+  })
+  w$status <- reactive({
+    w$figure.of.merit()$status
+  })
   return(w)
 }
 
 renderWidget.widget.overview.topic <- function(w) {
-  #reactive({list(text=intToUtf8(0x2197), subtext="++")})
+  # reactive({list(text=intToUtf8(0x2197), subtext="++")})
   renderUI({
     status.symbol <- w$symbols[[which(names(w$symbols) == w$status())]]
     overview.html(w$name, status.symbol, w$symbol, w$link(), "400%")
@@ -352,4 +404,3 @@ widgetExplanation.widget.overview.topic <- function(w) {
     w$figure.of.merit()$why
   })
 }
-

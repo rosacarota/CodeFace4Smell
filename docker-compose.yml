@@ -21,7 +21,7 @@ services:
       - "3306:3306"
     command: --max-allowed-packet=256M
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -58,7 +58,7 @@ services:
       - ./res:/app/res
       - ./log:/app/log
     ports:
-      - "8100:8100"  # id_service
+      - "8100:8100" # id_service
     networks:
       - codeface-network
     stdin_open: true
@@ -90,14 +90,17 @@ services:
       # Results and logs (needed to display analysis data)
       - ./res:/app/res:ro
       - ./log:/app/log
+      # Git repositories (needed by some widgets)
+      - ./repos:/app/repos:ro
       # R package cache
       - r-libs:/opt/Rlibs:ro
+      # Shiny Server configuration
+      - ./docker/shiny-server.conf:/etc/shiny-server/shiny-server.conf:ro
     ports:
       - "8081:8081"
     networks:
       - codeface-network
-    command: >
-      R -e "shiny::runApp('/app/codeface/R/shiny/apps/dashboard', host='0.0.0.0', port=8081)"
+    command: shiny-server
 
 # ============================================================================
 # Volumes

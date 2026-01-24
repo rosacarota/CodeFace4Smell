@@ -101,7 +101,7 @@ RUN apt-get update -qq && \
     apt-get install -y --no-install-recommends \
     # Core tools
     git subversion nodejs exuberant-ctags sloccount screen \
-    graphviz doxygen libgraphviz-dev astyle xsltproc diffstat \
+    graphviz doxygen libgraphviz-dev astyle xsltproc diffstat gdebi-core \
     # Build tools (pkg-config omitted - pkgconf already installed by cmake)
     build-essential gcc gfortran cmake g++ \
     # Libraries
@@ -140,6 +140,16 @@ RUN mkdir -p /etc/R /opt/Rlibs && \
     echo "MAKEFLAGS = -j$(nproc)" > /etc/R/Makevars.site && \
     # Configure Java for rJava
     R CMD javareconf
+
+# ============================================================================
+# 3.5. Install Shiny Server
+# ============================================================================
+RUN wget https://download3.rstudio.org/ubuntu-18.04/x86_64/shiny-server-1.5.22.1017-amd64.deb && \
+    gdebi -n shiny-server-1.5.22.1017-amd64.deb && \
+    rm shiny-server-1.5.22.1017-amd64.deb && \
+    # Create log directory (shiny user is created by the package)
+    mkdir -p /app/log/shiny-server && \
+    chown -R shiny:shiny /app/log/shiny-server
 
 # ============================================================================
 # 4. Node.js Environment
