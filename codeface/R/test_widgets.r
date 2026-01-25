@@ -16,31 +16,35 @@
 # Copyright 2013 by Siemens AG, Johannes Ebke <johannes.ebke.ext@siemens.com>
 
 library(testthat)
-source("shiny/apps/common.server.r", chdir=TRUE)
-source("shiny/widgets.r", chdir=TRUE)
+source("shiny/apps/common.server.r", chdir = TRUE)
+source("shiny/widgets.r", chdir = TRUE)
 
 # Only look at the first project in the database
-projects.selected = 1:1
+projects.selected <- 1:1
 
-for(pid.num in projects.list$id[projects.selected]) {
-  #print(paste("Testing PID", pid.num))
-  pid <- reactive({ pid.num })
+for (pid.num in projects.list$id[projects.selected]) {
+  # print(paste("Testing PID", pid.num))
+  pid <- reactive({
+    pid.num
+  })
   pid.num <- isolate(pid())
-  #observe({ print(paste("Observing PID", pid())) })
-  for(widget in widget.list) {
+  # observe({ print(paste("Observing PID", pid())) })
+  for (widget in widget.list) {
     name <- widget$widget.classes[[1]]
-    #print(paste("PID:", pid.num, "Testing widget:", widget$widget.classes[[1]]))
+    # print(paste("PID:", pid.num, "Testing widget:", widget$widget.classes[[1]]))
     test_that(paste(name, "can be created for project", pid.num), {
       w <- newWidget(widget, pid)
+      expect_is(w, "widget")
     })
     test_that(paste(name, "can be initialized for project", pid.num), {
       w <- initWidget(newWidget(widget, pid))
+      expect_is(w, "widget")
     })
     test_that(paste(name, "can be listed for project", pid.num), {
       w <- initWidget(newWidget(widget, pid))
       l <- listViews(w)
       isolate(l())
+      expect_is(w, "widget")
     })
   }
 }
-

@@ -29,36 +29,78 @@ This guide covers everything you need to know about running Codeface using Docke
 
 ### Run an Analysis (Example: PHP)
 
-1. Enter the main application container:
+1. Create `repos/` directory and clone the repository on your machine:
    ```bash
-   docker-compose exec codeface-app bash
-   ```
-
-2. Inside the container, clone the repository to analyze:
-   ```bash
-   cd /app/repos
+   mkdir -p repos
+   cd repos
    git clone https://github.com/php/php-src.git
+   cd ..
    ```
-
-3. Run the analysis command:
+   
+2. Run the analysis:
    ```bash
-   cd /app
-   codeface run -c codeface.conf -p conf/php.conf res/php repos
+   docker-compose exec codeface-app codeface run -c codeface.conf -p conf/php.conf res/php repos
    ```
 
-4. View results in the Shiny Dashboard (http://localhost:8081).
+3. View results in the Shiny Dashboard at **http://localhost:8081**
+
+> **Note**: The `repos/` directory is mounted from your host machine and excluded from git.
+> Repositories cloned here persist even when containers are recreated.
 
 ## 3. Architecture
 
 The setup consists of 3 connected services:
 
-- **`codeface-db`**: MariaDB database (stores analysis data).
-- **`codeface-app`**: Main application container (runs the Python/R analysis tools).
-- **`codeface-shiny`**: R Shiny server (hosts the visualization dashboard).
+- **`codeface-db`**: MariaDB 10.11 database (stores analysis data)
+- **`codeface-app`**: Main application container (runs Python/R analysis tools)
+- **`codeface-shiny`**: R Shiny Server (hosts the interactive dashboard)
 
-Data is persisted in Docker volumes (`mysql-data`, `r-libs`) and local folders (`res`, `log`).
+### Data Persistence
 
-## 4. Troubleshooting
+- **Docker Volumes**: `mysql-data` (database), `r-libs` (R packages)
+- **Local Mounts**: `./repos` (git repositories), `./res` (results), `./log` (logs)
+
+### Installed Packages
+
+**System Tools:**
+- **Version Control**: Git, Subversion
+- **Build Tools**: CMake, gcc, g++, gfortran
+- **Code Analysis**: srcML, sloccount, diffstat, exuberant-ctags
+- **Visualization**: Graphviz, Doxygen
+- **Documentation**: LaTeX (texlive-latex-base, texlive-latex-extra, texlive-luatex)
+
+**R Packages (Core):**
+- **Shiny**: shiny, shinyGridster, shinybootstrap2
+- **Database**: DBI, RMySQL
+- **Data**: data.table, zoo, xts, lubridate
+- **Visualization**: ggplot2, gridExtra, scales, Rgraphviz
+- **Text**: tm, wordcloud, SnowballC
+- **Network**: igraph, sna
+- **Utilities**: stringr, plyr, reshape2, devtools
+
+**Python Packages:**
+- **Database**: pymysql
+- **Scientific**: scipy, numpy, matplotlib
+- **Parsing**: lxml
+- **Testing**: pytest, testresources
+
+**Node.js:**
+- ID service for entity resolution (runs on port 8100)
+
+## 4. System Requirements
+
+**Minimum:**
+- 8 GB RAM allocated to Docker
+- 20 GB free disk space
+- Docker Desktop 4.0+
+- Stable internet connection (for initial build)
+
+**Recommended:**
+- 16 GB RAM allocated to Docker
+- 50 GB free disk space (for large repositories)
+- SSD for better I/O performance
+
+## 5. Troubleshooting
 
 ### Build Issues
 - **Timeouts**: If dependency installation fails, check your internet connection and try building again.
@@ -83,7 +125,9 @@ To stop everything and delete all data (database and results):
 docker-compose down -v
 ```
 
-## 5. Development
+## 6. Development
 
 - **Configuration**: Edit `codeface.conf` for global settings or `conf/*.conf` for project settings.
 - **Logs**: Check `./log/` directory for detailed application logs.
+- **R Package Development**: Packages are cached in `r-libs` volume for faster rebuilds.
+- **Database Access**: Connect to `localhost:3306` with credentials from `codeface.conf`.

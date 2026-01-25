@@ -1,0 +1,41 @@
+name: R Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Start containers
+      run: docker-compose up -d
+    
+    - name: Wait for services
+      run: sleep 30
+    
+    - name: Run R utility tests
+      run: |
+        docker-compose exec -T codeface-app Rscript -e "source('codeface/R/test_utils.r')"
+    
+    - name: Run R developer classification tests
+      run: |
+        docker-compose exec -T codeface-app Rscript -e "source('codeface/R/test_developer_classification.r')"
+    
+    - name: Run R breadcrumb tests
+      run: |
+        docker-compose exec -T codeface-app Rscript -e "source('codeface/R/test_breadcrumb.r')"
+    
+    - name: Show logs on failure
+      if: failure()
+      run: docker-compose logs codeface-app
+    
+    - name: Cleanup
+      if: always()
+      run: docker-compose down -v

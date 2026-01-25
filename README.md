@@ -1,79 +1,171 @@
-# Installation# CodeFace4Smell
+# CodeFace4Smell
 
-**CodeFace4Smell** is a fork of CodeFace (https://github.com/siemens/codeface) extended for smell analysis.
+**CodeFace4Smell** is a fork of [CodeFace](https://github.com/siemens/codeface) extended for code smell analysis and software evolution research.
 
-## Docker Setup (Recommended)
+##  Quick Start (Docker)
 
-For detailed instructions, see **[DOCKER_GUIDE.md](DOCKER_GUIDE.md)**.
+**Prerequisites:**
+- Docker Desktop ([Install](https://www.docker.com/products/docker-desktop/))
+- Git
+- 8-16 GB RAM allocated to Docker
 
-### Quick Start
+**Setup:**
 ```bash
+# 1. Clone the repository
+git clone https://github.com/rosacarota/CodeFace4Smell.git
+cd CodeFace4Smell
+
+# 2. Build and start containers
 docker-compose up -d --build
+
+# 3. Access the dashboard
+# Open http://localhost:8081 in your browser
 ```
-Access dashboard at: http://localhost:8081
 
-## Vagrant Setup (Legacy)
-The recommended way to set up a Codeface instance is via
-vagrant. Clone the repository and run
+**Run an analysis:**
+```bash
+# 1. Clone a repository to analyze
+mkdir -p repos
+cd repos
+git clone https://github.com/php/php-src.git
+cd ..
 
-	vagrant up
+# 2. Run analysis
+docker-compose exec codeface-app codeface run -c codeface.conf -p conf/php.conf res/php repos
 
-to obtain a fully provisioned Codeface machine. Vagrant defaults to
-Virtualbox as provider, which may cause large performance impacts
-especially for I/O heavy tasks. You can /alternatively/ use
+# 3. View results at http://localhost:8081
+```
+ **For detailed instructions, see [DOCKER_GUIDE.md](DOCKER_GUIDE.md)**
 
-	vagrant up --provider=lxc
+## What's Included
 
-if you have the corresponding LXC provider for vagrant installed on
-your system. To access the machine in each case, use
+### Docker Services
+- **codeface-db**: MariaDB 10.11 database for analysis data
+- **codeface-app**: Main analysis engine (Python + R + Git tools)
+- **codeface-shiny**: R Shiny Server for interactive dashboard
 
-	vagrant ssh
+### Key Features
+- **Multi-language analysis**: Python, R, C++, JavaScript
+- **Git repository analysis**: Commit history, contributors, collaboration patterns
+- **Code metrics**: Complexity, SLOC, code smells
+- **Interactive dashboard**: Real-time visualization with R Shiny
+- **Mailing list analysis**: Communication patterns (optional)
+- **Time series analysis**: Evolution tracking across releases
 
-## Analysis Setup
+### Installed Tools & Packages
 
-To get a `codeface` executable in your `$PATH`; go to `$CFDIR` and run:
+**System Tools:**
+- Git, Subversion, CMake, srcML
+- diffstat, sloccount, exuberant-ctags
+- Graphviz, Doxygen, LaTeX (for reports)
 
-        python setup.py develop --user
+**R Packages:**
+- Core: shiny, DBI, RMySQL, ggplot2, igraph
+- Dashboard: shinyGridster, shinybootstrap2
+- Analysis: tm, wordcloud, zoo, xts, lubridate
+- Visualization: Rgraphviz, gridExtra, scales
 
-To analyse a project:
+**Python Packages:**
+- Database: pymysql
+- Analysis: scipy, numpy, matplotlib
+- Utilities: lxml, testresources
 
-* Clone the desired git repositories into some directory
-* Download the desired mailing lists into some directory
-* Start the ID server: `cd $CFDIR/id_service/; nodejs id_service.js ../codeface.conf`
-* Run `codeface`, see the command line help for usage examples
+**Node.js:**
+- ID service for entity resolution
 
-## Web server setup
-There are two options to set up an instance of the web frontend server:
+## Project Structure
 
-* Using a self-contained tarball prepared on a machine with proper
-  internet connection (to be deployed on machines without network
-  access or behind restrictive corporate firewalls):
-  Run `bash shiny-server-pack.sh`, copy the resulting
-  `shiny-server-pack.tar.gz` to the destination machine and unpack
-  it into $CFDIR. Start the server with `shiny-server.sh`.
+```
+CodeFace4Smell/
+├── codeface/           # Main application code
+│   ├── R/             # R analysis scripts
+│   │   └── shiny/     # Dashboard apps
+│   └── *.py           # Python analysis modules
+├── conf/              # Project configurations
+├── docker/            # Docker configuration files
+├── repos/             # Git repositories to analyze (not in git)
+├── res/               # Analysis results
+├── log/               # Application logs
+├── Dockerfile         # Docker image definition
+└── docker-compose.yml # Multi-container setup
+```
 
-* Global installation: Run
+## Configuration
 
-        sudo -E npm install -g \
-        https://github.com/JohannesEbke/shiny-server/archive/no-su.tar.gz
+### Global Settings (`codeface.conf`)
+- Database connection
+- ID service port
+- Analysis tool toggles (sloccount, understand)
 
-  to install shiny server (respectively the customised version which
-  supports operation without root privileges) into the global
-  node package repo. Start with
+### Project Settings (`conf/*.conf`)
+- Repository path
+- Release tags/revisions
+- Mailing list sources (optional)
+- Analysis parameters
 
-        shiny-server shiny-server.config
+## Dashboard Features
 
-  in `$CFDIR`.
+Access the Shiny dashboard at `http://localhost:8081` to view:
 
-  In the default configuration, the web frontend is available
-  on http://localhost:8081/.
+- **Project Overview**: Health indicators for Collaboration, Construction, Communication, Complexity
+- **Commit Analysis**: Developer activity, timezone distribution
+- **Release Analysis**: Time series metrics across versions
+- **Collaboration Networks**: Developer interaction graphs
+- **Code Metrics**: Complexity trends, SLOC evolution
 
-## Generate HTML Documentation
+## Troubleshooting
 
-* To generate the Sphinx documentation for the codeface python classes, go
-  to $CFDIR and run:
+**Dashboard not loading:**
+```bash
+docker-compose logs codeface-shiny
+docker-compose restart codeface-shiny
+```
 
-        python setup.py build_sphinx
+**Analysis fails:**
+```bash
+docker-compose logs codeface-app
+# Check that repository exists in repos/
+```
 
-The resulting documentation is found in `$CFDIR/build/sphinx/html`
-* To generate the python HTML documentation, run `python setup.py`.
+**Database issues:**
+```bash
+docker-compose logs codeface-db
+# Reset database:
+docker-compose down -v
+docker-compose up -d
+```
+
+## Documentation
+
+- **[DOCKER_GUIDE.md](DOCKER_GUIDE.md)** - Comprehensive Docker setup guide
+- **[repos/README.md](repos/README.md)** - Repository management
+- **Python API**: Run `python setup.py build_sphinx` (output in `build/sphinx/html`)
+
+##  Research & Citations
+
+CodeFace is designed for empirical software engineering research. If you use this tool in your research, please cite the original CodeFace project.
+
+## License
+
+See LICENSE file for details.
+
+## Contributing
+
+This is a research fork. For the original project, see [siemens/codeface](https://github.com/siemens/codeface).
+
+---
+
+## Legacy Setup (Not Recommended)
+
+<details>
+<summary>Vagrant Setup (Deprecated)</summary>
+
+The original Vagrant-based setup is no longer maintained. Use Docker instead.
+
+If you must use Vagrant:
+```bash
+vagrant up
+vagrant ssh
+```
+
+</details>

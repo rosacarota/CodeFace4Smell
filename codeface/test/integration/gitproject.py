@@ -243,4 +243,3 @@ class GitProject(object):
 
     def mbox_contents(self, mlist):
         return ("\n\n".join(self._mboxes.get(mlist, [])) + "\n\n").lstrip()
-

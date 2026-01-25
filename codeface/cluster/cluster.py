@@ -1543,25 +1543,25 @@ def computeProximityLinks(fileCommitList, cmtList, id_mgr, link_type, \
     #                                 cmtList, id_mgr, link_type, startDate)
     #                                 for fileSnapShot
     #                                 in fileCommit.getFileSnapShots().items()]
-
     for fileCommit in fileCommitList.values():
         if speedUp:
-            # se qui fileCommit è un oggetto "file", passagli lo snapshot, non l’oggetto
+            # PASSA L'OGGETTO, non il dict snapshot
             computeSnapshotCollaboration(
-                fileCommit.getFileSnapShot(),
-                cmtList=cmtList,
-                id_mgr=id_mgr,
-                link_type=link_type,
-                startDate=startDate
+                fileCommit,
+                cmtList,
+                id_mgr,
+                link_type,
+                startDate
             )
         else:
+            # Qui abbiamo tanti snapshot in momenti diversi (commit_id è la snapshot commit)
             for commit_id, snapshot in fileCommit.getFileSnapShots().items():
                 computeSnapshotCollaboration(
                     snapshot,
-                    cmtList=[commit_id],
-                    id_mgr=id_mgr,
-                    link_type=link_type,
-                    startDate=startDate
+                    cmtList,
+                    id_mgr,
+                    link_type,
+                    startDate
                 )
 
 
