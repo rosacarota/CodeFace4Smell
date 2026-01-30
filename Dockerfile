@@ -175,19 +175,13 @@ COPY setup.py pyproject.toml ./
 # Use packages.R which handles the custom R library setup
 RUN echo "[Docker] Installing R packages from packages.R..." && \
     Rscript packages.R 2>&1 | tee /tmp/r-install.log || { \
-    echo "[Docker] ⚠️  Some R packages failed, checking log..."; \
+    echo "[Docker] Some R packages failed, checking log..."; \
     cat /tmp/r-install.log; \
     echo "[Docker] Attempting minimal install..."; \
     Rscript packages.minimal.R; \
     }
 
-# Install Shiny-specific packages (separate step to avoid breaking main build)
-COPY install-shiny.R ./
-RUN echo "[Docker] Installing Shiny dashboard packages..." && \
-    Rscript install-shiny.R 2>&1 | tee /tmp/shiny-install.log || { \
-    echo "[Docker] ⚠️  Shiny packages failed, dashboard may not work"; \
-    cat /tmp/shiny-install.log; \
-    }
+
 
 # Install Python requirements with fallback for platform-specific packages
 RUN echo "[Docker] Installing Python requirements..." && \

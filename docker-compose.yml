@@ -57,6 +57,8 @@ services:
       # Results and logs
       - ./res:/app/res
       - ./log:/app/log
+      # Git repositories (needed for analysis)
+      - ./repos:/app/repos
     ports:
       - "8100:8100" # id_service
     networks:
