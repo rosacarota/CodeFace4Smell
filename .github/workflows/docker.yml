@@ -21,9 +21,24 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: |
+            image=moby/buildkit:latest
+            network=host
 
-      - name: Build images
-        run: docker compose build
+      - name: Build images with cache
+        run: docker compose build --pull
+
+      - name: Save Docker images
+        run: |
+          docker save $(docker compose config --images | tr '\n' ' ') | gzip > docker-images.tar.gz
+
+      - name: Upload Docker images artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-images
+          path: docker-images.tar.gz
+          retention-days: 1
 
       - name: Start containers
         run: docker compose up -d
@@ -31,15 +46,25 @@ jobs:
       - name: Show container status
         run: docker compose ps
 
+      - name: Wait for database
+        run: |
+          echo "Waiting for database to be ready..."
+          timeout 60 bash -c 'until docker compose exec -T codeface-db mysqladmin ping -h localhost -uroot -proot --silent 2>/dev/null; do sleep 2; done'
+          echo "Database is ready!"
+
       - name: Smoke test (Shiny on :8081)
         shell: bash
         run: |
           set -e
           echo "Waiting for Shiny (http://localhost:8081) ..."
           for i in {1..30}; do
-            if curl -fsS http://localhost:8081 >/dev/null; then
+            if curl -fsS http://localhost:8081 > /dev/null 2>&1; then
               echo "Shiny Server is accessible!"
-              exit 0
+              # Verify it's actually Shiny content
+              if curl -fsS http://localhost:8081 | grep -qi "shiny\|R\|dashboard"; then
+                echo "✅ Shiny Server verified!"
+                exit 0
+              fi
             fi
             echo "  not ready yet ($i/30) ..."
             sleep 5
