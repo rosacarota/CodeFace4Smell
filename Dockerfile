@@ -63,8 +63,8 @@ FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive \
     NEEDRESTART_MODE=a \
-    R_LIBS_USER=/opt/Rlibs \
-    R_LIBS_SITE=/opt/Rlibs \
+    R_LIBS_USER=/opt/Rlibs.baked \
+    R_LIBS_SITE=/opt/Rlibs.baked \
     R_INSTALL_STAGED=false \
     WNHOME=/usr/share/wordnet \
     WNSEARCHDIR=/usr/share/wordnet/dict
@@ -131,10 +131,9 @@ RUN apt-get update -qq && \
 # ============================================================================
 # 3. R Environment Setup
 # ============================================================================
-RUN mkdir -p /etc/R /opt/Rlibs && \
-    chmod 777 /opt/Rlibs && \
-    # Configure R to use /opt/Rlibs
-    echo '.libPaths(unique(c("/opt/Rlibs", .libPaths())))' > /etc/R/Rprofile.site && \
+RUN mkdir -p /etc/R /opt/Rlibs /opt/Rlibs.baked && \
+    chmod 777 /opt/Rlibs /opt/Rlibs.baked && \
+    echo '.libPaths(unique(c("/opt/Rlibs", "/opt/Rlibs.baked", .libPaths())))' > /etc/R/Rprofile.site && \
     echo 'options(repos = c(CRAN = "https://cloud.r-project.org"))' >> /etc/R/Rprofile.site && \
     # Parallel builds
     echo "MAKEFLAGS = -j$(nproc)" > /etc/R/Makevars.site && \

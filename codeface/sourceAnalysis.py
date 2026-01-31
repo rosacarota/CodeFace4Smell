@@ -20,17 +20,18 @@ class FileAnalysis:
         # Run source code analysis and generate xml files
         input_file = 'INPUT=' + self.filename
         output_dir = 'OUTPUT_DIRECTORY=' + self.outdir
-        cmd_1 = ['cat', self.conf]
-        p1 = Popen(cmd_1 ,stdout=PIPE)
-        doxy_conf = p1.communicate()[0]
-        doxy_conf = doxy_conf + input_file + '\n'
-        doxy_conf = doxy_conf + output_dir
 
-        cmd = 'doxygen -'
-        cmd_2 = cmd.split()
-        p2 = Popen(cmd_2, stdin=PIPE, stdout=PIPE, stderr=PIPE)
-        p2.stdin.write(doxy_conf)
-        p2.communicate()
+        # Read config file directly using Python 
+        with open(self.conf, 'r') as f:
+            doxy_conf = f.read()
+
+        doxy_conf = doxy_conf + '\n' + input_file + '\n'
+        doxy_conf = doxy_conf + output_dir + '\n'
+
+        cmd = ['doxygen', '-']
+        p2 = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        # Pass input as bytes
+        p2.communicate(input=doxy_conf.encode('utf-8'))
 
     def _parse_XML_index(self):
         # Parse index file generate by deoxygen that contains the compound

@@ -13,7 +13,7 @@ concurrency:
 jobs:
   docker:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 60
 
     steps:
       - name: Checkout
@@ -21,35 +21,39 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        with:
-          driver-opts: |
-            image=moby/buildkit:latest
-            network=host
 
-      - name: Build images with cache
-        run: docker compose build --pull
-
-      - name: Save Docker images
+      - name: Build image (GHA cache)
         run: |
-          docker save $(docker compose config --images | tr '\n' ' ') | gzip > docker-images.tar.gz
+          docker buildx build \
+            --cache-from type=gha \
+            --cache-to type=gha,mode=max \
+            --load \
+            -t codeface4smell:ci \
+            -f Dockerfile \
+            .
 
-      - name: Upload Docker images artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: docker-images
-          path: docker-images.tar.gz
-          retention-days: 1
+      - name: Create compose override for CI
+        run: |
+          cat > docker-compose.ci.yml <<'YAML'
+          services:
+            codeface-app:
+              image: codeface4smell:ci
+              build: null
+            codeface-shiny:
+              image: codeface4smell:ci
+              build: null
+          YAML
 
       - name: Start containers
-        run: docker compose up -d
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml up -d
 
       - name: Show container status
-        run: docker compose ps
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml ps
 
       - name: Wait for database
         run: |
           echo "Waiting for database to be ready..."
-          timeout 60 bash -c 'until docker compose exec -T codeface-db mysqladmin ping -h localhost -uroot -proot --silent 2>/dev/null; do sleep 2; done'
+          timeout 60 bash -c 'until docker compose -f docker-compose.yml -f docker-compose.ci.yml exec -T codeface-db mysqladmin ping -h localhost -uroot -proot --silent 2>/dev/null; do sleep 2; done'
           echo "Database is ready!"
 
       - name: Smoke test (Shiny on :8081)
@@ -59,8 +63,6 @@ jobs:
           echo "Waiting for Shiny (http://localhost:8081) ..."
           for i in {1..30}; do
             if curl -fsS http://localhost:8081 > /dev/null 2>&1; then
-              echo "Shiny Server is accessible!"
-              # Verify it's actually Shiny content
               if curl -fsS http://localhost:8081 | grep -qi "shiny\|R\|dashboard"; then
                 echo "✅ Shiny Server verified!"
                 exit 0
@@ -75,9 +77,9 @@ jobs:
       - name: Logs on failure
         if: failure()
         run: |
-          docker compose ps || true
-          docker compose logs --no-color || true
+          docker compose -f docker-compose.yml -f docker-compose.ci.yml ps || true
+          docker compose -f docker-compose.yml -f docker-compose.ci.yml logs --no-color || true
 
       - name: Cleanup
         if: always()
-        run: docker compose down -v
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml down -v

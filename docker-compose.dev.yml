@@ -1,0 +1,10 @@
+services:
+  codeface-app:
+    volumes:
+      - r-libs:/opt/Rlibs
+  codeface-shiny:
+    volumes:
+      - r-libs:/opt/Rlibs:ro
+
+volumes:
+  r-libs:
