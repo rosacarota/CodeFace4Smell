@@ -38,14 +38,13 @@ jobs:
           services:
             codeface-app:
               image: codeface4smell:ci
-              build: null
             codeface-shiny:
               image: codeface4smell:ci
-              build: null
           YAML
 
-      - name: Start containers
-        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml up -d
+      - name: Start DB + App (avoid r-libs race)
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.ci.yml up -d --no-build codeface-db codeface-app
 
       - name: Show container status
         run: docker compose -f docker-compose.yml -f docker-compose.ci.yml ps
@@ -55,6 +54,10 @@ jobs:
           echo "Waiting for database to be ready..."
           timeout 60 bash -c 'until docker compose -f docker-compose.yml -f docker-compose.ci.yml exec -T codeface-db mysqladmin ping -h localhost -uroot -proot --silent 2>/dev/null; do sleep 2; done'
           echo "Database is ready!"
+
+      - name: Start Shiny (after DB+App)
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.ci.yml up -d --no-build codeface-shiny
 
       - name: Smoke test (Shiny on :8081)
         shell: bash
